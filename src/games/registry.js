@@ -118,6 +118,7 @@ export class SlotGameRegistry {
       grid: config.grid,
       evaluation: {
         mode: config.evaluation.mode,
+        direction: config.evaluation.direction || 'leftToRight',
         lineCount: derived.lineCount,
         minMatch: config.evaluation.minMatch || 3
       },

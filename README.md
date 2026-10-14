@@ -48,7 +48,8 @@ blender-mcp-slots/
 │   │       ├── panda-fortune.js     #   新增 5x3 二十线 · 熊掌收集金币 + 黏性扩张 WILD
 │   │       ├── inferno-jackpots.js  #   新增 5x3 二十线 · 6 币锁仓重旋四档奖池 + 免费旋转
 │   │       ├── book-of-ra.js        #   新增 5x3 十线 · Book 系「扩展符号」免费旋转（可再触发）
-│   │       └── cosmic-crush.js      #   新增 5x3 二十线 · 雪崩连锁 + 倍率阶梯 + 免费旋转
+│   │       ├── cosmic-crush.js      #   新增 5x3 二十线 · 雪崩连锁 + 倍率阶梯 + 免费旋转
+│   │       └── starlight-burst.js   #   新增 5x3 十线 · 双向赔付 + 「WILD 重旋」整轴展开
 │   ├── mcp/
 │   │   ├── protocol.js              # JSON-RPC 2.0 编解码 + 参数校验
 │   │   ├── dispatcher.js            # 方法路由（校验 / 超时 / 错误码 / 指标）
@@ -67,11 +68,12 @@ blender-mcp-slots/
 │   ├── migrate.mjs                  # Neon Postgres 建表 / 校验
 │   ├── r2check.mjs                  # Cloudflare R2 连通性自检（凭据 / 桶 / 读写）
 │   └── smoke-v2.mjs                 # 端到端冒烟：新机台特性 + 存储/归档工具
-└── tests/                           # node:test，33 个用例
+└── tests/                           # node:test，37 个用例
     ├── engine.test.js
     ├── mcp.test.js
     ├── store.test.js                # 存储降级、新机台、多特性排队
-    └── cascades.test.js             # 雪崩连锁、扩展符号、R2 签名与归档降级
+    ├── cascades.test.js             # 雪崩连锁、扩展符号、R2 签名与归档降级
+    └── wildrespin.test.js           # 双向赔付、WILD 重旋状态机与非法配置拒绝
 ```
 
 ## 2. 依赖说明
@@ -225,6 +227,8 @@ curl -X POST http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
   "cascades": [{ "step": 0, "multiplier": 1, "grid": [...], "win": 1.4, "winCells": [...], "removed": 3, "newCells": [...] }],
   "expandingSymbol": { "symbolId": "mask", "reels": [1, 3] },  // Book 系整轴展开
   "selectedSymbol": "mask",           // 本次免费旋转选定的扩展符号
+  "wildRespin": { "remaining": 3, "sticky": 9, "settled": false, "awarded": 2.4 },  // WILD 重旋进度
+  "phase": "base",                    // base | freeSpins | holdAndRespin | wildRespin
   "triggered": [{ "type": "freeSpins", "spins": 10 }],
   "freeSpins": { "remaining": 10, "multiplier": 1, "awarded": 0 },
   "nextPhase": "freeSpins",
@@ -249,6 +253,8 @@ curl -X POST http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
 | 多特性同轮触发 | 免费旋转与金币重旋同时命中时，重旋进入 `pendingRespin` 排队，免费旋转结算后自动启动，状态机不互相覆盖 |
 | 雪崩连锁失控 | 段数硬上限 `cascades.maxSteps`（默认 8）+ 倍率阶梯末尾封顶 + 单轮封顶 `limits.maxWinMultiplier` |
 | R2 / 对象存储故障 | 归档在独立旁路：连接失败即 `degraded`，写入丢弃只计数，游戏、数据库与排行榜完全不受影响 |
+| 特性状态机叠加 | WILD 重旋与免费旋转/金币重旋互相覆盖 | 重旋轮不结算散射，且仅在本轮未触发其它特性时启动；`phase/nextPhase` 有回归用例 |
+| 双向赔付拉高 RTP | 同一条线付两次 | 双向机台按 `slots.simulate` 20 万轮重新标定赔付表（`tuning.payScale`），调参不改代码 |
 | 日志污染 stdio | 日志写 stderr；stdout 只写 JSON-RPC |
 | 进程异常 | `uncaughtException` / `unhandledRejection` 记录后继续；`SIGINT/SIGTERM` 优雅关闭 |
 | 赔付失衡 | `slots.simulate` / `npm run simulate` 随时复核 RTP，CI 中亦有回归断言 |
@@ -262,6 +268,8 @@ curl -X POST http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
 - **交互链路**：点击 `SPIN`（空格同效）→ 整列滚动动画 → 请求 `slots.spin`（动画与请求并行，最少 620ms）→ 逐列停轮（每列 120ms）→ 中奖格/连线依次点亮 → 显示本轮赢得倍率与金额 → 触发特性时弹出横幅并自动续转（免费旋转 / 金币重旋结束后回到基础轮）。
 - **雪崩演出**（`features.cascades` 机台）：本轮返回的 `cascades` 逐段重放——每段渲染该段盘面、高亮中奖格、新落位符号带 `drop` 下落动画，转轮下方徽标实时显示「第 N 段 · 倍率 xN · +赢得」，直到无中奖为止。
 - **扩展符号演出**（`freeSpins.expandingSymbol` 机台）：免费旋转横幅显示本轮选定的扩展符号及触发条件；展开时对应整轴加金色描边脉冲并弹出提示，随后按常规线制结算。
+- **WILD 重旋演出**（`features.wildRespin` 机台）：触发时整轴金色描边脉冲 + Toast「星芒 WILD 整轴展开 · 获得 N 次重旋」，横幅实时显示剩余次数、已展开格数与本段累计赢得，结束后自动回到基础轮。
+- **双向赔付标签**：`evaluation.direction=both` 的机台在大厅卡片显示「双向赔付」标签，赔付表中说明「每条线左右各判一次」。
 - **归档状态**：面板标题旁标签显示当前存储驱动，并在启用 R2 时追加「R2 归档就绪/降级」，降级仅提示不阻断操作。
 - **控制区**：投注档位（`bet.levels`）步进、线数选择（`lines` 模式）、自动旋转 10/25/50（可随时停止）、赔付表弹窗（按符号列出 3/4/5 连倍率 + 特性规则文本）。
 - **面板**：最近 30 轮记录、本场统计（轮次、实际 RTP、总投注、最大单轮、特性触发次数）、排行榜（按单次旋转最高倍率，标题右侧标签显示当前存储驱动与是否降级）。
@@ -279,6 +287,7 @@ curl -X POST http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
 | `inferno-jackpots` 烈焰金库 | 5×3 / 20 线 | 6 枚金币触发 3 次锁仓重旋、MINI/MINOR/MAJOR/GRAND 四档奖池；金库散射 8/12/16 次免费旋转（倍率上限 x3） | 96% |
 | `book-of-ra` 法老之书 | 5×3 / 10 线 | 亡灵之书散射 10/12/15 次免费旋转，进入时随机选定扩展符号（候选池可配），出现 ≥2 个即整轴展开；可再触发 +5/+8/+10 | 95.5% |
 | `cosmic-crush` 星海消除 | 5×3 / 20 线 | 雪崩连锁：中奖格消除 → 上方下落 → 顶部补新符号，倍率阶梯 `1/1/2/3/5/8/12`；陨石散射 8/12/16 次免费旋转（`carryInFreeSpins` 可让倍率跨轮累积） | 96% |
+| `starlight-burst` 星光爆裂 | 5×3 / 10 线 | **双向赔付**（每条线左右各判一次）；星芒 WILD 只落在 2/3/4 轴，出现即整轴展开并获 3 次免费重旋，重旋中再出新 WILD 则次数重置；星云散射 8/12/16 次免费旋转（黏性扩张 WILD） | 96.2% |
 
 ### 实测 RTP（`npm run simulate -- <gameId> 200000`）
 
@@ -291,6 +300,7 @@ inferno-jackpots  rtp=0.9432  target=0.96   max=234.00x
 neon-fruits       rtp=0.9596  target=0.96   max=2507.92x
 panda-fortune     rtp=0.9544  target=0.96   max=103.20x
 pharaoh-gold      rtp=0.9517  target=0.96   max=235.00x
+starlight-burst   rtp=0.9622  target=0.962  max=78.27x
 ```
 
-八台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。
+九台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。

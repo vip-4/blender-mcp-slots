@@ -80,10 +80,13 @@ export function evaluateGrid({
   } else {
     const lines = resolveLines(config);
     const count = Math.min(activeLines || lines.length, lines.length);
-    for (let li = 0; li < count; li += 1) {
-      const pattern = lines[li];
+    // 双向赔付（Starburst 系）：同一条线「从左往右」与「从右往左」各判一次，命中则各付一次
+    const bothWays = config.evaluation.direction === 'both' || config.evaluation.direction === 'bothWays';
+
+    const judge = (li, dir) => {
+      const pattern = dir === 'rtl' ? [...lines[li]].reverse() : lines[li];
       const seq = pattern.map((p) => grid[p.reel]?.[p.row]);
-      if (seq.some((x) => x === undefined)) continue;
+      if (seq.some((x) => x === undefined)) return;
 
       let baseId = null;
       for (const id of seq) {
@@ -100,16 +103,17 @@ export function evaluateGrid({
         if (id === baseId || isWild(symbolMap.get(id))) matched.push({ ...pattern[i], symbol: id });
         else break;
       }
-      if (matched.length < minMatch) continue;
+      if (matched.length < minMatch) return;
       const pay = payOf(baseId, matched.length);
-      if (pay <= 0) continue;
+      if (pay <= 0) return;
 
       let mult = globalMultiplier;
       for (const m of matched) mult *= wildMultipliers.get(`${m.reel},${m.row}`) ?? 1;
       const win = roundMoney(pay * perUnit * mult);
-      if (win <= 0) continue;
+      if (win <= 0) return;
       lineWins.push({
         line: li,
+        direction: dir,
         symbol: baseId,
         count: matched.length,
         positions: matched.map(({ reel, row }) => ({ reel, row })),
@@ -117,6 +121,11 @@ export function evaluateGrid({
         pay: win
       });
       total += win;
+    };
+
+    for (let li = 0; li < count; li += 1) {
+      judge(li, 'ltr');
+      if (bothWays) judge(li, 'rtl');
     }
   }
 

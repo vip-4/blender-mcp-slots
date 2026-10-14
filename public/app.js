@@ -124,6 +124,7 @@ function renderLobby() {
         <span class="chip accent">${g.evaluation.mode === 'ways' ? `${g.evaluation.lineCount} WAYS` : `${g.evaluation.lineCount} 线`}</span>
         <span class="chip">${g.grid.reels}×${g.grid.rows}</span>
         <span class="chip">${g.volatility}</span>
+        ${g.evaluation.direction === 'both' || g.evaluation.direction === 'bothWays' ? '<span class="chip accent">双向赔付</span>' : ''}
         ${(g.features || []).map((f) => `<span class="chip">${featureName(f)}</span>`).join('')}
       </div>
       <div class="card-foot">
@@ -137,7 +138,14 @@ function renderLobby() {
 }
 
 function featureName(key) {
-  return { freeSpins: '免费旋转', holdAndRespin: '金币重旋', collect: '收集符', multiplierWild: '倍率 WILD' }[key] || key;
+  return {
+    freeSpins: '免费旋转',
+    holdAndRespin: '金币重旋',
+    collect: '收集符',
+    multiplierWild: '倍率 WILD',
+    cascades: '雪崩连锁',
+    wildRespin: 'WILD 重旋'
+  }[key] || key;
 }
 
 /* ============================ 机台 ============================ */
@@ -362,6 +370,13 @@ async function doSpin() {
     toast(`扩展符号「${sym.label}」整轴展开！`);
   }
 
+  // 4.5) WILD 重旋触发：整轴展开提示
+  const wrTrigger = result.triggered.find((t) => t.type === 'wildRespin');
+  if (wrTrigger) {
+    for (const reel of wrTrigger.reels || []) state.reelEls[reel].col.classList.add('expanded');
+    toast(`星芒 WILD 整轴展开 · 获得 ${wrTrigger.respins} 次重旋！`);
+  }
+
   // 5) 中奖演出：雪崩机台按段播放，其余为单段高亮
   if (result.cascades && result.cascades.length > 1) {
     await playCascades(result);
@@ -400,6 +415,8 @@ function showFeatureBanner(result) {
     el.innerHTML = `<b>免费旋转 ${fs.remaining} 次</b><span>${hints.join(' · ')}</span>`;
   } else if (rs) {
     el.innerHTML = `<b>金币重旋 ${rs.remaining} 次</b><span>已锁定 ${rs.coins} 枚金币</span>`;
+  } else if (result.wildRespin && !result.wildRespin.settled) {
+    el.innerHTML = `<b>星芒重旋 ${result.wildRespin.remaining} 次</b><span>整轴 WILD ${result.wildRespin.sticky} 格 · 本段已获 ${fmt(result.wildRespin.awarded || 0)}</span>`;
   } else if (result.respinSettlement) {
     const jp = result.respinSettlement.jackpot;
     el.innerHTML = `<b>${jp ? `${jp.tier} 奖池 ${jp.multiplier}x` : '金币结算'}</b><span>${fmt(result.respinSettlement.pay)} 已入账</span>`;
@@ -569,7 +586,8 @@ function renderStats(stats) {
     <div><span>总投注</span><b>${fmt(stats.totalBet)}</b></div>
     <div><span>最大单轮</span><b>${fmt(stats.biggestWin)}</b></div>
     <div><span>免费旋转</span><b>${stats.features?.freeSpins || 0}</b></div>
-    <div><span>金币重旋</span><b>${stats.features?.holdAndRespin || 0}</b></div>`;
+    <div><span>金币重旋</span><b>${stats.features?.holdAndRespin || 0}</b></div>
+    <div><span>WILD 重旋</span><b>${stats.features?.wildRespin || 0}</b></div>`;
 }
 
 /* ============================ 排行榜 / 外部存储 ============================ */
@@ -648,6 +666,19 @@ function openPaytable() {
         } 次重旋，奖池 ${Object.entries(cfg.features.holdAndRespin.jackpots)
           .map(([k, v]) => `${k.toUpperCase()} ${v.cells}格=${v.multiplier}x`)
           .join(' / ')}`
+      : '',
+    cfg.evaluation.direction === 'both' || cfg.evaluation.direction === 'bothWays'
+      ? `<b>双向赔付</b>：每条线「左→右」与「右→左」各判一次，两向都成立则各付一次`
+      : '',
+    cfg.features?.wildRespin
+      ? `<b>WILD 重旋</b>：WILD 落在第 ${cfg.features.wildRespin.reels.map((r) => r + 1).join('/')} 轴即整轴展开并获 ${
+          cfg.features.wildRespin.respins
+        } 次免费重旋${cfg.features.wildRespin.resetOnNew === false ? '' : '；重旋中再出新 WILD 则次数重置'}`
+      : '',
+    cfg.features?.cascades
+      ? `<b>雪崩连锁</b>：中奖格消除后上方下落补新符号，倍率阶梯 ${cfg.features.cascades.ladder.join('/')}${
+          cfg.features.cascades.carryInFreeSpins ? '（免费旋转内跨轮累积）' : ''
+        }`
       : '',
     cfg.features?.multiplierWild ? `<b>倍率 WILD</b>：WILD 参与组合时倍率 ${cfg.features.multiplierWild.values.join('/')}x` : '',
     cfg.features?.collect ? `<b>收集符</b>：${symbolById(cfg.features.collect.symbolId).label} 落在第 ${cfg.features.collect.reels.map((r) => r + 1).join('/')} 轴时兑现盘面所有金币` : '',

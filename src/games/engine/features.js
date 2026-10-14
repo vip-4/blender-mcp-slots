@@ -119,6 +119,37 @@ export function collapseGrid({ grid, winCells, strips, rng, removeWild = false, 
 }
 
 /* ============================================================
+ *  Wild 重旋（Starburst 系）：Wild 落在指定轴 → 整轴展开 + N 次免费重旋
+ * ============================================================ */
+
+/** 找出指定轴上的全部 Wild（reels 为空则扫描所有轴） */
+export function findWildsOnReels({ config, grid, reels }) {
+  const wildIds = config.symbols.filter((s) => s.kind === 'wild').map((s) => s.id);
+  const targets = reels?.length ? reels : grid.map((_, i) => i);
+  const out = [];
+  for (const reel of targets) {
+    if (!grid[reel]) continue;
+    for (let row = 0; row < grid[reel].length; row += 1) {
+      if (wildIds.includes(grid[reel][row])) out.push({ reel, row });
+    }
+  }
+  return out;
+}
+
+/** 把指定轴整轴替换为 Wild（原地改写盘面），返回被改写的所有坐标 */
+export function expandWildReels({ grid, reels, wildId }) {
+  const out = [];
+  for (const reel of [...new Set(reels)]) {
+    if (!grid[reel]) continue;
+    for (let row = 0; row < grid[reel].length; row += 1) {
+      grid[reel][row] = wildId;
+      out.push({ reel, row });
+    }
+  }
+  return out;
+}
+
+/* ============================================================
  *  扩展符号（Expanding Symbol，Book 系经典玩法）
  *  进入免费旋转时随机选定一个符号；盘面出现 >= minCount 个时整轴展开
  * ============================================================ */

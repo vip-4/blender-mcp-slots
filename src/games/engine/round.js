@@ -11,7 +11,9 @@ import {
   cascadeMultiplier,
   collapseGrid,
   pickExpandingSymbol,
-  applyExpandingSymbol
+  applyExpandingSymbol,
+  findWildsOnReels,
+  expandWildReels
 } from './features.js';
 import { lineCount } from './paylines.js';
 import { AppError, ErrorCode } from '../../shared/errors.js';
@@ -56,10 +58,18 @@ export function createState(config, { bet, lines, balance = 1000, serverSeed, cl
     rng: new Rng({ serverSeed: serverSeed || randomSeed(), clientSeed }).state,
     freeSpins: null,
     respins: null,
+    wildRespin: null,
     // 同一轮同时命中「免费旋转」与「锁仓重旋」时，后者排队，避免两个状态机互相覆盖
     pendingRespin: null,
     history: [],
-    stats: { rounds: 0, paidRounds: 0, totalBet: 0, totalWin: 0, biggestWin: 0, features: { freeSpins: 0, holdAndRespin: 0 } },
+    stats: {
+      rounds: 0,
+      paidRounds: 0,
+      totalBet: 0,
+      totalWin: 0,
+      biggestWin: 0,
+      features: { freeSpins: 0, holdAndRespin: 0, wildRespin: 0 }
+    },
     createdAt: Date.now(),
     updatedAt: Date.now()
   };
@@ -96,7 +106,8 @@ export function playRound({ config, derived, state, bet, lines }) {
 
   const isFree = state.phase === 'freeSpins';
   const isRespin = state.phase === 'holdAndRespin';
-  const cost = isFree || isRespin ? 0 : useBet;
+  const isWildRespin = state.phase === 'wildRespin';
+  const cost = isFree || isRespin || isWildRespin ? 0 : useBet;
 
   if (state.balance + 1e-9 < cost) {
     throw new AppError(ErrorCode.BetOutOfRange, 'insufficient balance', { balance: state.balance, cost });
@@ -127,6 +138,10 @@ export function playRound({ config, derived, state, bet, lines }) {
   let expanded = [];
   if (isFree && wildId && state.freeSpins.stickyWilds.length) {
     for (const p of state.freeSpins.stickyWilds) grid[p.reel][p.row] = wildId;
+  }
+  // Wild 重旋：重旋轮保持已展开的 Wild 轴
+  if (isWildRespin && wildId && state.wildRespin?.stickyWilds.length) {
+    for (const p of state.wildRespin.stickyWilds) grid[p.reel][p.row] = wildId;
   }
   if (isFree && fsCfg?.expandingWild) {
     const r = applyExpandingWilds({ config, cfg: fsCfg.expandingWild, grid, rng });
@@ -260,7 +275,14 @@ export function playRound({ config, derived, state, bet, lines }) {
   const triggered = [];
   const scatterId = fsCfg?.trigger?.symbolId;
 
-  if (!isRespin) {
+  // Wild 重旋轮不结算散射，避免与免费旋转状态机互相触发
+  if (isWildRespin) {
+    evaluated.scatterWins = [];
+    evaluated.totalWin = roundMoney(evaluated.lineWins.reduce((a, w) => a + w.pay, 0));
+    totalWin = roundMoney(evaluated.totalWin + (collect?.pay || 0));
+  }
+
+  if (!isRespin && !isWildRespin) {
     const scatterCount = scatterId ? countSymbol(grid, scatterId) : 0;
     if (scatterCount > 0 && fsCfg) {
       const award = scatterAward(fsCfg, scatterCount);
@@ -314,6 +336,44 @@ export function playRound({ config, derived, state, bet, lines }) {
         state.stats.features.holdAndRespin += 1;
         triggered.push({ type: 'holdAndRespinQueued', coins: held.length, respins: payload.remaining });
       }
+    }
+  }
+
+  // ---------- 5.5 Wild 重旋：Wild 落在指定轴即整轴展开 + N 次免费重旋 ----------
+  const wrCfg = config.features?.wildRespin;
+  let wildRespinState = null;
+  if (wrCfg) {
+    const hits = findWildsOnReels({ config, grid, reels: wrCfg.reels });
+    if (isWildRespin) {
+      const rs = state.wildRespin;
+      const known = new Set(rs.stickyWilds.map((p) => `${p.reel},${p.row}`));
+      const fresh = hits.filter((p) => !known.has(`${p.reel},${p.row}`));
+      if (fresh.length) {
+        const cells = wrCfg.expand === false ? fresh : expandWildReels({ grid, reels: fresh.map((p) => p.reel), wildId });
+        for (const c of cells) if (!known.has(`${c.reel},${c.row}`)) rs.stickyWilds.push(c);
+        if (wrCfg.resetOnNew !== false) rs.remaining = wrCfg.respins ?? 3;
+        triggered.push({ type: 'wildRespinRetrigger', respins: rs.remaining, cells: cells.length });
+      } else {
+        rs.remaining -= 1;
+      }
+      rs.played += 1;
+      rs.awarded = roundMoney(rs.awarded + totalWin);
+      if (rs.remaining < 0) {
+        triggered.push({ type: 'wildRespinSettled', spins: rs.played, pay: rs.awarded, wilds: rs.stickyWilds.length });
+        state.phase = 'base';
+        state.wildRespin = null;
+        wildRespinState = { remaining: 0, sticky: 0, settled: true, awarded: rs.awarded };
+      } else {
+        wildRespinState = { remaining: rs.remaining, sticky: rs.stickyWilds.length, settled: false, awarded: rs.awarded };
+      }
+    } else if (hits.length && state.phase === 'base' && !state.pendingRespin) {
+      // 仅在本轮未触发其它特性时启动，避免与免费旋转 / 锁仓重旋状态机叠加
+      const cells = wrCfg.expand === false ? hits : expandWildReels({ grid, reels: hits.map((p) => p.reel), wildId });
+      state.phase = 'wildRespin';
+      state.wildRespin = { remaining: wrCfg.respins ?? 3, played: 0, awarded: 0, stickyWilds: cells, triggerBet: useBet };
+      state.stats.features.wildRespin += 1;
+      triggered.push({ type: 'wildRespin', respins: wrCfg.respins ?? 3, reels: [...new Set(cells.map((c) => c.reel))] });
+      wildRespinState = { remaining: state.wildRespin.remaining, sticky: cells.length, settled: false, awarded: 0 };
     }
   }
 
@@ -384,7 +444,7 @@ export function playRound({ config, derived, state, bet, lines }) {
     roundId: `${config.id}-${state.stats.rounds}-${state.rng.nonce}`,
     gameId: config.id,
     configVersion: config.version,
-    phase: isFree ? 'freeSpins' : isRespin ? 'holdAndRespin' : 'base',
+    phase: isFree ? 'freeSpins' : isRespin ? 'holdAndRespin' : isWildRespin ? 'wildRespin' : 'base',
     reelSet,
     bet: useBet,
     cost,
@@ -409,6 +469,7 @@ export function playRound({ config, derived, state, bet, lines }) {
     respins: state.respins
       ? { remaining: state.respins.remaining, coins: state.respins.held.length, held: state.respins.held }
       : null,
+    wildRespin: wildRespinState,
     nextPhase: state.phase,
     balance: state.balance,
     fairness: {

@@ -108,6 +108,24 @@ export function validateConfig(config) {
     if (cas.removeWild) warnings.push('cascades.removeWild=true will keep wilds on the grid between cascades');
   }
 
+  const wr = config.features?.wildRespin;
+  if (wr) {
+    need(kinds.has('wild'), 'wildRespin requires a wild symbol');
+    need((wr.respins ?? 3) >= 1, 'wildRespin.respins must be >= 1');
+    for (const reel of wr.reels || []) {
+      need(reel >= 0 && reel < config.grid.reels, `wildRespin reel ${reel} out of range`);
+    }
+    if (wr.expand === false) warnings.push('wildRespin.expand=false keeps only the landed wilds (reels will not fully expand)');
+  }
+
+  const dir = config.evaluation?.direction;
+  if (dir && !['leftToRight', 'rightToLeft', 'both', 'bothWays'].includes(dir)) {
+    warnings.push(`unknown evaluation.direction "${dir}", treated as leftToRight`);
+  }
+  if (dir === 'both' || dir === 'bothWays') {
+    warnings.push('evaluation.direction=both pays each line in both directions (doubles line hit rate)');
+  }
+
   const hr = config.features?.holdAndRespin;
   if (hr) {
     const bid = hr.trigger?.symbolId;

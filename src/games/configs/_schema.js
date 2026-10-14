@@ -19,6 +19,7 @@
  *   grid: { reels: 3|5, rows: 3 },
  *   evaluation: {
  *     mode: 'lines' | 'ways',
+ *     // direction: leftToRight（默认） | rightToLeft | both（双向赔付，同一条线左右各付一次）
  *     direction: 'leftToRight',
  *     lineSet: '3x3:5' | '5x3:20' | '5x3:10',   // mode=lines 时必填
  *     ways: 243,                                // mode=ways 时可省略（自动 rows^reels）
@@ -48,6 +49,9 @@
  *       // 盘面出现 >= minCount 个时，出现该符号的整轴替换为该符号（reels 可限定轴范围）
  *       expandingSymbol: { minCount: 2, candidates: ['pharaoh','anubis'], reels: [1,2,3] }
  *     },
+ *     // WILD 重旋（Starburst 系）：WILD 落在 reels 指定轴 → 整轴展开 + N 次免费重旋
+ *     // 重旋期间 WILD 保持；resetOnNew=true 时再次出现新 WILD 则次数重置
+ *     wildRespin: { reels: [1,2,3], respins: 3, expand: true, resetOnNew: true },
  *     // 雪崩连锁：中奖格消除 → 上方下落 → 顶部补新符号；倍率按 ladder 逐段递增
  *     cascades: {
  *       ladder: [1,1,2,3,5,8,12],

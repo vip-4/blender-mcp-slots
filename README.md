@@ -309,4 +309,59 @@ starlight-burst   rtp=0.9622  target=0.962  max=78.27x
 treasure-hunter   rtp=0.9582  target=0.96   max=321.60x
 ```
 
-十一台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。
+十一台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。可用 `npm run site:check` 之外的新脚本 `node scripts/tune-check.mjs [spins]` 一次快筛全部机台（默认 20 万轮，高波动机台轮数不足时方差可达 ±3%）。
+
+---
+
+## 8. 静态站点（`site/`）与生产部署
+
+`site/` 是**自包含单文件**静态站点：内联 CSS/JS、零外部请求、45 KB，内含免后端的「星光爆裂」试玩器，已做 SEO 与 GEO（生成式引擎优化）处理，可直接托管到任意静态平台。
+
+### 8.1 文件结构
+
+```
+site/
+├── index.html            # 单文件站点（语义化结构 + 完整 meta + JSON-LD + 内联试玩器）
+├── 404.html              # 404 页（noindex，规范链接回首页）
+├── robots.txt            # 允许索引 + Sitemap 声明
+├── sitemap.xml           # URL 与 og:image 声明
+├── llms.txt              # 面向 AI 爬虫的纯文本事实摘要（GEO）
+├── manifest.webmanifest  # PWA 清单（可安装、主题色）
+├── .nojekyll             # 关闭 GitHub Pages 的 Jekyll 处理
+└── assets/og-cover.png   # 社交分享封面 1200×630（懒加载，不影响首屏）
+```
+
+### 8.2 SEO / GEO 处理
+
+| 维度 | 处理 |
+| --- | --- |
+| 基础 meta | `title`(35 字) / `description`(127 字) / `keywords` / `robots`(max-image-preview:large) / `canonical` / `theme-color` |
+| Open Graph | `og:type/site_name/title/description/url/image/image:width/height/alt/locale` |
+| Twitter Card | `summary_large_image` + title/description/image/image:alt |
+| 结构化数据 | `@graph`：WebSite + SoftwareApplication + ItemList(11 台 VideoGame) + FAQPage |
+| GEO（AI 摘要友好） | 首屏 TL;DR 定义段、`<dl>` 事实列表、表格化规格、完整问句式 FAQ 小标题、`llms.txt` |
+| 语义化 | `header/nav/main/section/footer` + 唯一 `h1` + 每节 `aria-labelledby` + 表格 `caption/scope` |
+| 可访问性 | 跳转链接、`aria-live` 结果播报、`prefers-reduced-motion`、明暗双主题、`:focus-visible` 焦点环 |
+| 性能 | 零外部请求、内联资源 45 KB、封面图懒加载、无阻塞脚本 |
+
+自检：`npm run site:check`（49 项：meta / OG / Twitter / JSON-LD 可解析性 / 语义 / 可访问性 / 外部依赖 / 体积）。
+
+### 8.3 部署命令
+
+```bash
+npm run site:serve          # 本地预览 http://127.0.0.1:8080
+npm run site:check          # SEO / GEO / 可访问性自检
+npm run site:build          # 生成 dist/index.min.html（单文件镜像，约 27 KB）
+
+# GitHub Pages：推送 main 即由 .github/workflows/pages.yml 发布 site/
+# Cloudflare Pages
+npx wrangler pages deploy site --project-name=blender-mcp-slots
+# Vercel（需 VERCEL_TOKEN）
+npx vercel deploy site --prod
+# EdgeOne Pages（单文件渠道）
+node scripts/deploy-edgeone.mjs
+```
+
+线上地址：<https://vip-4.github.io/blender-mcp-slots/>
+
+> 说明：EdgeOne Pages 的托管域名对「老虎机/博彩」类内容有策略限制，会被拒绝并返回 self-hosted 指引；该类渠道可改用 GitHub Pages / Cloudflare Pages / Vercel，或自建 Pages MCP 服务。

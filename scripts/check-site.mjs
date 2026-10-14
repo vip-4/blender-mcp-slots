@@ -3,7 +3,9 @@ import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
 const SITE = path.resolve(process.cwd(), 'site');
-const html = readFileSync(path.join(SITE, 'index.html'), 'utf8');
+const target = process.argv[2] || 'index.html';
+const html = readFileSync(path.resolve(SITE, target), 'utf8');
+console.log(`检查对象：site/${path.relative(SITE, path.resolve(SITE, target))}`);
 const problems = [];
 const ok = [];
 

@@ -100,7 +100,7 @@
   .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; }
   .card b { display: block; font-size: .95rem; }
 
-  /* 试玩器 */
+  /* demo-css-start 试玩器 */
   .machine { display: grid; gap: 1.2rem; grid-template-columns: minmax(0, 1.4fr) minmax(240px, 1fr); }
   @media (max-width: 780px) { .machine { grid-template-columns: 1fr; } }
   .reels { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: .6rem; }
@@ -122,6 +122,7 @@
   button[aria-disabled="true"] { opacity: .5; }
   .log { margin-top: .8rem; font-size: .85rem; color: var(--muted); max-height: 8.5rem; overflow: auto; }
   .log div { padding: .12rem 0; }
+  /* demo-css-end */
 
   table { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: 1rem; }
   caption { text-align: left; color: var(--muted); padding-bottom: .5rem; font-size: .88rem; }
@@ -204,6 +205,7 @@
   </section>
 
   <!-- ============ 在线试玩 ============ -->
+  <!-- demo-start -->
   <section id="play" aria-labelledby="play-title">
     <h2 id="play-title">在线试玩：星光爆裂（静态轻量版）</h2>
     <p class="muted">下面的试玩器是<strong>纯前端实现</strong>：不依赖后端、不联网、不上传任何数据。它复刻了 <code>starlight-burst</code> 的规则——5×3、10 线、<strong>双向赔付</strong>，星芒 WILD 只出现在第 2/3/4 轴，出现即整轴展开并触发 3 次免费重旋。</p>
@@ -282,7 +284,7 @@
           <tr><th scope="row">黄金法老 Pharaoh Gold</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9517</td><td class="num">0.96</td><td class="num">235.00×</td><td>金币重旋 · 收集符 · 奖池</td></tr>
           <tr><th scope="row">樱花物语 Sakura Tale</th><td class="num">5×3</td><td class="num">10 线</td><td>双向</td><td>中高</td><td class="num">0.9583</td><td class="num">0.96</td><td class="num">520.42×</td><td>双向赔付 · 雪崩连锁 · 扩展符号</td></tr>
           <tr><th scope="row">星光爆裂 Starlight Burst</th><td class="num">5×3</td><td class="num">10 线</td><td>双向</td><td>低</td><td class="num">0.9622</td><td class="num">0.962</td><td class="num">78.27×</td><td>WILD 重旋 · 整轴展开 · 双向赔付</td></tr>
-          <tr><th scope="row">宝藏猎人 Treasure Hunter</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9679</td><td class="num">0.96</td><td class="num">324.85×</td><td>雪崩连锁 · 黏性扩张 WILD · 倍率递进</td></tr>
+          <tr><th scope="row">宝藏猎人 Treasure Hunter</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9582</td><td class="num">0.96</td><td class="num">321.60×</td><td>雪崩连锁 · 黏性扩张 WILD · 倍率递进</td></tr>
         </tbody>
       </table>
     </div>
@@ -414,7 +416,7 @@ node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code
         { "@type": "VideoGame", "position": 8, "name": "黄金法老 Pharaoh Gold", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9517"}] },
         { "@type": "VideoGame", "position": 9, "name": "樱花物语 Sakura Tale", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9583"}] },
         { "@type": "VideoGame", "position": 10, "name": "星光爆裂 Starlight Burst", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9622"}] },
-        { "@type": "VideoGame", "position": 11, "name": "宝藏猎人 Treasure Hunter", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9679"}] }
+        { "@type": "VideoGame", "position": 11, "name": "宝藏猎人 Treasure Hunter", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9582"}] }
       ]
     },
     {
@@ -457,7 +459,10 @@ node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code
 }
 </script>
 
+<!-- demo-end -->
+
 <!-- ============ 静态试玩器（纯前端，无网络请求） ============ -->
+<!-- demo-js-start -->
 <script>
 (function () {
   'use strict';
@@ -695,5 +700,6 @@ node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code
   });
 })();
 </script>
+<!-- demo-js-end -->
 </body>
 </html>

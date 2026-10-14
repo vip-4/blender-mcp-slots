@@ -12,7 +12,7 @@ Blender MCP Slots 用一份可校验的 CONFIG 描述老虎机的转轮条带、
 - 机台数量：11 款（3×3 / 5×3；5 线、10 线、20 线、243 WAYS）
 - 赔付方向：单向（leftToRight）与双向赔付（both，同一条线左右各付一次）
 - 特性能力：freeSpins、cascades、holdAndRespin、collect、multiplierWild、expandingSymbol、wildRespin
-- RTP 校准：slots.simulate 蒙特卡洛，20 万轮/台；实测区间 0.9386 ~ 0.9679
+- RTP 校准：slots.simulate 蒙特卡洛，20 万轮/台；实测区间 0.9386 ~ 0.9622
 - 公平性：服务端种子 + 客户端种子 + nonce 派生随机数，返回种子哈希可事后复算
 - 统一入口：POST /rpc（JSON-RPC 2.0），暴露 18 个 MCP 工具
 - 存储：默认内存；可选 Postgres（会话/排行榜）与 Cloudflare R2（归档），均可降级
@@ -30,7 +30,7 @@ Blender MCP Slots 用一份可校验的 CONFIG 描述老虎机的转轮条带、
 - 黄金法老 Pharaoh Gold：5×3、20 线、高波动，0.9517 / 0.96，金币重旋 + 收集符 + 奖池
 - 樱花物语 Sakura Tale：5×3、10 线、中高波动，0.9583 / 0.96，双向赔付 + 雪崩连锁 + 扩展符号
 - 星光爆裂 Starlight Burst：5×3、10 线、低波动，0.9622 / 0.962，WILD 重旋 + 双向赔付
-- 宝藏猎人 Treasure Hunter：5×3、20 线、高波动，0.9679 / 0.96，雪崩连锁 + 黏性扩张 WILD
+- 宝藏猎人 Treasure Hunter：5×3、20 线、高波动，0.9582 / 0.96，雪崩连锁 + 黏性扩张 WILD
 
 ## 页面结构
 

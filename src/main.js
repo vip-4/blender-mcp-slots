@@ -1,4 +1,6 @@
 import { loadRuntime } from './config/runtime.js';
+import { loadEnv } from './config/dotenv.js';
+import { createStore } from './store/index.js';
 import { createLogger } from './shared/logger.js';
 import { createMetrics } from './shared/metrics.js';
 import { RateLimiter, IdempotencyCache, SpinBudget } from './shared/guard.js';
@@ -10,6 +12,7 @@ import { createBlenderBridge } from './mcp/blender/bridge.js';
 import { startStdio } from './mcp/transports/stdio.js';
 import { startHttp } from './mcp/transports/http.js';
 
+loadEnv();
 const runtime = loadRuntime();
 const logger = createLogger({ level: runtime.logLevel });
 const metrics = createMetrics();
@@ -19,10 +22,12 @@ process.on('uncaughtException', (e) => logger.error('uncaughtException', { error
 
 async function bootstrap() {
   const registry = await createRegistry({ configDir: runtime.configDir, logger });
+  const store = await createStore({ logger, metrics, registry });
   const service = createGameService({
     registry,
     logger,
     metrics,
+    store,
     guards: {
       limiter: new RateLimiter({ capacity: runtime.limits.rateCapacity, refillPerSec: runtime.limits.rateRefill }),
       budget: new SpinBudget(),
@@ -33,7 +38,7 @@ async function bootstrap() {
   const blender = createBlenderBridge(runtime.blender, { logger, metrics });
 
   const dispatcher = new Dispatcher({ logger, metrics, timeoutMs: runtime.timeoutMs });
-  registerTools({ dispatcher, registry, service, blender, metrics, logger });
+  registerTools({ dispatcher, registry, service, blender, metrics, logger, store });
 
   const transports = [];
   if (runtime.transport === 'stdio' || runtime.transport === 'both') transports.push(startStdio({ dispatcher, logger }));

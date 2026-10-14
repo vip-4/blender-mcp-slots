@@ -51,7 +51,7 @@ export default defineConfig({
       retrigger: { counts: { 3: 4, 4: 8, 5: 12 }, maxSpins: 200 }
     }
   },
-  tuning: { payScale: 0.992 },
+  tuning: { payScale: 1.04 },
   limits: { maxWinMultiplier: 4000 },
   rtp: { target: 0.96, tolerance: 0.015 },
   volatility: 'high'

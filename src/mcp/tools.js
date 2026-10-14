@@ -7,7 +7,7 @@ const obj = (properties = {}, required = []) => ({ type: 'object', properties, r
  * 统一入口：所有能力都以 MCP 工具形式暴露。
  * 新增机台不需要改动这里；新增玩法能力才需要在此登记一个工具。
  */
-export function registerTools({ dispatcher, registry, service, blender, metrics, logger }) {
+export function registerTools({ dispatcher, registry, service, blender, metrics, logger, store }) {
   const tools = [
     {
       name: 'slots.listGames',
@@ -98,6 +98,24 @@ export function registerTools({ dispatcher, registry, service, blender, metrics,
         registry.simulate(gameId, { spins: Math.min(spins || 100000, 2000000), bet, lines, seed })
     },
     {
+      name: 'slots.history',
+      description: '查询最近旋转记录（外部存储优先，不可用时回退内存快照）',
+      inputSchema: obj({ gameId: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 200 } }),
+      handler: async ({ gameId, limit }) => ({ limit: limit ?? 20, spins: await service.history({ gameId, limit }) })
+    },
+    {
+      name: 'slots.leaderboard',
+      description: '按单次旋转最高倍率查询排行榜',
+      inputSchema: obj({ gameId: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 100 } }),
+      handler: async ({ gameId, limit }) => ({ limit: limit ?? 10, rows: await service.leaderboard({ gameId, limit }) })
+    },
+    {
+      name: 'store.health',
+      description: '外部存储（Neon Postgres / Redis）健康状态与降级情况',
+      inputSchema: obj({}),
+      handler: async () => (store ? store.health() : { driver: 'none', degraded: true })
+    },
+    {
       name: 'slots.validateConfigs',
       description: '校验全部或指定机台 CONFIG 是否符合契约',
       inputSchema: obj({ gameId: { type: 'string' } }),
@@ -149,7 +167,8 @@ export function registerTools({ dispatcher, registry, service, blender, metrics,
         configFailures: registry.failures,
         sessions: service.sessions.size,
         uptimeSec: Math.round(process.uptime()),
-        blender: blender ? blender.getState() : 'disabled'
+        blender: blender ? blender.getState() : 'disabled',
+        store: store ? await store.health() : 'disabled'
       })
     },
     {

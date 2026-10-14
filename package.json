@@ -1,6 +1,6 @@
 {
   "name": "blender-mcp-slots",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Blender MCP 老虎机游戏模块：多主题机台共用同一套 CONFIG 引擎的 SLOT GAMES 合集",
   "type": "module",
   "main": "src/main.js",
@@ -12,12 +12,19 @@
     "start:http": "node src/main.js --transport=http",
     "start:stdio": "node src/main.js --transport=stdio",
     "simulate": "node scripts/simulate.js",
+    "migrate": "node scripts/migrate.mjs",
     "test": "node --test tests/"
   },
-  "dependencies": {},
   "optionalDependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0"
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "pg": "^8.23.1"
   },
-  "keywords": ["mcp", "blender", "slot", "casino", "game-engine"],
+  "keywords": [
+    "mcp",
+    "blender",
+    "slot",
+    "casino",
+    "game-engine"
+  ],
   "license": "MIT"
 }

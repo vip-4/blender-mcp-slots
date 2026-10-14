@@ -80,7 +80,17 @@ const SHAPES = {
   eye: (c) => `<path d="M6 52 C28 24 72 24 94 52 C72 80 28 80 6 52Z" fill="${c}"/><circle cx="50" cy="52" r="14" fill="#1b1206"/><circle cx="50" cy="52" r="6" fill="#fff"/><path d="M50 38 L50 16" stroke="${c}" stroke-width="6" stroke-linecap="round"/><path d="M92 54 L97 78" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`,
   scarab: (c) => `<ellipse cx="50" cy="56" rx="22" ry="28" fill="${c}"/><circle cx="50" cy="26" r="12" fill="${c}"/><path d="M28 46 C10 40 8 66 26 70" fill="rgba(255,255,255,.35)"/><path d="M72 46 C90 40 92 66 74 70" fill="rgba(255,255,255,.35)"/><path d="M50 36 L50 80" stroke="rgba(0,0,0,.3)" stroke-width="4"/>`,
   tomb: (c) => `<path d="M22 88 L22 44 C22 24 78 24 78 44 L78 88 Z" fill="${c}"/><rect x="12" y="84" width="76" height="10" rx="4" fill="${darken(c)}"/><path d="M38 88 L38 56 C38 46 62 46 62 56 L62 88 Z" fill="rgba(0,0,0,.45)"/>`,
-  anubis: (c) => `<path d="M28 40 L22 6 L46 28 L54 28 L78 6 L72 40 C72 62 60 76 50 76 C40 76 28 62 28 40Z" fill="${c}"/><path d="M34 44 C34 60 42 68 50 68 C58 68 66 60 66 44 L50 54 Z" fill="rgba(0,0,0,.35)"/><circle cx="42" cy="38" r="4" fill="#1b1206"/><circle cx="58" cy="38" r="4" fill="#1b1206"/>`
+  anubis: (c) => `<path d="M28 40 L22 6 L46 28 L54 28 L78 6 L72 40 C72 62 60 76 50 76 C40 76 28 62 28 40Z" fill="${c}"/><path d="M34 44 C34 60 42 68 50 68 C58 68 66 60 66 44 L50 54 Z" fill="rgba(0,0,0,.35)"/><circle cx="42" cy="38" r="4" fill="#1b1206"/><circle cx="58" cy="38" r="4" fill="#1b1206"/>`,
+  bamboo: (c) => `<rect x="42" y="6" width="16" height="88" rx="6" fill="${c}"/><rect x="38" y="30" width="24" height="8" rx="4" fill="${darken(c)}"/><rect x="38" y="62" width="24" height="8" rx="4" fill="${darken(c)}"/><path d="M58 26 C74 14 86 14 94 22 C82 34 66 36 58 30Z" fill="${c}"/><path d="M42 56 C26 44 14 44 6 52 C18 64 34 66 42 60Z" fill="${c}"/>`,
+  pot: (c) => `<path d="M50 18 C26 18 16 44 16 62 C16 82 32 94 50 94 C68 94 84 82 84 62 C84 44 74 18 50 18Z" fill="${c}"/><rect x="34" y="8" width="32" height="14" rx="6" fill="${darken(c)}"/><path d="M28 40 C40 52 60 52 72 40" stroke="rgba(255,255,255,.55)" stroke-width="6" fill="none"/><text x="50" y="78" text-anchor="middle" font-size="30" font-weight="900" fill="rgba(0,0,0,.45)">福</text>`,
+  panda: (c) => `<circle cx="50" cy="54" r="34" fill="${c}"/><circle cx="24" cy="24" r="13" fill="#212529"/><circle cx="76" cy="24" r="13" fill="#212529"/><ellipse cx="36" cy="50" rx="10" ry="13" fill="#212529" transform="rotate(-12 36 50)"/><ellipse cx="64" cy="50" rx="10" ry="13" fill="#212529" transform="rotate(12 64 50)"/><circle cx="36" cy="50" r="4" fill="#fff"/><circle cx="64" cy="50" r="4" fill="#fff"/><ellipse cx="50" cy="66" rx="7" ry="5" fill="#212529"/><path d="M42 76 C46 82 54 82 58 76" stroke="#212529" stroke-width="4" fill="none" stroke-linecap="round"/>`,
+  taiji: (c) => `<circle cx="50" cy="52" r="34" fill="${c}"/><path d="M50 18 A34 34 0 0 1 50 86 A17 17 0 0 1 50 52 A17 17 0 0 0 50 18Z" fill="#212529"/><circle cx="50" cy="35" r="5" fill="${c}"/><circle cx="50" cy="69" r="5" fill="#212529"/><circle cx="50" cy="52" r="34" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="3"/>`,
+  paw: (c) => `<ellipse cx="50" cy="66" rx="26" ry="22" fill="${c}"/><circle cx="24" cy="40" r="11" fill="${c}"/><circle cx="42" cy="26" r="11" fill="${c}"/><circle cx="62" cy="26" r="11" fill="${c}"/><circle cx="80" cy="40" r="11" fill="${c}"/>`,
+  temple: (c) => `<path d="M6 52 L50 12 L94 52 Z" fill="${c}"/><rect x="18" y="52" width="64" height="40" rx="4" fill="${darken(c)}"/><rect x="40" y="62" width="20" height="30" rx="3" fill="#ffd8a8"/><path d="M6 52 L94 52" stroke="rgba(255,255,255,.6)" stroke-width="5"/>`,
+  torch: (c) => `<rect x="42" y="52" width="16" height="42" rx="5" fill="#8b5a2b"/><path d="M50 6 C64 26 70 34 70 44 C70 58 61 66 50 66 C39 66 30 58 30 44 C30 34 36 26 50 6Z" fill="${c}"/><path d="M50 24 C58 36 60 42 60 48 C60 56 56 60 50 60 C44 60 40 56 40 48 C40 42 42 36 50 24Z" fill="#ffe066"/>`,
+  phoenix: (c) => `<path d="M50 90 C30 78 22 58 30 38 C36 24 50 16 62 20 C58 30 62 40 70 44 C82 50 92 44 94 32 C96 52 82 70 64 76 C70 82 68 88 62 92 Z" fill="${c}"/><circle cx="58" cy="34" r="4" fill="#1b1206"/><path d="M30 38 C18 30 12 18 14 6 C26 12 34 22 36 32Z" fill="${c}"/><path d="M62 20 C56 8 58 2 64 2 C68 10 70 16 70 22Z" fill="#ffe066"/>`,
+  flame: (c) => `<path d="M50 4 C62 26 82 36 82 58 C82 78 68 94 50 94 C32 94 18 78 18 58 C18 40 34 34 40 22 C44 34 40 44 46 52 C52 42 46 26 50 4Z" fill="${c}"/><path d="M50 44 C58 56 64 62 64 72 C64 84 58 90 50 90 C42 90 36 84 36 72 C36 62 44 54 50 44Z" fill="#ffe066"/>`,
+  vault: (c) => `<circle cx="50" cy="52" r="36" fill="${c}"/><circle cx="50" cy="52" r="26" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="6"/><circle cx="50" cy="52" r="9" fill="${darken(c)}"/><g stroke="${darken(c)}" stroke-width="7" stroke-linecap="round"><path d="M50 16 L50 28"/><path d="M50 76 L50 88"/><path d="M14 52 L26 52"/><path d="M74 52 L86 52"/></g><path d="M50 52 L74 34" stroke="${darken(c)}" stroke-width="7" stroke-linecap="round"/>`
 };
 
 function symbolSvg(sym) {
@@ -176,6 +186,7 @@ async function enterGame(id) {
   $('winAmount').textContent = '0.00';
   renderHistory();
   renderStats(session.stats);
+  void refreshBoard();
 }
 
 function buildReels() {
@@ -441,6 +452,7 @@ async function updateHud(result) {
   for (const t of result.triggered) {
     if (t.type === 'freeSpins') toast(`触发免费旋转 ${t.spins} 次！`);
     if (t.type === 'holdAndRespin') toast(`触发金币重旋：${t.coins} 枚金币`);
+    if (t.type === 'holdAndRespinQueued') toast(`免费旋转结束后将自动进入金币重旋（${t.coins} 枚金币）`);
     if (t.type === 'freeSpinsSettled') toast(`免费旋转结束，共赢 ${fmt(t.pay)}`);
     if (t.type === 'holdAndRespinSettled') {
       toast(t.jackpot ? `${t.jackpot.tier} 奖池！${fmt(t.pay)}` : `金币结算 ${fmt(t.pay)}`);
@@ -465,6 +477,7 @@ function pushHistory(result) {
   });
   if (state.history.length > 30) state.history.length = 30;
   renderHistory();
+  void refreshBoard();
 }
 
 function renderHistory() {
@@ -495,6 +508,41 @@ function renderStats(stats) {
     <div><span>最大单轮</span><b>${fmt(stats.biggestWin)}</b></div>
     <div><span>免费旋转</span><b>${stats.features?.freeSpins || 0}</b></div>
     <div><span>金币重旋</span><b>${stats.features?.holdAndRespin || 0}</b></div>`;
+}
+
+/* ============================ 排行榜 / 外部存储 ============================ */
+const shortId = (id) => (id && id !== 'anon' ? `${String(id).slice(0, 8)}…` : '匿名局');
+
+async function refreshBoard() {
+  if (!state.config) return;
+  try {
+    const { rows } = await rpc('slots.leaderboard', { gameId: state.config.id, limit: 8 });
+    $('boardList').innerHTML = rows.length
+      ? rows
+          .map(
+            (r, i) =>
+              `<div class="history-row"><span>#${i + 1} ${shortId(r.sessionId)}</span><b>${Number(
+                r.bestMultiplier
+              ).toFixed(1)}x · ${fmt(r.bestWin)}</b></div>`
+          )
+          .join('')
+      : '<div class="history-row"><span>暂无战绩</span></div>';
+  } catch {
+    $('boardList').innerHTML = '<div class="history-row"><span>排行榜暂不可用</span></div>';
+  }
+}
+
+async function refreshStoreTag() {
+  try {
+    const h = await rpc('store.health');
+    const driver = h.primary?.driver || h.driver || 'memory';
+    const degraded = h.primary?.degraded || h.degraded;
+    const tag = $('storeTag');
+    tag.textContent = `${driver}${degraded ? ' · 已降级' : ''}`;
+    tag.className = `store-tag ${degraded ? 'warn' : 'ok'}`;
+  } catch {
+    $('storeTag').textContent = '—';
+  }
 }
 
 /* ============================ 赔付表 ============================ */
@@ -609,6 +657,7 @@ async function boot() {
   const list = await rpc('slots.listGames');
   state.games = list.games;
   renderLobby();
+  void refreshStoreTag();
 }
 
 boot();

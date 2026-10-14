@@ -1,6 +1,6 @@
 export const JSONRPC = '2.0';
 export const PROTOCOL_VERSION = '2024-11-05';
-export const SERVER_INFO = { name: 'blender-mcp-slots', version: '1.1.0' };
+export const SERVER_INFO = { name: 'blender-mcp-slots', version: '1.2.0' };
 
 export const ok = (id, result) => ({ jsonrpc: JSONRPC, id: id ?? null, result });
 export const errorResponse = (id, code, message, data) => ({

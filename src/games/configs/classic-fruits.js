@@ -34,7 +34,7 @@ export default defineConfig({
     multiplierWild: { values: [2, 3], weights: [80, 20] }
   },
   // 运营调参：赔付表全局系数（改后请用 slots.simulate 复核实际 RTP）
-  tuning: { payScale: 1.022 },
+  tuning: { payScale: 1.006 },
   limits: { maxWinMultiplier: 500 },
   rtp: { target: 0.95, tolerance: 0.015 },
   volatility: 'low'

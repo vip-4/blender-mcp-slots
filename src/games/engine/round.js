@@ -52,6 +52,8 @@ export function createState(config, { bet, lines, balance = 1000, serverSeed, cl
     rng: new Rng({ serverSeed: serverSeed || randomSeed(), clientSeed }).state,
     freeSpins: null,
     respins: null,
+    // 同一轮同时命中「免费旋转」与「锁仓重旋」时，后者排队，避免两个状态机互相覆盖
+    pendingRespin: null,
     history: [],
     stats: { rounds: 0, paidRounds: 0, totalBet: 0, totalWin: 0, biggestWin: 0, features: { freeSpins: 0, holdAndRespin: 0 } },
     createdAt: Date.now(),
@@ -186,8 +188,7 @@ export function playRound({ config, derived, state, bet, lines }) {
       const held = evaluated.bonusCells.map((c) => ({ ...c, value: c.value ?? rollCoinValue(rng, hrCfg.coin || {}) }));
       const mask = emptyMask(config.grid.reels, config.grid.rows);
       for (const c of held) mask[c.reel][c.row] = true;
-      state.phase = 'holdAndRespin';
-      state.respins = {
+      const payload = {
         remaining: hrCfg.respins ?? 3,
         held,
         lockedMask: mask,
@@ -196,8 +197,17 @@ export function playRound({ config, derived, state, bet, lines }) {
         triggerBet: useBet,
         jackpot: null
       };
-      state.stats.features.holdAndRespin += 1;
-      triggered.push({ type: 'holdAndRespin', coins: held.length, respins: hrCfg.respins ?? 3 });
+      if (state.phase === 'base') {
+        state.phase = 'holdAndRespin';
+        state.respins = payload;
+        state.stats.features.holdAndRespin += 1;
+        triggered.push({ type: 'holdAndRespin', coins: held.length, respins: payload.remaining });
+      } else {
+        // 本轮已先触发免费旋转：重旋排队，免费旋转结算后自动启动
+        state.pendingRespin = payload;
+        state.stats.features.holdAndRespin += 1;
+        triggered.push({ type: 'holdAndRespinQueued', coins: held.length, respins: payload.remaining });
+      }
     }
   }
 
@@ -241,6 +251,13 @@ export function playRound({ config, derived, state, bet, lines }) {
       state.phase = 'base';
       state.freeSpins = null;
       triggered.push({ type: 'freeSpinsSettled', spins: summary.played, pay: summary.awarded });
+      const queued = state.pendingRespin;
+      if (queued) {
+        state.pendingRespin = null;
+        state.phase = 'holdAndRespin';
+        state.respins = queued;
+        triggered.push({ type: 'holdAndRespin', coins: queued.held.length, respins: queued.remaining, queued: true });
+      }
     }
   }
 

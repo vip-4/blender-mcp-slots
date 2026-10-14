@@ -200,8 +200,12 @@ main { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; }
 .spin-btn:disabled { opacity: .5; cursor: not-allowed; }
 
 /* ---------- 面板 ---------- */
-.panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+.panels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px; }
+@media (max-width: 1100px) { .panels { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 760px) { .panels { grid-template-columns: 1fr; } }
+.store-tag { font-style: normal; font-size: 10px; padding: 2px 8px; border-radius: 999px; letter-spacing: .06em; }
+.store-tag.ok { color: #8ce99a; background: rgba(140, 233, 154, .14); }
+.store-tag.warn { color: #ffd43b; background: rgba(255, 212, 59, .14); }
 .panel { padding: 14px 16px; border-radius: var(--radius); background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .09); }
 .panel h3 { margin: 0 0 10px; font-size: 13px; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
 .history { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }

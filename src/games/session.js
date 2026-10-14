@@ -7,10 +7,11 @@ import { AppError, ErrorCode } from '../shared/errors.js';
  * MCP 工具层与 HTTP 层只与它交互，不直接触碰引擎内部状态。
  */
 export class GameService {
-  constructor({ registry, logger, metrics, limiter, budget, idempotency, wallet, limits = {} }) {
+  constructor({ registry, logger, metrics, limiter, budget, idempotency, wallet, store, limits = {} }) {
     this.registry = registry;
     this.logger = logger;
     this.metrics = metrics;
+    this.store = store;
     this.limiter = limiter;
     this.budget = budget;
     this.idempotency = idempotency;
@@ -123,7 +124,33 @@ export class GameService {
     for (const t of result.triggered) this.metrics?.bump(`feature.${t.type}`);
 
     if (idempotencyKey && this.idempotency) this.idempotency.set(idempotencyKey, result);
+    this.persist(session, result);
     return result;
+  }
+
+  /** 旁路持久化：失败只记指标，绝不阻断旋转返回 */
+  persist(session, result) {
+    if (!this.store) return;
+    void this.store
+      .recordSpin({
+        roundId: result.roundId,
+        sessionId: session.sessionId,
+        gameId: result.gameId,
+        configVersion: result.configVersion,
+        phase: result.phase,
+        bet: result.bet,
+        lines: result.lines,
+        cost: result.cost,
+        totalWin: result.totalWin,
+        multiplier: result.multiplier || 1,
+        triggered: result.triggered || [],
+        balanceAfter: result.balance,
+        serverSeedHash: result.fairness?.serverSeedHash,
+        clientSeed: result.fairness?.clientSeed,
+        nonce: result.fairness?.nonce,
+        at: new Date().toISOString()
+      })
+      .catch(() => {});
   }
 
   autoSpin({ sessionId, gameId, bet, lines, count = 10, stopOnFeature = false }) {
@@ -147,13 +174,30 @@ export class GameService {
     return { sessionId: sid, rounds, stoppedEarly, session: this.publicSession(sid) };
   }
 
+  /** 最近旋转记录（优先外部存储，失败回退内存） */
+  async history({ gameId, limit = 20 } = {}) {
+    if (!this.store) return [];
+    return this.store.recentSpins({ gameId, limit });
+  }
+
+  /** 单次旋转最高倍率排行榜 */
+  async leaderboard({ gameId, limit = 10 } = {}) {
+    if (!this.store) return [];
+    return this.store.leaderboard({ gameId, limit });
+  }
+
+  async storeHealth() {
+    return this.store ? this.store.health() : { driver: 'none', degraded: true };
+  }
+
   destroy() {
     clearInterval(this.sweeper);
     this.sessions.clear();
+    void this.store?.close?.().catch?.(() => {});
   }
 }
 
-export function createGameService({ registry, logger, metrics, guards = {}, limits } = {}) {
+export function createGameService({ registry, logger, metrics, guards = {}, limits, store } = {}) {
   return new GameService({
     registry,
     logger,
@@ -161,6 +205,7 @@ export function createGameService({ registry, logger, metrics, guards = {}, limi
     limiter: guards.limiter,
     budget: guards.budget,
     idempotency: guards.idempotency,
+    store,
     limits
   });
 }

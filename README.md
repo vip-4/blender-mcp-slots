@@ -49,7 +49,9 @@ blender-mcp-slots/
 │   │       ├── inferno-jackpots.js  #   新增 5x3 二十线 · 6 币锁仓重旋四档奖池 + 免费旋转
 │   │       ├── book-of-ra.js        #   新增 5x3 十线 · Book 系「扩展符号」免费旋转（可再触发）
 │   │       ├── cosmic-crush.js      #   新增 5x3 二十线 · 雪崩连锁 + 倍率阶梯 + 免费旋转
-│   │       └── starlight-burst.js   #   新增 5x3 十线 · 双向赔付 + 「WILD 重旋」整轴展开
+│   │       ├── starlight-burst.js   #   新增 5x3 十线 · 双向赔付 + 「WILD 重旋」整轴展开
+│   │       ├── treasure-hunter.js   #   新增 5x3 二十线 · 雪崩连锁 + 黏性扩张 WILD + 免费旋转
+│   │       └── sakura-tale.js       #   新增 5x3 十线 · 双向赔付 + 雪崩连锁 + 扩展符号免费旋转
 │   ├── mcp/
 │   │   ├── protocol.js              # JSON-RPC 2.0 编解码 + 参数校验
 │   │   ├── dispatcher.js            # 方法路由（校验 / 超时 / 错误码 / 指标）
@@ -288,6 +290,8 @@ curl -X POST http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
 | `book-of-ra` 法老之书 | 5×3 / 10 线 | 亡灵之书散射 10/12/15 次免费旋转，进入时随机选定扩展符号（候选池可配），出现 ≥2 个即整轴展开；可再触发 +5/+8/+10 | 95.5% |
 | `cosmic-crush` 星海消除 | 5×3 / 20 线 | 雪崩连锁：中奖格消除 → 上方下落 → 顶部补新符号，倍率阶梯 `1/1/2/3/5/8/12`；陨石散射 8/12/16 次免费旋转（`carryInFreeSpins` 可让倍率跨轮累积） | 96% |
 | `starlight-burst` 星光爆裂 | 5×3 / 10 线 | **双向赔付**（每条线左右各判一次）；星芒 WILD 只落在 2/3/4 轴，出现即整轴展开并获 3 次免费重旋，重旋中再出新 WILD 则次数重置；星云散射 8/12/16 次免费旋转（黏性扩张 WILD） | 96.2% |
+| `treasure-hunter` 宝藏猎人 | 5×3 / 20 线 | 雪崩连锁（倍率阶梯 `1/1/2/3/5/8`）× 黏性扩张 WILD（1~3 轴低概率展开）× 免费旋转倍率递进；3+ 宝藏箱散射触发 8/12/16 次，可再触发 | 96% |
+| `sakura-tale` 樱花物语 | 5×3 / 10 线 | **双向赔付** × 雪崩连锁（倍率阶梯 `1/1/2/3/5`）× 扩展符号免费旋转；神社铃铛散射 10/12/15 次，进入时随机选定扩展符号，出现 ≥2 个整轴展开后双向结算可触发连锁 | 96% |
 
 ### 实测 RTP（`npm run simulate -- <gameId> 200000`）
 
@@ -300,7 +304,9 @@ inferno-jackpots  rtp=0.9432  target=0.96   max=234.00x
 neon-fruits       rtp=0.9596  target=0.96   max=2507.92x
 panda-fortune     rtp=0.9544  target=0.96   max=103.20x
 pharaoh-gold      rtp=0.9517  target=0.96   max=235.00x
+sakura-tale       rtp=0.9583  target=0.96   max=520.42x
 starlight-burst   rtp=0.9622  target=0.962  max=78.27x
+treasure-hunter   rtp=0.9582  target=0.96   max=321.60x
 ```
 
-九台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。
+十一台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。

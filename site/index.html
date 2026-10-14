@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============ 基础 SEO ============ -->
+<title>Blender MCP Slots · 开源多机台老虎机引擎与在线试玩</title>
+<meta name="description" content="Blender MCP Slots 是开源的多机台老虎机（SLOT GAMES）引擎：11 款机台共用一套 CONFIG 驱动引擎，支持免费旋转、雪崩连锁、双向赔付、WILD 重旋，全部机台经 20 万轮蒙特卡洛实测 RTP 达标，并提供免后端在线试玩。">
+<meta name="keywords" content="老虎机,SLOT GAMES,slot machine,开源老虎机引擎,Blender MCP,MCP 服务,RTP 蒙特卡洛,免费旋转,雪崩连锁,双向赔付,WILD 重旋,Node.js">
+<meta name="author" content="blender-mcp-slots">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#1b1046">
+<link rel="canonical" href="https://vip-4.github.io/blender-mcp-slots/">
+
+<!-- ============ Open Graph ============ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Blender MCP Slots">
+<meta property="og:title" content="Blender MCP Slots · 开源多机台老虎机引擎与在线试玩">
+<meta property="og:description" content="11 款机台共用一套 CONFIG 驱动引擎：免费旋转、雪崩连锁、双向赔付、WILD 重旋，20 万轮实测 RTP 达标，支持免后端在线试玩。">
+<meta property="og:url" content="https://vip-4.github.io/blender-mcp-slots/">
+<meta property="og:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
+<meta property="og:image:secure_url" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="霓虹紫金风格的老虎机转轮与符号封面图">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+
+<!-- ============ Twitter Card ============ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blender MCP Slots · 开源多机台老虎机引擎">
+<meta name="twitter:description" content="11 款机台、一套 CONFIG 引擎、20 万轮实测 RTP 达标，附带免后端在线试玩。">
+<meta name="twitter:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
+<meta name="twitter:image:alt" content="霓虹紫金风格的老虎机转轮与符号封面图">
+
+<!-- ============ 资源与图标 ============ -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b1046'/%3E%3Crect x='6' y='9' width='20' height='14' rx='3' fill='none' stroke='%23ffd166' stroke-width='2'/%3E%3Ccircle cx='12' cy='16' r='2.5' fill='%23ef476f'/%3E%3Ccircle cx='20' cy='16' r='2.5' fill='%237de2fc'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="sitemap" type="application/xml" href="sitemap.xml">
+
+<!-- ============ 样式（内联，零外部请求） ============ -->
+<style>
+  :root {
+    --bg: #0b0724; --bg2: #160f38; --card: rgba(255,255,255,.05);
+    --line: rgba(255,255,255,.12); --fg: #f4f1ff; --muted: #b9b3d6;
+    --primary: #7c5cff; --accent: #7de2fc; --gold: #ffd166;
+    --ok: #06d6a0; --warn: #ff9f1c; --radius: 14px;
+    --font: "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.05); --line:rgba(28,16,80,.14); --fg:#1b1046; --muted:#4b4470; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; font-family: var(--font); color: var(--fg); line-height: 1.75;
+    background: radial-gradient(1200px 600px at 15% -10%, var(--bg2), var(--bg)) no-repeat, var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { width: min(1100px, 92vw); margin-inline: auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+  .skip { position: absolute; left: -9999px; top: 0; background: var(--gold); color: #1b1046; padding: .6rem 1rem; z-index: 20; }
+  .skip:focus { left: 1rem; top: 1rem; }
+
+  header.site {
+    position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--bg) 82%, transparent); border-bottom: 1px solid var(--line);
+  }
+  header.site .wrap { display: flex; gap: 1rem; align-items: center; justify-content: space-between; padding: .7rem 0; flex-wrap: wrap; }
+  .brand { font-weight: 800; letter-spacing: .02em; display: flex; align-items: center; gap: .55rem; }
+  .brand svg { width: 26px; height: 26px; }
+  nav ul { display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; font-size: .92rem; }
+  nav a { color: var(--muted); } nav a:hover { color: var(--fg); }
+
+  h1 { font-size: clamp(1.7rem, 4.4vw, 2.9rem); line-height: 1.2; margin: 0 0 .6rem; }
+  h2 { font-size: clamp(1.25rem, 2.6vw, 1.7rem); margin: 0 0 .8rem; scroll-margin-top: 5rem; }
+  h3 { font-size: 1.05rem; margin: 1.2rem 0 .4rem; }
+  p { margin: .5rem 0; color: var(--fg); }
+  .muted { color: var(--muted); }
+  section { padding: 2.6rem 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: 0; }
+
+  .hero { padding: 3rem 0 2rem; }
+  .tag { display: inline-block; font-size: .78rem; padding: .25rem .7rem; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); margin-right: .4rem; }
+  .tag.hot { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 50%, transparent); }
+  .cta { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1.2rem; }
+  .btn {
+    display: inline-block; padding: .7rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: .95rem;
+    background: linear-gradient(135deg, var(--primary), #b388ff); color: #fff; border: 1px solid transparent;
+  }
+  .btn.alt { background: transparent; border-color: var(--line); color: var(--fg); }
+  .btn:hover { text-decoration: none; filter: brightness(1.1); }
+
+  .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 1.2rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; }
+  .card b { display: block; font-size: .95rem; }
+
+  /* 试玩器 */
+  .machine { display: grid; gap: 1.2rem; grid-template-columns: minmax(0, 1.4fr) minmax(240px, 1fr); }
+  @media (max-width: 780px) { .machine { grid-template-columns: 1fr; } }
+  .reels { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: .6rem; }
+  .reel { display: grid; gap: .5rem; }
+  .cell {
+    aspect-ratio: 1 / 1; display: grid; place-items: center; border-radius: 10px; font-weight: 800; font-size: clamp(.8rem, 2.4vw, 1.3rem);
+    background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.02)); border: 1px solid var(--line);
+  }
+  .cell.win { box-shadow: 0 0 0 2px var(--gold) inset, 0 0 18px color-mix(in srgb, var(--gold) 45%, transparent); }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
+  .row { display: flex; justify-content: space-between; gap: .6rem; font-size: .9rem; padding: .25rem 0; }
+  .row b { font-variant-numeric: tabular-nums; }
+  .controls { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin-top: .8rem; }
+  select, button {
+    font: inherit; color: var(--fg); background: var(--bg2); border: 1px solid var(--line);
+    border-radius: 10px; padding: .55rem .8rem;
+  }
+  button.primary { background: linear-gradient(135deg, var(--primary), #b388ff); border-color: transparent; font-weight: 700; cursor: pointer; }
+  button[aria-disabled="true"] { opacity: .5; }
+  .log { margin-top: .8rem; font-size: .85rem; color: var(--muted); max-height: 8.5rem; overflow: auto; }
+  .log div { padding: .12rem 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: 1rem; }
+  caption { text-align: left; color: var(--muted); padding-bottom: .5rem; font-size: .88rem; }
+  th, td { text-align: left; padding: .55rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 700; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .table-scroll { overflow-x: auto; }
+
+  dl.facts { display: grid; gap: .4rem 1.2rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin: 1rem 0 0; }
+  dl.facts dt { font-weight: 700; font-size: .9rem; }
+  dl.facts dd { margin: 0 0 .6rem; color: var(--muted); font-size: .9rem; }
+
+  ol.steps { padding-left: 1.2rem; margin: .6rem 0 0; }
+  ol.steps li { margin-bottom: .5rem; }
+  code { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: .1rem .35rem; font-size: .88em; }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: .8rem; overflow-x: auto; font-size: .85rem; }
+  figure { margin: 1.4rem 0 0; }
+  figure img { width: 100%; height: auto; border-radius: var(--radius); border: 1px solid var(--line); }
+  figcaption { color: var(--muted); font-size: .85rem; margin-top: .4rem; }
+  details { margin-top: .8rem; }
+  summary { cursor: pointer; font-weight: 700; }
+
+  footer.site { border-top: 1px solid var(--line); padding: 2rem 0 3rem; color: var(--muted); font-size: .88rem; }
+  .note { border-left: 3px solid var(--warn); padding-left: .8rem; color: var(--muted); font-size: .9rem; margin-top: 1rem; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .cell { transition: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#7c5cff"/><rect x="6" y="9" width="20" height="14" rx="3" fill="none" stroke="#ffd166" stroke-width="2"/><circle cx="12" cy="16" r="2.5" fill="#ef476f"/><circle cx="20" cy="16" r="2.5" fill="#7de2fc"/></svg>
+      <span>Blender MCP Slots</span>
+    </div>
+    <nav aria-label="站内导航">
+      <ul>
+        <li><a href="#tldr">摘要</a></li>
+        <li><a href="#play">在线试玩</a></li>
+        <li><a href="#games">机台合集</a></li>
+        <li><a href="#engine">引擎能力</a></li>
+        <li><a href="#faq">常见问题</a></li>
+        <li><a href="#deploy">部署集成</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-labelledby="hero-title">
+    <span class="tag hot">开源 · MIT</span>
+    <span class="tag">11 款机台</span>
+    <span class="tag">20 万轮实测 RTP</span>
+    <span class="tag">免后端可试玩</span>
+    <h1 id="hero-title">Blender MCP Slots：一套 CONFIG 驱动的多机台老虎机引擎</h1>
+    <p class="muted">Blender MCP Slots 是一个用 Node.js 实现的多机台老虎机（SLOT GAMES）引擎与 MCP 服务。新增一台机台只需写一个 CONFIG 文件：转轮条带、赔付表、线制、特性开关全部由配置描述，引擎、MCP 工具与前端无需改动一行代码。</p>
+    <div class="cta">
+      <a class="btn" href="#play">立即试玩（静态版）</a>
+      <a class="btn alt" href="#games">查看 11 款机台</a>
+      <a class="btn alt" href="https://github.com/vip-4/blender-mcp-slots" rel="noopener">源码仓库</a>
+    </div>
+  </section>
+
+  <!-- ============ TL;DR（面向生成式引擎的答案块） ============ -->
+  <section id="tldr" aria-labelledby="tldr-title">
+    <h2 id="tldr-title">摘要：Blender MCP Slots 是什么？</h2>
+    <p><strong>Blender MCP Slots 是一个开源的多机台老虎机（SLOT GAMES）引擎</strong>，通过 Model Context Protocol（MCP）对外提供服务。它把「转轮逻辑、赔率、中奖判定、奖励触发、特殊符号」全部抽象为一份可校验的 CONFIG，目前内置 11 款机台，涵盖免费旋转、雪崩连锁、双向赔付、WILD 重旋、金币重旋与收集符等主流玩法；每款机台都用 20 万轮蒙特卡洛模拟校准 RTP，实测值均落在目标 ±2% 区间内。</p>
+    <dl class="facts">
+      <dt>引擎实现</dt><dd>Node.js 20+ ESM，零运行时依赖，共享引擎目录 <code>src/games/engine/*</code>。</dd>
+      <dt>机台数量</dt><dd>11 款（3×3 到 5×3，5 线 / 10 线 / 20 线 / 243 WAYS）。</dd>
+      <dt>配置驱动</dt><dd>新增机台 = 新增一个 CONFIG 文件，重启或调用 <code>slots.reloadConfigs</code> 生效。</dd>
+      <dt>公平性</dt><dd>服务端种子 + 客户端种子 + nonce，公开种子哈希，结果可复算。</dd>
+      <dt>RTP 校准</dt><dd><code>slots.simulate</code> 蒙特卡洛，20 万轮/台，实测 0.9386 ~ 0.9679。</dd>
+      <dt>许可与用途</dt><dd>MIT 开源，用于引擎/数学/概率教学与技术演示，不涉及任何真实货币。</dd>
+    </dl>
+    <p class="note">合规说明：本项目为概率引擎与软件工程示例，所有「投注 / 派彩」均为虚拟积分，不涉及真实货币交易，也不提供任何博彩服务。</p>
+  </section>
+
+  <!-- ============ 在线试玩 ============ -->
+  <section id="play" aria-labelledby="play-title">
+    <h2 id="play-title">在线试玩：星光爆裂（静态轻量版）</h2>
+    <p class="muted">下面的试玩器是<strong>纯前端实现</strong>：不依赖后端、不联网、不上传任何数据。它复刻了 <code>starlight-burst</code> 的规则——5×3、10 线、<strong>双向赔付</strong>，星芒 WILD 只出现在第 2/3/4 轴，出现即整轴展开并触发 3 次免费重旋。</p>
+
+    <div class="machine">
+      <div>
+        <div class="reels" id="reels" role="img" aria-label="5 轴 3 行老虎机盘面，共 15 个格子"></div>
+        <div class="controls">
+          <label class="muted" for="betSel">投注</label>
+          <select id="betSel" aria-label="选择每轮投注额度">
+            <option value="0.2">0.2</option>
+            <option value="0.5">0.5</option>
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+          </select>
+          <button class="primary" id="spinBtn" type="button">旋转（空格）</button>
+          <button id="resetBtn" type="button">重置</button>
+        </div>
+        <p id="status" role="status" aria-live="polite" class="muted">点击「旋转」开始演示，初始积分 1000。</p>
+        <div class="log" id="log" aria-live="polite" aria-label="特性与结算日志"></div>
+      </div>
+
+      <div class="panel">
+        <div class="row"><span>积分余额</span><b id="bal">1000.00</b></div>
+        <div class="row"><span>累计投注</span><b id="tb">0.00</b></div>
+        <div class="row"><span>累计派彩</span><b id="tw">0.00</b></div>
+        <div class="row"><span>实时 RTP</span><b id="rtp">—</b></div>
+        <div class="row"><span>轮次</span><b id="rounds">0</b></div>
+        <div class="row"><span>WILD 重旋剩余</span><b id="rsLeft">—</b></div>
+        <details>
+          <summary>赔付表（每线注倍数）</summary>
+          <div class="table-scroll">
+            <table>
+              <caption>静态试玩版赔付表（双向赔付：每条线左右各判一次）</caption>
+              <thead><tr><th scope="col">符号</th><th scope="col">3 连</th><th scope="col">4 连</th><th scope="col">5 连</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">红宝石 / 黄玉</th><td class="num">1×</td><td class="num">3×</td><td class="num">10×</td></tr>
+                <tr><th scope="row">蓝宝石</th><td class="num">1.5×</td><td class="num">4×</td><td class="num">12×</td></tr>
+                <tr><th scope="row">祖母绿</th><td class="num">2×</td><td class="num">5×</td><td class="num">15×</td></tr>
+                <tr><th scope="row">紫水晶</th><td class="num">3×</td><td class="num">8×</td><td class="num">24×</td></tr>
+                <tr><th scope="row">BAR</th><td class="num">5×</td><td class="num">15×</td><td class="num">45×</td></tr>
+                <tr><th scope="row">幸运 7</th><td class="num">8×</td><td class="num">24×</td><td class="num">70×</td></tr>
+                <tr><th scope="row">星芒 WILD</th><td colspan="3">替代任意符号（第 2/3/4 轴触发整轴展开 + 3 次重旋）</td></tr>
+                <tr><th scope="row">星云 SCATTER</th><td class="num">2×总注</td><td class="num">5×总注</td><td class="num">20×总注</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 机台合集 ============ -->
+  <section id="games" aria-labelledby="games-title">
+    <h2 id="games-title">机台合集：11 款机台的规格与实测 RTP</h2>
+    <p class="muted">下表为 20 万轮蒙特卡洛实测结果（<code>node scripts/simulate.js</code>）。「实测 RTP」是实际派彩 ÷ 实际投注，「目标 RTP」为 CONFIG 中声明的 <code>rtp.target</code>。</p>
+    <div class="table-scroll">
+      <table>
+        <caption>Blender MCP Slots 内置机台一览（按名称排序，数据取自 20 万轮模拟）</caption>
+        <thead>
+          <tr>
+            <th scope="col">机台</th><th scope="col">盘面</th><th scope="col">线制</th>
+            <th scope="col">赔付方向</th><th scope="col">波动</th><th scope="col">实测 RTP</th><th scope="col">目标 RTP</th><th scope="col">最大单轮</th><th scope="col">核心特性</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">法老之书 Book of Ra</th><td class="num">5×3</td><td class="num">10 线</td><td>单向</td><td>高</td><td class="num">0.9553</td><td class="num">0.955</td><td class="num">247.69×</td><td>扩展符号 · 免费旋转再触发</td></tr>
+          <tr><th scope="row">经典水果机 Classic Fruits</th><td class="num">3×3</td><td class="num">5 线</td><td>单向</td><td>低</td><td class="num">0.9386</td><td class="num">0.95</td><td class="num">350.10×</td><td>倍率 WILD</td></tr>
+          <tr><th scope="row">星海消除 Cosmic Crush</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9604</td><td class="num">0.96</td><td class="num">710.25×</td><td>雪崩连锁 · 倍率阶梯 1/1/2/3/5/8/12</td></tr>
+          <tr><th scope="row">龙腾富贵 Dragon Fortune</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>中高</td><td class="num">0.9569</td><td class="num">0.96</td><td class="num">260.31×</td><td>扩张 WILD · 倍率递进</td></tr>
+          <tr><th scope="row">烈焰金库 Inferno Jackpots</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9432</td><td class="num">0.96</td><td class="num">234.00×</td><td>6 币锁仓重旋 · 四档奖池</td></tr>
+          <tr><th scope="row">霓虹水果 Neon Fruits</th><td class="num">5×3</td><td class="num">243 WAYS</td><td>单向</td><td>高</td><td class="num">0.9596</td><td class="num">0.96</td><td class="num">2507.92×</td><td>倍率 WILD · 免费旋转</td></tr>
+          <tr><th scope="row">熊猫财神 Panda Fortune</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>中高</td><td class="num">0.9544</td><td class="num">0.96</td><td class="num">103.20×</td><td>金币收集 · 黏性扩张 WILD</td></tr>
+          <tr><th scope="row">黄金法老 Pharaoh Gold</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9517</td><td class="num">0.96</td><td class="num">235.00×</td><td>金币重旋 · 收集符 · 奖池</td></tr>
+          <tr><th scope="row">樱花物语 Sakura Tale</th><td class="num">5×3</td><td class="num">10 线</td><td>双向</td><td>中高</td><td class="num">0.9583</td><td class="num">0.96</td><td class="num">520.42×</td><td>双向赔付 · 雪崩连锁 · 扩展符号</td></tr>
+          <tr><th scope="row">星光爆裂 Starlight Burst</th><td class="num">5×3</td><td class="num">10 线</td><td>双向</td><td>低</td><td class="num">0.9622</td><td class="num">0.962</td><td class="num">78.27×</td><td>WILD 重旋 · 整轴展开 · 双向赔付</td></tr>
+          <tr><th scope="row">宝藏猎人 Treasure Hunter</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9679</td><td class="num">0.96</td><td class="num">324.85×</td><td>雪崩连锁 · 黏性扩张 WILD · 倍率递进</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 引擎能力 ============ -->
+  <section id="engine" aria-labelledby="engine-title">
+    <h2 id="engine-title">引擎能力：CONFIG 即玩法</h2>
+    <p class="muted">所有玩法能力都是 CONFIG 开关，机台之间可任意组合，引擎代码不写死任何一款机台。</p>
+    <dl class="facts">
+      <dt><code>freeSpins</code> 免费旋转</dt><dd>散射计数触发，可指定独立条带、倍率上限与再触发规则。</dd>
+      <dt><code>cascades</code> 雪崩连锁</dt><dd>中奖格消除 → 上方下落 → 顶部补新符号，倍率阶梯逐段递增，可跨轮累积。</dd>
+      <dt><code>holdAndRespin</code> 金币重旋</dt><dd>N 枚金币触发锁仓重旋，次数重置机制 + 多档奖池。</dd>
+      <dt><code>collect</code> 收集符</dt><dd>指定轴出现收集符即兑现盘面所有金币面值。</dd>
+      <dt><code>multiplierWild</code> 倍率 WILD</dt><dd>WILD 携带 x2/x3/x5/x10 倍率，直接乘入线赢。</dd>
+      <dt><code>expandingSymbol</code> 扩展符号</dt><dd>Book 系玩法：随机选定符号，出现 ≥2 个即整轴展开后结算。</dd>
+      <dt><code>wildRespin</code> WILD 重旋</dt><dd>Starburst 系玩法：WILD 落在指定轴即整轴展开，并赠送 N 次免费重旋。</dd>
+      <dt><code>evaluation.direction = both</code> 双向赔付</dt><dd>同一条线「左→右」与「右→左」各判一次，两向成立各付一次。</dd>
+    </dl>
+  </section>
+
+  <!-- ============ FAQ（GEO：问句式标题 + FAQPage 结构化数据） ============ -->
+  <section id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">常见问题</h2>
+
+    <h3>如何新增一款老虎机机台？</h3>
+    <p>在 <code>src/games/configs/</code> 下新增一个导出 CONFIG 的 <code>.js</code> 文件，描述盘面、符号与权重、赔付表、线制与特性开关即可。启动时注册表会自动加载并做契约校验（fail-fast）：单份配置出错只会让该机台下线，不影响其它机台与 MCP 服务。运行时也可通过 <code>slots.registerGame</code> 注入或用 <code>slots.reloadConfigs</code> 热重载。</p>
+
+    <h3>如何校准一款机台的 RTP？</h3>
+    <p>运行 <code>node scripts/simulate.js</code>（或调用 MCP 工具 <code>slots.simulate</code>）对每台机台跑 20 万轮蒙特卡洛，输出实测 RTP、最大单轮倍数与特性触发次数。若偏离目标，用 CONFIG 中的 <code>tuning.payScale</code> 线性微调赔付表；特性叠加导致的结构性失衡（例如雪崩倍率跨轮累积）应调整特性参数而非只调 payScale。</p>
+
+    <h3>中奖结果是否可以验证公平性？</h3>
+    <p>可以。每轮使用「服务端种子 + 客户端种子 + nonce」派生的可复现随机数，响应中返回 <code>fairness</code>（服务端种子哈希、客户端种子、nonce），可在会话结束后公开服务端种子复算整条结果链。转轮结果先于动画生成，前端只负责演出。</p>
+
+    <h3>支持哪些赔付判定模式？</h3>
+    <p>支持 <code>lines</code>（固定线制，内置 5/10/20 线等图案）与 <code>ways</code>（243 WAYS 等相邻轴任意位置）两种模式；线制机台还可设置 <code>evaluation.direction = both</code> 启用双向赔付。</p>
+
+    <h3>是否依赖数据库或外部服务？</h3>
+    <p>核心玩法零外部依赖，可纯内存运行。可选接入 Postgres 做会话与排行榜持久化，接入 Cloudflare R2 做旋转日志归档；两者均带降级开关，不可用时自动降级到内存并标记 <code>degraded</code>，不影响旋转主流程。</p>
+
+    <h3>如何在生产环境部署？</h3>
+    <p>MCP 服务以 <code>node src/main.js --transport=http --port=5173</code> 启动，通过 <code>/rpc</code> 统一入口提供全部工具；静态站点（当前页面）为自包含单文件，可直接托管到 GitHub Pages、Vercel、Cloudflare Pages 或 EdgeOne Pages。详见下方「部署与集成」。</p>
+  </section>
+
+  <!-- ============ 部署集成 ============ -->
+  <section id="deploy" aria-labelledby="deploy-title">
+    <h2 id="deploy-title">部署与集成步骤</h2>
+    <h3>1. 启动 MCP 服务</h3>
+    <pre><code>git clone https://github.com/vip-4/blender-mcp-slots.git
+cd blender-mcp-slots &amp;&amp; npm install
+node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code></pre>
+    <h3>2. 通过统一入口调用</h3>
+    <pre><code>curl -s http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"slots.spin","params":{"sessionId":"...","bet":1}}'</code></pre>
+    <h3>3. 部署静态站点</h3>
+    <ol class="steps">
+      <li>GitHub Pages：推送 <code>main</code> 后由 <code>.github/workflows/pages.yml</code> 自动发布 <code>site/</code> 到 <code>gh-pages</code> 分支。</li>
+      <li>Cloudflare Pages：<code>npx wrangler pages deploy site --project-name=blender-mcp-slots</code>。</li>
+      <li>Vercel：<code>npx vercel deploy site --prod</code>（需 <code>VERCEL_TOKEN</code>）。</li>
+      <li>EdgeOne Pages：单文件 <code>site/index.html</code> 可直接 <code>npx -y mcporter call mcp-on-edge.edgeone.app/mcp-server.deploy-html</code> 发布。</li>
+    </ol>
+    <h3>4. 稳定性与可观测性</h3>
+    <ol class="steps">
+      <li><code>/healthz</code> 与 MCP 工具 <code>system.health</code> 暴露机台数量、配置故障、活跃会话与存储驱动状态。</li>
+      <li>限流、幂等缓存与旋转预算三重护栏；配置契约校验保证坏配置只下线单机台。</li>
+      <li>存储与归档均为旁路降级，失败只计数不阻断旋转。</li>
+    </ol>
+    <figure>
+      <img src="assets/og-cover.png" width="1200" height="630" alt="霓虹紫金风格的老虎机转轮与符号封面图" loading="lazy" decoding="async">
+      <figcaption>社交分享封面（1200×630，懒加载，不影响首屏渲染）。</figcaption>
+    </figure>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>Blender MCP Slots · 开源多机台老虎机引擎 · MIT License · <a href="https://github.com/vip-4/blender-mcp-slots" rel="noopener">GitHub</a> · <a href="https://gitee.com/vip882/blender-mcp-slots" rel="noopener">Gitee</a> · <a href="https://atomgit.com/zzw1208/blender-mcp-slots" rel="noopener">AtomGit</a></p>
+    <p>本页数据来自 20 万轮蒙特卡洛模拟，最后更新：<time datetime="2026-10-15">2026-10-15</time>。内容为概率引擎技术演示，不涉及真实货币。</p>
+  </div>
+</footer>
+
+<!-- ============ 结构化数据（SEO + GEO：便于搜索引擎与生成式引擎抽取事实） ============ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#website",
+      "url": "https://vip-4.github.io/blender-mcp-slots/",
+      "name": "Blender MCP Slots",
+      "description": "开源的多机台老虎机（SLOT GAMES）引擎与 MCP 服务，11 款机台共用一套 CONFIG 驱动引擎。",
+      "inLanguage": "zh-CN",
+      "publisher": { "@id": "https://vip-4.github.io/blender-mcp-slots/#project" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#project",
+      "name": "Blender MCP Slots",
+      "applicationCategory": "GameApplication",
+      "applicationSubCategory": "Slot machine engine",
+      "operatingSystem": "Node.js 20+",
+      "url": "https://github.com/vip-4/blender-mcp-slots",
+      "license": "https://opensource.org/licenses/MIT",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": [
+        "CONFIG 驱动的多机台老虎机引擎",
+        "免费旋转 / 雪崩连锁 / 双向赔付 / WILD 重旋 / 金币重旋 / 收集符",
+        "20 万轮蒙特卡洛 RTP 校准",
+        "服务端+客户端双种子可验证随机",
+        "MCP 统一入口 /rpc 与 18 个工具",
+        "静态单文件站点，可托管任意静态平台"
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#games",
+      "name": "Blender MCP Slots 内置机台",
+      "itemListOrder": "https://schema.org/ItemListOrderAscending",
+      "numberOfItems": 11,
+      "itemListElement": [
+        { "@type": "VideoGame", "position": 1, "name": "法老之书 Book of Ra", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9553"}] },
+        { "@type": "VideoGame", "position": 2, "name": "经典水果机 Classic Fruits", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"3x3"},{"@type":"PropertyValue","name":"线制","value":"5 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9386"}] },
+        { "@type": "VideoGame", "position": 3, "name": "星海消除 Cosmic Crush", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9604"}] },
+        { "@type": "VideoGame", "position": 4, "name": "龙腾富贵 Dragon Fortune", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9569"}] },
+        { "@type": "VideoGame", "position": 5, "name": "烈焰金库 Inferno Jackpots", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9432"}] },
+        { "@type": "VideoGame", "position": 6, "name": "霓虹水果 Neon Fruits", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"243 WAYS"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9596"}] },
+        { "@type": "VideoGame", "position": 7, "name": "熊猫财神 Panda Fortune", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9544"}] },
+        { "@type": "VideoGame", "position": 8, "name": "黄金法老 Pharaoh Gold", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9517"}] },
+        { "@type": "VideoGame", "position": 9, "name": "樱花物语 Sakura Tale", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9583"}] },
+        { "@type": "VideoGame", "position": 10, "name": "星光爆裂 Starlight Burst", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9622"}] },
+        { "@type": "VideoGame", "position": 11, "name": "宝藏猎人 Treasure Hunter", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9679"}] }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "如何新增一款老虎机机台？",
+          "acceptedAnswer": { "@type": "Answer", "text": "在 src/games/configs/ 下新增一个导出 CONFIG 的 .js 文件，描述盘面、符号与权重、赔付表、线制与特性开关即可；启动时自动加载并做契约校验，运行时可用 slots.registerGame 注入或 slots.reloadConfigs 热重载。" }
+        },
+        {
+          "@type": "Question",
+          "name": "如何校准一款机台的 RTP？",
+          "acceptedAnswer": { "@type": "Answer", "text": "用 scripts/simulate.js 或 MCP 工具 slots.simulate 跑 20 万轮蒙特卡洛，再用 CONFIG 中的 tuning.payScale 线性微调；结构性失衡应调整特性参数（如关闭 cascades.carryInFreeSpins）。" }
+        },
+        {
+          "@type": "Question",
+          "name": "中奖结果是否可以验证公平性？",
+          "acceptedAnswer": { "@type": "Answer", "text": "可以。每轮使用服务端种子 + 客户端种子 + nonce 派生的可复现随机数，响应返回 fairness 字段（服务端种子哈希、客户端种子、nonce），会话结束后公开种子即可复算整条结果链。" }
+        },
+        {
+          "@type": "Question",
+          "name": "支持哪些赔付判定模式？",
+          "acceptedAnswer": { "@type": "Answer", "text": "支持 lines 固定线制（5/10/20 线）与 ways（243 WAYS）两种模式，线制机台还可设置 evaluation.direction = both 启用双向赔付。" }
+        },
+        {
+          "@type": "Question",
+          "name": "是否依赖数据库或外部服务？",
+          "acceptedAnswer": { "@type": "Answer", "text": "核心玩法零外部依赖。可选接入 Postgres 做会话与排行榜持久化、Cloudflare R2 做旋转日志归档，两者均带降级开关，不可用时自动降级到内存并标记 degraded。" }
+        },
+        {
+          "@type": "Question",
+          "name": "如何在生产环境部署？",
+          "acceptedAnswer": { "@type": "Answer", "text": "MCP 服务用 node src/main.js --transport=http --port=5173 启动并通过 /rpc 统一入口提供工具；静态站点为自包含单文件，可发布到 GitHub Pages、Vercel、Cloudflare Pages 或 EdgeOne Pages。" }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<!-- ============ 静态试玩器（纯前端，无网络请求） ============ -->
+<script>
+(function () {
+  'use strict';
+  var SYM = [
+    { id: 'ruby',     label: '红宝石', glyph: '◆',  color: '#ef476f', w: 110, pay: { 3: 1,   4: 3,  5: 10 } },
+    { id: 'topaz',    label: '黄玉',   glyph: '◆',  color: '#ffd166', w: 110, pay: { 3: 1,   4: 3,  5: 10 } },
+    { id: 'sapphire', label: '蓝宝石', glyph: '◆',  color: '#4cc9f0', w: 105, pay: { 3: 1.5, 4: 4,  5: 12 } },
+    { id: 'emerald',  label: '祖母绿', glyph: '◆',  color: '#06d6a0', w: 100, pay: { 3: 2,   4: 5,  5: 15 } },
+    { id: 'amethyst', label: '紫水晶', glyph: '◆',  color: '#b388ff', w: 60,  pay: { 3: 3,   4: 8,  5: 24 } },
+    { id: 'bar',      label: 'BAR',    glyph: 'BAR', color: '#f8f9fa', w: 42, pay: { 3: 5,   4: 15, 5: 45 } },
+    { id: 'seven',    label: '幸运 7', glyph: '7',   color: '#ff8500', w: 26, pay: { 3: 8,   4: 24, 5: 70 } },
+    { id: 'star',     label: '星芒',   glyph: '★',  color: '#ffe066', w: 6,   pay: null, wild: true },
+    { id: 'nebula',   label: '星云',   glyph: '◉',  color: '#c77dff', w: 16,  pay: null, scatter: { 3: 2, 4: 5, 5: 20 } }
+  ];
+  var BY_ID = {};
+  for (var i = 0; i < SYM.length; i += 1) BY_ID[SYM[i].id] = SYM[i];
+
+  var LINES = [
+    [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2],
+    [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [0, 1, 1, 1, 0]
+  ];
+  var WILD_REELS = [1, 2, 3];   // 星芒 WILD 只出现在第 2/3/4 轴
+  var RESPINS = 3;
+
+  var state = { bet: 1, balance: 1000, totalBet: 0, totalWin: 0, rounds: 0, rs: { active: false, remaining: 0, sticky: {}, awarded: 0 } };
+  var els = {};
+  var busy = false;
+
+  function rand() {
+    var a = new Uint32Array(1);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return a[0] / 4294967296;
+  }
+  function rollReel(reel) {
+    var allowWild = WILD_REELS.indexOf(reel) >= 0;
+    var total = 0, k;
+    for (k = 0; k < SYM.length; k += 1) if (allowWild || !SYM[k].wild) total += SYM[k].w;
+    var r = rand() * total;
+    for (k = 0; k < SYM.length; k += 1) {
+      if (!allowWild && SYM[k].wild) continue;
+      r -= SYM[k].w;
+      if (r <= 0) return SYM[k].id;
+    }
+    return SYM[0].id;
+  }
+  function rollGrid() {
+    var grid = [];
+    for (var reel = 0; reel < 5; reel += 1) {
+      var col = [];
+      for (var row = 0; row < 3; row += 1) col.push(rollReel(reel));
+      grid.push(col);
+    }
+    return grid;
+  }
+  function key(p) { return p.reel + ',' + p.row; }
+
+  function applySticky(grid) {
+    Object.keys(state.rs.sticky).forEach(function (k) {
+      var parts = k.split(',');
+      grid[+parts[0]][+parts[1]] = 'star';
+    });
+  }
+  function findWilds(grid) {
+    var out = [];
+    WILD_REELS.forEach(function (reel) {
+      for (var row = 0; row < 3; row += 1) if (grid[reel][row] === 'star') out.push({ reel: reel, row: row });
+    });
+    return out;
+  }
+
+  function judge(grid, pattern) {
+    var seq = pattern.map(function (r, i) { return grid[i][r]; });
+    var base = null;
+    for (var i = 0; i < seq.length; i += 1) if (seq[i] !== 'star') { base = seq[i]; break; }
+    if (base === null) base = seq[0];
+    var matched = [];
+    for (var j = 0; j < seq.length; j += 1) {
+      if (seq[j] === base || seq[j] === 'star') matched.push({ reel: j, row: pattern[j] });
+      else break;
+    }
+    var sym = BY_ID[base];
+    if (matched.length < 3 || !sym.pay) return null;
+    return { base: base, count: matched.length, cells: matched, pay: sym.pay[matched.length] };
+  }
+
+  function evaluate(grid, bet) {
+    var perUnit = bet / LINES.length;
+    var win = 0, cells = {}, details = [];
+    LINES.forEach(function (pattern) {
+      [pattern, pattern.slice().reverse()].forEach(function (p, idx) {
+        var hit = judge(grid, p);
+        if (!hit) return;
+        var amount = Math.round(hit.pay * perUnit * 100) / 100;
+        win += amount;
+        hit.cells.forEach(function (c) { cells[key(c)] = true; });
+        if (details.length < 6) details.push(hit.count + ' 连 ' + BY_ID[hit.base].label + ' ' + (idx ? '（右→左）' : '（左→右）') + ' +' + amount.toFixed(2));
+      });
+    });
+    var scatter = 0;
+    for (var reel = 0; reel < 5; reel += 1) {
+      for (var row = 0; row < 3; row += 1) if (grid[reel][row] === 'nebula') scatter += 1;
+    }
+    if (scatter >= 3) {
+      var sp = BY_ID.nebula.scatter[Math.min(scatter, 5)] * bet;
+      win += sp;
+      details.unshift(scatter + ' 个星云散射 +' + sp.toFixed(2) + '（总注倍数）');
+    }
+    return { win: Math.round(win * 100) / 100, cells: cells, details: details };
+  }
+
+  function render(grid, res) {
+    var html = '';
+    for (var reel = 0; reel < 5; reel += 1) {
+      html += '<div class="reel">';
+      for (var row = 0; row < 3; row += 1) {
+        var id = grid[reel][row];
+        var s = BY_ID[id];
+        var winCls = res && res.cells[key({ reel: reel, row: row })] ? ' win' : '';
+        html += '<div class="cell' + winCls + '" style="color:' + s.color + '" data-sym="' + s.label + '">' + s.glyph + '</div>';
+      }
+      html += '</div>';
+    }
+    els.reels.innerHTML = html;
+    els.reels.setAttribute('aria-label', '盘面：' + grid.map(function (col) { return col.map(function (id) { return BY_ID[id].label; }).join('、'); }).join(' | '));
+  }
+
+  function log(msg) {
+    var d = document.createElement('div');
+    d.textContent = msg;
+    els.log.insertBefore(d, els.log.firstChild);
+  }
+
+  function updateHud() {
+    els.bal.textContent = state.balance.toFixed(2);
+    els.tb.textContent = state.totalBet.toFixed(2);
+    els.tw.textContent = state.totalWin.toFixed(2);
+    els.rounds.textContent = String(state.rounds);
+    els.rtp.textContent = state.totalBet > 0 ? (state.totalWin / state.totalBet).toFixed(4) : '—';
+    els.rsLeft.textContent = state.rs.active ? state.rs.remaining + ' 次 · 已获 ' + state.rs.awarded.toFixed(2) : '—';
+    els.spinBtn.textContent = state.rs.active ? '免费重旋（空格）' : '旋转（空格）';
+  }
+
+  function spin() {
+    if (busy) return;
+    busy = true;
+    var rs = state.rs;
+    var free = rs.active;
+
+    if (!free) {
+      if (state.balance < state.bet) { els.status.textContent = '积分不足，请降低投注或点击重置。'; busy = false; return; }
+      state.balance -= state.bet;
+      state.totalBet += state.bet;
+    }
+
+    var grid = rollGrid();
+    if (free) applySticky(grid);
+
+    var hits = findWilds(grid);
+    var fresh = hits.filter(function (p) { return !rs.sticky[key(p)]; });
+    if (fresh.length) {
+      var reelsHit = [];
+      fresh.forEach(function (p) {
+        if (reelsHit.indexOf(p.reel) < 0) reelsHit.push(p.reel);
+        rs.sticky[key(p)] = true;
+      });
+      reelsHit.forEach(function (reel) {
+        for (var row = 0; row < 3; row += 1) { grid[reel][row] = 'star'; rs.sticky[key({ reel: reel, row: row })] = true; }
+      });
+      if (free) {
+        rs.remaining = RESPINS;
+        log('新的星芒 WILD 落在第 ' + reelsHit.map(function (r) { return r + 1; }).join('/') + ' 轴 → 重旋次数重置为 ' + RESPINS);
+      } else {
+        rs.active = true;
+        rs.remaining = RESPINS;
+        rs.awarded = 0;
+        log('星芒 WILD 落在第 ' + reelsHit.map(function (r) { return r + 1; }).join('/') + ' 轴 → 整轴展开，获得 ' + RESPINS + ' 次免费重旋');
+      }
+    } else if (free) {
+      rs.remaining -= 1;
+    }
+
+    var res = evaluate(grid, state.bet);
+    state.balance += res.win;
+    state.totalWin += res.win;
+    state.rounds += 1;
+
+    if (res.details.length) {
+      log('本轮 ' + (free ? '重旋' : '旋转') + '赢得 ' + res.win.toFixed(2) + '：' + res.details.join('；'));
+      els.status.textContent = '本轮赢得 ' + res.win.toFixed(2) + ' 积分。';
+    } else {
+      els.status.textContent = free ? '重旋未中奖。' : '本轮未中奖，再试一次。';
+    }
+
+    if (rs.active) {
+      rs.awarded += res.win;
+      if (rs.remaining < 0) {
+        log('WILD 重旋结束：本段共赢得 ' + rs.awarded.toFixed(2));
+        rs.active = false; rs.remaining = 0; rs.sticky = {}; rs.awarded = 0;
+      }
+    }
+
+    render(grid, res);
+    updateHud();
+    busy = false;
+  }
+
+  function reset() {
+    state.balance = 1000; state.totalBet = 0; state.totalWin = 0; state.rounds = 0;
+    state.rs = { active: false, remaining: 0, sticky: {}, awarded: 0 };
+    els.log.innerHTML = '';
+    els.status.textContent = '已重置，初始积分 1000。';
+    render(rollGrid(), null);
+    updateHud();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    els = {
+      reels: document.getElementById('reels'),
+      betSel: document.getElementById('betSel'),
+      spinBtn: document.getElementById('spinBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      status: document.getElementById('status'),
+      log: document.getElementById('log'),
+      bal: document.getElementById('bal'), tb: document.getElementById('tb'), tw: document.getElementById('tw'),
+      rtp: document.getElementById('rtp'), rounds: document.getElementById('rounds'), rsLeft: document.getElementById('rsLeft')
+    };
+    els.spinBtn.addEventListener('click', spin);
+    els.resetBtn.addEventListener('click', reset);
+    els.betSel.addEventListener('change', function () { state.bet = parseFloat(els.betSel.value); });
+    document.addEventListener('keydown', function (e) {
+      if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); spin(); }
+    });
+    render(rollGrid(), null);
+    updateHud();
+  });
+})();
+</script>
+</body>
+</html>

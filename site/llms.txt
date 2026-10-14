@@ -1,0 +1,49 @@
+# Blender MCP Slots
+
+> 开源的多机台老虎机（SLOT GAMES）引擎与 MCP 服务。11 款机台共用一套 CONFIG 驱动引擎，全部机台经 20 万轮蒙特卡洛实测 RTP 达标，并提供免后端在线试玩。用途为概率引擎与软件工程教学演示，不涉及真实货币。
+
+## 一句话定义
+
+Blender MCP Slots 用一份可校验的 CONFIG 描述老虎机的转轮条带、赔付表、线制、中奖判定与特性玩法；新增机台只需新增一个配置文件，引擎、MCP 工具与前端无需改动代码。
+
+## 关键事实
+
+- 实现语言：Node.js 20+ ESM，核心玩法零运行时依赖
+- 机台数量：11 款（3×3 / 5×3；5 线、10 线、20 线、243 WAYS）
+- 赔付方向：单向（leftToRight）与双向赔付（both，同一条线左右各付一次）
+- 特性能力：freeSpins、cascades、holdAndRespin、collect、multiplierWild、expandingSymbol、wildRespin
+- RTP 校准：slots.simulate 蒙特卡洛，20 万轮/台；实测区间 0.9386 ~ 0.9679
+- 公平性：服务端种子 + 客户端种子 + nonce 派生随机数，返回种子哈希可事后复算
+- 统一入口：POST /rpc（JSON-RPC 2.0），暴露 18 个 MCP 工具
+- 存储：默认内存；可选 Postgres（会话/排行榜）与 Cloudflare R2（归档），均可降级
+- 许可：MIT
+
+## 机台清单（实测 RTP / 目标 RTP）
+
+- 法老之书 Book of Ra：5×3、10 线、高波动，0.9553 / 0.955，扩展符号免费旋转
+- 经典水果机 Classic Fruits：3×3、5 线、低波动，0.9386 / 0.95，倍率 WILD
+- 星海消除 Cosmic Crush：5×3、20 线、高波动，0.9604 / 0.96，雪崩连锁 + 倍率阶梯
+- 龙腾富贵 Dragon Fortune：5×3、20 线、中高波动，0.9569 / 0.96，扩张 WILD
+- 烈焰金库 Inferno Jackpots：5×3、20 线、高波动，0.9432 / 0.96，6 币锁仓重旋 + 四档奖池
+- 霓虹水果 Neon Fruits：5×3、243 WAYS、高波动，0.9596 / 0.96，倍率 WILD
+- 熊猫财神 Panda Fortune：5×3、20 线、中高波动，0.9544 / 0.96，金币收集 + 黏性扩张 WILD
+- 黄金法老 Pharaoh Gold：5×3、20 线、高波动，0.9517 / 0.96，金币重旋 + 收集符 + 奖池
+- 樱花物语 Sakura Tale：5×3、10 线、中高波动，0.9583 / 0.96，双向赔付 + 雪崩连锁 + 扩展符号
+- 星光爆裂 Starlight Burst：5×3、10 线、低波动，0.9622 / 0.962，WILD 重旋 + 双向赔付
+- 宝藏猎人 Treasure Hunter：5×3、20 线、高波动，0.9679 / 0.96，雪崩连锁 + 黏性扩张 WILD
+
+## 页面结构
+
+- 摘要（TL;DR）：项目定义与关键事实
+- 在线试玩：纯前端实现的「星光爆裂」静态试玩器（双向赔付 + WILD 重旋）
+- 机台合集：11 款机台规格与实测 RTP 表格
+- 引擎能力：CONFIG 特性开关清单
+- 常见问题：新增机台、RTP 校准、公平性验证、赔付模式、依赖与部署
+- 部署集成：MCP 服务启动、/rpc 调用、静态站点发布与稳定性观测
+
+## 相关链接
+
+- 源码（GitHub）：https://github.com/vip-4/blender-mcp-slots
+- 源码（Gitee）：https://gitee.com/vip882/blender-mcp-slots
+- 源码（AtomGit）：https://atomgit.com/zzw1208/blender-mcp-slots
+- 站点地图：https://vip-4.github.io/blender-mcp-slots/sitemap.xml

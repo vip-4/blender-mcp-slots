@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://vip-4.github.io/blender-mcp-slots/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png</image:loc>
+      <image:title>Blender MCP Slots 封面</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vip-4.github.io/blender-mcp-slots/llms.txt</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+</urlset>

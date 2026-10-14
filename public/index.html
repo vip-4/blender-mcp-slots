@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Blender MCP · SLOT GAMES 合集</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◎</span>
+      <div>
+        <div class="title">BLENDER MCP · SLOT GAMES</div>
+        <div class="subtitle">多主题机台 · 共用一套 CONFIG 引擎</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="status"><i id="connDot" class="dot"></i><span id="connText">连接中…</span></div>
+      <div class="balance-box"><span>余额</span><b id="balance">—</b></div>
+    </div>
+  </header>
+
+  <!-- ======== 大厅 ======== -->
+  <main>
+    <section id="lobby" class="view">
+      <div class="lobby-head">
+        <h1>机台大厅</h1>
+        <p id="lobbyMeta">加载中…</p>
+      </div>
+      <div id="gameGrid" class="game-grid"></div>
+    </section>
+
+    <!-- ======== 机台 ======== -->
+    <section id="machine" class="view hidden">
+      <div class="machine-head">
+        <button id="backBtn" class="ghost-btn">← 返回大厅</button>
+        <div class="machine-title"><span id="gameName">—</span><em id="gameTag"></em></div>
+        <div class="badges" id="badges"></div>
+      </div>
+
+      <div class="stage">
+        <div class="reels-wrap">
+          <div id="reels" class="reels"></div>
+          <svg id="lineOverlay" class="line-overlay" preserveAspectRatio="none"></svg>
+          <div id="featureBanner" class="feature-banner hidden"></div>
+        </div>
+      </div>
+
+      <div class="winbar">
+        <div id="winLabel" class="win-label">祝好运</div>
+        <div id="winAmount" class="win-amount">0.00</div>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl-block">
+          <label>投注</label>
+          <div class="stepper">
+            <button id="betDown" class="ghost-btn">−</button>
+            <span id="betValue">1</span>
+            <button id="betUp" class="ghost-btn">+</button>
+          </div>
+        </div>
+        <div class="ctrl-block" id="linesBlock">
+          <label>线数</label>
+          <select id="linesSelect" class="select"></select>
+        </div>
+        <div class="ctrl-block">
+          <label>自动</label>
+          <div class="auto-row">
+            <button class="ghost-btn auto-btn" data-auto="10">10</button>
+            <button class="ghost-btn auto-btn" data-auto="25">25</button>
+            <button class="ghost-btn auto-btn" data-auto="50">50</button>
+            <button id="autoStop" class="ghost-btn hidden">停止</button>
+          </div>
+        </div>
+        <button id="spinBtn" class="spin-btn">SPIN</button>
+        <button id="paytableBtn" class="ghost-btn">赔付表</button>
+      </div>
+
+      <div class="panels">
+        <div class="panel">
+          <h3>最近记录</h3>
+          <div id="historyList" class="history"></div>
+        </div>
+        <div class="panel">
+          <h3>本场统计</h3>
+          <div id="statsBox" class="stats"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======== 赔付表弹窗 ======== -->
+  <div id="paytableModal" class="modal hidden">
+    <div class="modal-body">
+      <div class="modal-head">
+        <h2 id="ptTitle">赔付表</h2>
+        <button id="ptClose" class="ghost-btn">关闭</button>
+      </div>
+      <div id="ptContent" class="pt-content"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -43,7 +43,17 @@
  *       reelSet: 'free',
  *       multiplier: { start: 1, onRetrigger: 1, max: 5 },
  *       retrigger: { counts: {3:5,4:8,5:12}, maxSpins: 200 },
- *       expandingWild: { reelIndexes: [1,2,3], probability: 1, sticky: false }
+ *       expandingWild: { reelIndexes: [1,2,3], probability: 1, sticky: false },
+ *       // 扩展符号（Book 系）：进入免费旋转时从 candidates 随机选定一个标准符号，
+ *       // 盘面出现 >= minCount 个时，出现该符号的整轴替换为该符号（reels 可限定轴范围）
+ *       expandingSymbol: { minCount: 2, candidates: ['pharaoh','anubis'], reels: [1,2,3] }
+ *     },
+ *     // 雪崩连锁：中奖格消除 → 上方下落 → 顶部补新符号；倍率按 ladder 逐段递增
+ *     cascades: {
+ *       ladder: [1,1,2,3,5,8,12],
+ *       maxSteps: 8,
+ *       removeWild: false,          // 是否连同参与连线的 WILD 一起消除
+ *       carryInFreeSpins: false     // true = 倍率在整段免费旋转内跨轮累积
  *     },
  *     holdAndRespin: {
  *       trigger: { symbolId: 'coin' }, triggerCount: 6, respins: 3,
@@ -60,7 +70,7 @@
  * }
  */
 
-export const CONFIG_CONTRACT_VERSION = '1.1.0';
+export const CONFIG_CONTRACT_VERSION = '1.2.0';
 
 export function defineConfig(config) {
   return config;

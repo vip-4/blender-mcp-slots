@@ -73,7 +73,7 @@ export default defineConfig({
       coin: { values: [2, 3, 5, 8, 10], weights: [30, 25, 20, 15, 10] }
     }
   },
-  tuning: { payScale: 0.904 },
+  tuning: { payScale: 0.924 },
   limits: { maxWinMultiplier: 5000 },
   rtp: { target: 0.96, tolerance: 0.015 },
   volatility: 'high'

@@ -111,9 +111,26 @@ export function registerTools({ dispatcher, registry, service, blender, metrics,
     },
     {
       name: 'store.health',
-      description: '外部存储（Neon Postgres / Redis）健康状态与降级情况',
+      description: '外部存储（Neon Postgres / Redis / R2 归档）健康状态与降级情况',
       inputSchema: obj({}),
       handler: async () => (store ? store.health() : { driver: 'none', degraded: true })
+    },
+    {
+      name: 'store.archive',
+      description: '把缓冲中的旋转流水立即归档到 Cloudflare R2（JSONL 按小时分片）',
+      inputSchema: obj({}),
+      handler: async () => (store ? store.flushArchive() : { enabled: false, flushed: 0 })
+    },
+    {
+      name: 'store.snapshot',
+      description: '把当前全部机台 CONFIG 备份为 R2 快照，作为参数化调参的回滚点',
+      inputSchema: obj({ name: { type: 'string' } }),
+      handler: async ({ name }) => {
+        const configs = registry.list().map((g) => registry.describeById(g.id));
+        if (!store) return { enabled: false, ok: false, count: configs.length };
+        const r = await store.snapshotConfigs(name || 'configs', { at: new Date().toISOString(), games: configs });
+        return { ...r, count: configs.length };
+      }
     },
     {
       name: 'slots.validateConfigs',

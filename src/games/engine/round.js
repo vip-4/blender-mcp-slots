@@ -7,7 +7,11 @@ import {
   assignWildMultipliers,
   rollCoinValue,
   jackpotFor,
-  stepMultiplier
+  stepMultiplier,
+  cascadeMultiplier,
+  collapseGrid,
+  pickExpandingSymbol,
+  applyExpandingSymbol
 } from './features.js';
 import { lineCount } from './paylines.js';
 import { AppError, ErrorCode } from '../../shared/errors.js';
@@ -64,6 +68,21 @@ export function createState(config, { bet, lines, balance = 1000, serverSeed, cl
 const countSymbol = (grid, id) => grid.reduce((n, col) => n + col.filter((x) => x === id).length, 0);
 const emptyMask = (reels, rows) => Array.from({ length: reels }, () => Array.from({ length: rows }, () => false));
 
+/** 扫描盘面上的金币类符号（雪崩后盘面变化时需要重新定位） */
+const scanBonusCells = (config, grid, cellValues) => {
+  const out = [];
+  for (const s of config.symbols.filter((x) => x.kind === 'bonus')) {
+    for (let reel = 0; reel < grid.length; reel += 1) {
+      for (let row = 0; row < grid[reel].length; row += 1) {
+        if (grid[reel][row] === s.id) {
+          out.push({ reel, row, symbol: s.id, value: cellValues.get(`${reel},${row}`) ?? null });
+        }
+      }
+    }
+  }
+  return out;
+};
+
 /**
  * 单轮游戏流程（纯函数式：只依赖 config/derived/state）。
  * 同一 state + 同一 seed 必得同一结果 —— 可回放、可审计。
@@ -115,6 +134,21 @@ export function playRound({ config, derived, state, bet, lines }) {
     if (fsCfg.expandingWild.sticky) state.freeSpins.stickyWilds.push(...expanded);
   }
 
+  // 扩展符号：免费旋转内选定的符号达到 minCount 即整轴展开（先于判定执行）
+  let expandedSymbol = null;
+  if (isFree && fsCfg?.expandingSymbol && state.freeSpins.selectedSymbol) {
+    const r = applyExpandingSymbol({
+      grid,
+      symbolId: state.freeSpins.selectedSymbol,
+      reels: fsCfg.expandingSymbol.reels,
+      minCount: fsCfg.expandingSymbol.minCount ?? 2
+    });
+    if (r.reels?.length) {
+      expandedSymbol = { symbolId: state.freeSpins.selectedSymbol, reels: r.reels, cells: r.expanded };
+      expanded = expanded.concat(r.expanded);
+    }
+  }
+
   // ---------- 3. Wild 倍率 / 金币面值 ----------
   const { map: wildMultMap, list: wildMultipliers } = assignWildMultipliers({ config, cfg: mwCfg, grid, rng });
   const cellValues = new Map();
@@ -130,17 +164,87 @@ export function playRound({ config, derived, state, bet, lines }) {
     }
   }
 
-  // ---------- 4. 中奖判定 ----------
+  // ---------- 4. 中奖判定（可选：雪崩连锁） ----------
+  const cascadesCfg = config.features?.cascades;
   const globalMultiplier = isFree ? state.freeSpins.multiplier : 1;
-  const evaluated = evaluateGrid({
-    config,
-    grid,
-    bet: useBet,
-    activeLines: useLines,
-    globalMultiplier,
-    wildMultipliers: wildMultMap,
-    cellValues
-  });
+  const wildIds = config.symbols.filter((s) => s.kind === 'wild').map((s) => s.id);
+  // carryInFreeSpins=true 时连锁倍率跨轮累积（更爆），否则每轮从阶梯起点重来（RTP 更可控）
+  const carryCascades = !!(cascadesCfg?.carryInFreeSpins && isFree);
+  let cascadeIndex = carryCascades ? state.freeSpins.cascadeIndex ?? 0 : 0;
+  const cascadeSegments = [];
+  const allLineWins = [];
+  let evaluated = null;
+  let evaluatedWin = 0;
+
+  for (let step = 0; ; step += 1) {
+    const cm = cascadesCfg ? cascadeMultiplier(cascadesCfg, cascadeIndex) : 1;
+    const ev = evaluateGrid({
+      config,
+      grid,
+      bet: useBet,
+      activeLines: useLines,
+      globalMultiplier: globalMultiplier * cm,
+      wildMultipliers: wildMultMap,
+      cellValues
+    });
+    if (step === 0) {
+      evaluated = ev;
+    } else {
+      // 散射只在首段结算，避免连锁过程中重复计数
+      ev.scatterWins = [];
+    }
+    evaluatedWin = roundMoney(evaluatedWin + ev.totalWin);
+    allLineWins.push(...ev.lineWins);
+    cascadeSegments.push({
+      step,
+      multiplier: cm,
+      grid: grid.map((col) => col.slice()),
+      win: ev.totalWin,
+      winCells: ev.lineWins.flatMap((w) => w.positions),
+      // 本段结束后被消除的格子与新落位（前端据此播放落位动画，审计据此复盘）
+      removed: 0,
+      newCells: []
+    });
+
+    const canCascade = !isRespin && cascadesCfg && ev.lineWins.length > 0 && step < (cascadesCfg.maxSteps ?? 8) - 1;
+    if (!canCascade) break;
+
+    const collapsed = collapseGrid({
+      grid,
+      winCells: ev.lineWins.flatMap((w) => w.positions),
+      strips: derived.strips[reelSet],
+      rng,
+      removeWild: !!cascadesCfg.removeWild,
+      wildIds
+    });
+    if (!collapsed.removed.length) break;
+
+    cascadeSegments[cascadeSegments.length - 1].removed = collapsed.removed.length;
+    cascadeSegments[cascadeSegments.length - 1].newCells = collapsed.newCells;
+    grid = collapsed.grid;
+    cascadeIndex += 1;
+    for (const c of collapsed.removed) cellValues.delete(`${c.reel},${c.row}`);
+    // 新落位补充金币面值与 Wild 倍率（旧位置倍率随符号一起消失）
+    if (colCfg || hrCfg) {
+      for (const c of collapsed.newCells) {
+        const sym = config.symbols.find((s) => s.id === grid[c.reel][c.row]);
+        if (sym?.kind === 'bonus') cellValues.set(`${c.reel},${c.row}`, rollCoinValue(rng, (hrCfg?.coin ?? colCfg?.coin) || {}));
+      }
+    }
+    const remap = assignWildMultipliers({ config, cfg: mwCfg, grid, rng });
+    wildMultMap.clear();
+    for (const [k, v] of remap.map) wildMultMap.set(k, v);
+    wildMultipliers.length = 0;
+    wildMultipliers.push(...remap.list);
+  }
+
+  // 盘面经过连锁后已变化：按最终盘面重算金币格，保证重旋/收集取到正确位置
+  if (cascadeSegments.length > 1) {
+    evaluated.bonusCells = scanBonusCells(config, grid, cellValues);
+  }
+  evaluated.lineWins = allLineWins;
+  evaluated.totalWin = roundMoney(evaluatedWin);
+  if (isFree && state.freeSpins) state.freeSpins.cascadeIndex = carryCascades ? cascadeIndex : 0;
 
   if (isRespin) {
     // 重旋轮次只结算金币，不结算线赢/散射，保证 Hold & Respin 数学模型干净
@@ -169,6 +273,8 @@ export function playRound({ config, derived, state, bet, lines }) {
           totalSpins: award.spins,
           multiplier: fsCfg.multiplier?.start ?? 1,
           stickyWilds: [],
+          cascadeIndex: 0,
+          selectedSymbol: fsCfg.expandingSymbol ? pickExpandingSymbol({ config, cfg: fsCfg.expandingSymbol, rng }) : null,
           triggerBet: useBet,
           reelSet: derived.strips.free ? 'free' : 'base'
         };
@@ -290,6 +396,11 @@ export function playRound({ config, derived, state, bet, lines }) {
     bonusCells: evaluated.bonusCells.map((c) => ({ ...c, value: cellValues.get(`${c.reel},${c.row}`) ?? c.value ?? null })),
     wildMultipliers,
     expandedWilds: expanded,
+    expandingSymbol: expandedSymbol,
+    selectedSymbol: state.freeSpins?.selectedSymbol ?? null,
+    cascadeCount: cascadesCfg ? cascadeSegments.length : 0,
+    cascadeMultiplier: cascadesCfg ? cascadeMultiplier(cascadesCfg, cascadeIndex) : 1,
+    cascades: cascadesCfg && cascadeSegments.length > 1 ? cascadeSegments : null,
     collect,
     totalWin,
     capped,

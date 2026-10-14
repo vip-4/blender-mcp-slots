@@ -15,11 +15,12 @@ blender-mcp-slots/
 │   ├── main.js                      # 进程入口：装配 registry → service → dispatcher → transports
 │   ├── config/runtime.js            # 运行时参数（环境变量 / CLI 覆盖）
 │   ├── config/dotenv.js             # 极简 .env 加载（只补充不覆盖，方便本地调试）
-│   ├── store/                       # ★ 可插拔外部存储（Neon Postgres / Redis / 内存）
+│   ├── store/                       # ★ 可插拔外部存储（Neon Postgres / Redis / R2 / 内存）
 │   │   ├── index.js                 #   ResilientStore 门面：自动降级 + 旁路写入
 │   │   ├── memory.js                #   内存后端（默认 / 最终降级目标）
 │   │   ├── postgres.js              #   Neon Postgres 后端（批量落库、读前补写）
-│   │   └── redis.js                 #   Redis 后端（零依赖 RESP 客户端）
+│   │   ├── redis.js                 #   Redis 后端（零依赖 RESP 客户端）
+│   │   └── r2.js                    #   Cloudflare R2 归档（零依赖 S3 SigV4 + JSONL 分片）
 │   ├── shared/
 │   │   ├── errors.js                # 统一错误码（JSON-RPC 标准码 + 业务码 -320xx）
 │   │   ├── logger.js                # 结构化日志（走 stderr，保证 stdio 干净）
@@ -34,8 +35,8 @@ blender-mcp-slots/
 │   │   │   ├── reels.js             #   权重 → 转轮条带 → 旋转 / 重旋
 │   │   │   ├── paylines.js          #   线组定义（3x3:5 / 5x3:20 / 5x3:10）
 │   │   │   ├── evaluate.js          #   中奖判定（lines / ways 双模式）
-│   │   │   ├── features.js          #   免费旋转 / 扩张 WILD / 倍率 WILD / 金币重旋 / 收集
-│   │   │   ├── round.js             #   单轮状态机（基础轮 / 免费旋转 / 重旋）
+│   │   │   ├── features.js          #   免费旋转 / 扩张 WILD / 倍率 WILD / 金币重旋 / 收集 / 雪崩 / 扩展符号
+│   │   │   ├── round.js             #   单轮状态机（基础轮 / 免费旋转 / 重旋，含雪崩连锁循环）
 │   │   │   ├── math.js              #   蒙特卡洛自检（RTP / 命中率 / 波动）
 │   │   │   └── validator.js         #   CONFIG 契约校验（fail-fast）
 │   │   └── configs/                 # ★ 机台配置目录（新增机台只动这里）
@@ -45,7 +46,9 @@ blender-mcp-slots/
 │   │       ├── pharaoh-gold.js      #   新增 5x3 二十线 · 金币重旋四档奖池 + 收集符
 │   │       ├── neon-fruits.js       #   新增 5x3 243 WAYS · 倍率 WILD
 │   │       ├── panda-fortune.js     #   新增 5x3 二十线 · 熊掌收集金币 + 黏性扩张 WILD
-│   │       └── inferno-jackpots.js  #   新增 5x3 二十线 · 6 币锁仓重旋四档奖池 + 免费旋转
+│   │       ├── inferno-jackpots.js  #   新增 5x3 二十线 · 6 币锁仓重旋四档奖池 + 免费旋转
+│   │       ├── book-of-ra.js        #   新增 5x3 十线 · Book 系「扩展符号」免费旋转（可再触发）
+│   │       └── cosmic-crush.js      #   新增 5x3 二十线 · 雪崩连锁 + 倍率阶梯 + 免费旋转
 │   ├── mcp/
 │   │   ├── protocol.js              # JSON-RPC 2.0 编解码 + 参数校验
 │   │   ├── dispatcher.js            # 方法路由（校验 / 超时 / 错误码 / 指标）
@@ -61,11 +64,14 @@ blender-mcp-slots/
 ├── db/schema.sql                    # 外部存储表结构（幂等建表）
 ├── scripts/
 │   ├── simulate.js                  # RTP 自检脚本（调参必备）
-│   └── migrate.mjs                  # Neon Postgres 建表 / 校验
-└── tests/                           # node:test，27 个用例
+│   ├── migrate.mjs                  # Neon Postgres 建表 / 校验
+│   ├── r2check.mjs                  # Cloudflare R2 连通性自检（凭据 / 桶 / 读写）
+│   └── smoke-v2.mjs                 # 端到端冒烟：新机台特性 + 存储/归档工具
+└── tests/                           # node:test，33 个用例
     ├── engine.test.js
     ├── mcp.test.js
-    └── store.test.js                # 存储降级、新机台、多特性排队
+    ├── store.test.js                # 存储降级、新机台、多特性排队
+    └── cascades.test.js             # 雪崩连锁、扩展符号、R2 签名与归档降级
 ```
 
 ## 2. 依赖说明
@@ -77,6 +83,7 @@ blender-mcp-slots/
 | 可选依赖 | `@modelcontextprotocol/sdk`（`optionalDependencies`）：若要接入官方 SDK 的 Server/Transport，可把 `src/mcp/transports/*` 替换为 SDK 实现，`dispatcher` 与 `tools` 层无需改动 |
 | 可选依赖 | `pg`（`optionalDependencies`）：仅在启用 Neon Postgres 持久化时需要；缺失或连接失败会自动降级到内存存储，游戏主流程不受影响 |
 | Redis | 自研零依赖 RESP 客户端（`src/store/redis.js`），不引入 `ioredis`，避免为旁路链路增加传递依赖 |
+| R2 归档 | 自研零依赖 S3 SigV4 客户端（`src/store/r2.js`），不引入 `aws-sdk`；凭据缺失或网络不通时自动关闭归档 |
 | 前端 | 原生 HTML/CSS/ES Module，无构建、无框架、无 CDN 资源 |
 | 外部可选 | 既有 Blender MCP 服务（默认关闭，见 `BLENDER_MCP_ENABLED`） |
 
@@ -108,6 +115,12 @@ npm run simulate -- 200000   # 20 万轮 RTP 自检
 | `REDIS_URL` | — | Redis 连接串（旁路热数据，可选） |
 | `PG_CONNECT_TIMEOUT_MS` | `15000` | Postgres 连接超时（云端冷启动较久） |
 | `PG_STATEMENT_TIMEOUT_MS` | `10000` | Postgres 语句超时 |
+| `R2_ACCOUNT_ID` | — | Cloudflare 账户 ID（启用旋转流水归档时必填） |
+| `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` | — | R2 S3 兼容凭据 |
+| `R2_BUCKET` | — | 归档桶名（如 `blender-mcp-slots`） |
+| `R2_ENDPOINT` | `https://<account>.r2.cloudflarestorage.com` | 自定义 S3 端点（自建 MinIO 亦可复用） |
+| `R2_PREFIX` | `blender-mcp-slots` | 对象前缀：`{prefix}/spins/{date}/{hour}.jsonl`、`{prefix}/snapshots/*.json` |
+| `R2_TIMEOUT_MS` | `4000` | 单次归档请求超时 |
 
 ## 3. 集成步骤
 
@@ -146,7 +159,26 @@ curl -X POST http://127.0.0.1:5173/rpc \
 
 未配置时 `blender.health` 返回 `{ enabled:false, degraded:true }`，主流程照常运行。
 
-### 3.4 新增一款机台（完整步骤）
+### 3.4 接入 Cloudflare R2 归档（可选）
+
+```bash
+# 1) 写入 .env（不入库）
+R2_ACCOUNT_ID=<account>
+R2_ACCESS_KEY_ID=<access key>
+R2_SECRET_ACCESS_KEY=<secret>
+R2_BUCKET=blender-mcp-slots
+
+# 2) 连通性自检
+node scripts/r2check.mjs
+
+# 3) 运行时：旋转流水自动缓冲，满 200 条或每 60s 落盘；也可手动触发
+curl -X POST http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"store.snapshot","arguments":{"name":"release-1.2"}}}'
+```
+
+归档为**旁路能力**：`store.health` 中 `archive.degraded=true` 仅代表流水未落对象存储，数据库与内存快照仍在正常工作，游戏流程零影响。
+
+### 3.5 新增一款机台（完整步骤）
 
 1. 复制 `src/games/configs/_schema.js` 顶部契约，在 `configs/` 新建 `my-game.js`（纯数据）；
 2. 启动或调用 `slots.reloadConfigs` 热重载；
@@ -170,7 +202,9 @@ curl -X POST http://127.0.0.1:5173/rpc \
 | `slots.registerGame` | 运行时注入 CONFIG（A/B 实验、参数化配置） |
 | `slots.history` | 最近旋转记录（外部存储优先，失败回退内存快照） |
 | `slots.leaderboard` | 单次旋转最高倍率排行榜 |
-| `store.health` | 外部存储（Postgres / Redis）健康状态与降级情况 |
+| `store.health` | 外部存储（Postgres / Redis / R2 归档）健康状态与降级情况 |
+| `store.archive` | 立即把缓冲的旋转流水归档到 R2（按小时 JSONL 分片） |
+| `store.snapshot` | 把当前全部机台 CONFIG 备份为 R2 快照（调参回滚点） |
 | `blender.health` / `blender.renderSpin` | Blender 桥接状态与 3D 演出推送 |
 | `system.health` / `system.metrics` | 健康检查与观测指标 |
 
@@ -186,6 +220,11 @@ curl -X POST http://127.0.0.1:5173/rpc \
   "scatterWins": [{ "symbol": "scatter", "count": 3, "pay": 2 }],
   "bonusCells": [{ "reel": 2, "row": 1, "symbol": "coin", "value": 5 }],
   "wildMultipliers": [{ "reel": 1, "row": 0, "value": 3 }],
+  "cascadeCount": 3,                  // 雪崩连锁段数（未配置 cascades 时为 0）
+  "cascadeMultiplier": 2,             // 本轮最终连锁倍率
+  "cascades": [{ "step": 0, "multiplier": 1, "grid": [...], "win": 1.4, "winCells": [...], "removed": 3, "newCells": [...] }],
+  "expandingSymbol": { "symbolId": "mask", "reels": [1, 3] },  // Book 系整轴展开
+  "selectedSymbol": "mask",           // 本次免费旋转选定的扩展符号
   "triggered": [{ "type": "freeSpins", "spins": 10 }],
   "freeSpins": { "remaining": 10, "multiplier": 1, "awarded": 0 },
   "nextPhase": "freeSpins",
@@ -208,6 +247,8 @@ curl -X POST http://127.0.0.1:5173/rpc \
 | 数据库 / 缓存故障 | 存储门面自动降级到内存：写入丢弃只记指标，读取回退内存快照，`store.health` 明确标记 `degraded` |
 | 云端 DB 高延迟拖慢旋转 | 写入走旁路队列 + 批量事务落库（40 次旋转实测 RPC 总耗时 264ms），读前补写保证「刚转完就能查到」 |
 | 多特性同轮触发 | 免费旋转与金币重旋同时命中时，重旋进入 `pendingRespin` 排队，免费旋转结算后自动启动，状态机不互相覆盖 |
+| 雪崩连锁失控 | 段数硬上限 `cascades.maxSteps`（默认 8）+ 倍率阶梯末尾封顶 + 单轮封顶 `limits.maxWinMultiplier` |
+| R2 / 对象存储故障 | 归档在独立旁路：连接失败即 `degraded`，写入丢弃只计数，游戏、数据库与排行榜完全不受影响 |
 | 日志污染 stdio | 日志写 stderr；stdout 只写 JSON-RPC |
 | 进程异常 | `uncaughtException` / `unhandledRejection` 记录后继续；`SIGINT/SIGTERM` 优雅关闭 |
 | 赔付失衡 | `slots.simulate` / `npm run simulate` 随时复核 RTP，CI 中亦有回归断言 |
@@ -219,6 +260,9 @@ curl -X POST http://127.0.0.1:5173/rpc \
 - **大厅**：机台卡片（主题渐变、线数/WAYS、波动率、特性标签、RTP、投注区间），点击进机台；顶栏显示连接状态与余额。
 - **机台**：转轮网格（尺寸与行列数由 `grid` 决定）+ 中奖连线和中奖格高亮 + WILD 倍率角标 + 金币面值角标。
 - **交互链路**：点击 `SPIN`（空格同效）→ 整列滚动动画 → 请求 `slots.spin`（动画与请求并行，最少 620ms）→ 逐列停轮（每列 120ms）→ 中奖格/连线依次点亮 → 显示本轮赢得倍率与金额 → 触发特性时弹出横幅并自动续转（免费旋转 / 金币重旋结束后回到基础轮）。
+- **雪崩演出**（`features.cascades` 机台）：本轮返回的 `cascades` 逐段重放——每段渲染该段盘面、高亮中奖格、新落位符号带 `drop` 下落动画，转轮下方徽标实时显示「第 N 段 · 倍率 xN · +赢得」，直到无中奖为止。
+- **扩展符号演出**（`freeSpins.expandingSymbol` 机台）：免费旋转横幅显示本轮选定的扩展符号及触发条件；展开时对应整轴加金色描边脉冲并弹出提示，随后按常规线制结算。
+- **归档状态**：面板标题旁标签显示当前存储驱动，并在启用 R2 时追加「R2 归档就绪/降级」，降级仅提示不阻断操作。
 - **控制区**：投注档位（`bet.levels`）步进、线数选择（`lines` 模式）、自动旋转 10/25/50（可随时停止）、赔付表弹窗（按符号列出 3/4/5 连倍率 + 特性规则文本）。
 - **面板**：最近 30 轮记录、本场统计（轮次、实际 RTP、总投注、最大单轮、特性触发次数）、排行榜（按单次旋转最高倍率，标题右侧标签显示当前存储驱动与是否降级）。
 - **主题**：`theme.primary/secondary/accent/background/frame/font` 直接映射为 CSS 变量，多主题共用同一份 DOM 与逻辑。
@@ -233,16 +277,20 @@ curl -X POST http://127.0.0.1:5173/rpc \
 | `neon-fruits` 霓虹水果 | 5×3 / 243 WAYS | 倍率 WILD（x2/x3/x5）、星钻散射免费旋转（倍率上限 x4） | 96% |
 | `panda-fortune` 熊猫财神 | 5×3 / 20 线 | 熊掌（第 3~5 轴）收集盘面全部金币面值；财神庙散射 10/15/20 次免费旋转 + 黏性扩张 WILD；免费旋转与重旋可排队串场 | 96% |
 | `inferno-jackpots` 烈焰金库 | 5×3 / 20 线 | 6 枚金币触发 3 次锁仓重旋、MINI/MINOR/MAJOR/GRAND 四档奖池；金库散射 8/12/16 次免费旋转（倍率上限 x3） | 96% |
+| `book-of-ra` 法老之书 | 5×3 / 10 线 | 亡灵之书散射 10/12/15 次免费旋转，进入时随机选定扩展符号（候选池可配），出现 ≥2 个即整轴展开；可再触发 +5/+8/+10 | 95.5% |
+| `cosmic-crush` 星海消除 | 5×3 / 20 线 | 雪崩连锁：中奖格消除 → 上方下落 → 顶部补新符号，倍率阶梯 `1/1/2/3/5/8/12`；陨石散射 8/12/16 次免费旋转（`carryInFreeSpins` 可让倍率跨轮累积） | 96% |
 
-### 实测 RTP（`npm run simulate -- 60000`，高波动机台另跑 20 万轮）
+### 实测 RTP（`npm run simulate -- <gameId> 200000`）
 
 ```
-classic-fruits    rtp=0.9413  target=0.95  hit=38.63%  max=323.54x   vol=3.638
-dragon-fortune    rtp=0.9614  target=0.96  hit=31.00%  max=208.3x    vol=2.479  fs=287
-inferno-jackpots  rtp=0.9509  target=0.96  hit=24.14%  max=228x      vol=2.618  fs=34   hr=115
-neon-fruits       rtp=0.9596  target=0.96  hit=62.62%  max=2507.92x  vol=7.641  fs=1043   （20 万轮）
-panda-fortune     rtp=0.9454  target=0.96  hit=32.82%  max=103.2x    vol=2.154  fs=294
-pharaoh-gold      rtp=0.9543  target=0.96  hit=25.53%  max=235x      vol=2.976  fs=679  hr=132
+book-of-ra        rtp=0.9553  target=0.955  max=247.69x
+classic-fruits    rtp=0.9386  target=0.95   max=350.10x
+cosmic-crush      rtp=0.9604  target=0.96   max=710.25x
+dragon-fortune    rtp=0.9569  target=0.96   max=260.31x
+inferno-jackpots  rtp=0.9432  target=0.96   max=234.00x
+neon-fruits       rtp=0.9596  target=0.96   max=2507.92x
+panda-fortune     rtp=0.9544  target=0.96   max=103.20x
+pharaoh-gold      rtp=0.9517  target=0.96   max=235.00x
 ```
 
-六台机台实测 RTP 均落在 `target ± tolerance`；`fs` = 免费旋转触发次数，`hr` = 金币重旋触发次数。
+八台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。

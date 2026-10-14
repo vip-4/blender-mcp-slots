@@ -90,7 +90,10 @@ const SHAPES = {
   torch: (c) => `<rect x="42" y="52" width="16" height="42" rx="5" fill="#8b5a2b"/><path d="M50 6 C64 26 70 34 70 44 C70 58 61 66 50 66 C39 66 30 58 30 44 C30 34 36 26 50 6Z" fill="${c}"/><path d="M50 24 C58 36 60 42 60 48 C60 56 56 60 50 60 C44 60 40 56 40 48 C40 42 42 36 50 24Z" fill="#ffe066"/>`,
   phoenix: (c) => `<path d="M50 90 C30 78 22 58 30 38 C36 24 50 16 62 20 C58 30 62 40 70 44 C82 50 92 44 94 32 C96 52 82 70 64 76 C70 82 68 88 62 92 Z" fill="${c}"/><circle cx="58" cy="34" r="4" fill="#1b1206"/><path d="M30 38 C18 30 12 18 14 6 C26 12 34 22 36 32Z" fill="${c}"/><path d="M62 20 C56 8 58 2 64 2 C68 10 70 16 70 22Z" fill="#ffe066"/>`,
   flame: (c) => `<path d="M50 4 C62 26 82 36 82 58 C82 78 68 94 50 94 C32 94 18 78 18 58 C18 40 34 34 40 22 C44 34 40 44 46 52 C52 42 46 26 50 4Z" fill="${c}"/><path d="M50 44 C58 56 64 62 64 72 C64 84 58 90 50 90 C42 90 36 84 36 72 C36 62 44 54 50 44Z" fill="#ffe066"/>`,
-  vault: (c) => `<circle cx="50" cy="52" r="36" fill="${c}"/><circle cx="50" cy="52" r="26" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="6"/><circle cx="50" cy="52" r="9" fill="${darken(c)}"/><g stroke="${darken(c)}" stroke-width="7" stroke-linecap="round"><path d="M50 16 L50 28"/><path d="M50 76 L50 88"/><path d="M14 52 L26 52"/><path d="M74 52 L86 52"/></g><path d="M50 52 L74 34" stroke="${darken(c)}" stroke-width="7" stroke-linecap="round"/>`
+  vault: (c) => `<circle cx="50" cy="52" r="36" fill="${c}"/><circle cx="50" cy="52" r="26" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="6"/><circle cx="50" cy="52" r="9" fill="${darken(c)}"/><g stroke="${darken(c)}" stroke-width="7" stroke-linecap="round"><path d="M50 16 L50 28"/><path d="M50 76 L50 88"/><path d="M14 52 L26 52"/><path d="M74 52 L86 52"/></g><path d="M50 52 L74 34" stroke="${darken(c)}" stroke-width="7" stroke-linecap="round"/>`,
+  book: (c) => `<path d="M8 20 L48 26 L48 92 L12 84 Z" fill="${c}"/><path d="M92 20 L52 26 L52 92 L88 84 Z" fill="${darken(c)}"/><path d="M48 26 L52 26 L52 92 L48 92 Z" fill="rgba(0,0,0,.35)"/><path d="M56 34 L84 30" stroke="#ffe066" stroke-width="5" stroke-linecap="round"/><path d="M56 48 L84 44" stroke="#ffe066" stroke-width="5" stroke-linecap="round"/><path d="M56 62 L80 58" stroke="#ffe066" stroke-width="5" stroke-linecap="round"/><circle cx="70" cy="76" r="8" fill="#ffe066"/>`,
+  crystal: (c) => `<polygon points="50,4 84,34 66,94 34,94 16,34" fill="${c}"/><polygon points="50,4 66,94 34,94" fill="rgba(255,255,255,.28)"/><path d="M16 34 L84 34" stroke="rgba(0,0,0,.25)" stroke-width="4"/><path d="M50 4 L50 94" stroke="rgba(255,255,255,.5)" stroke-width="3"/>`,
+  comet: (c) => `<circle cx="68" cy="32" r="20" fill="${c}"/><circle cx="62" cy="26" r="7" fill="rgba(255,255,255,.75)"/><path d="M56 46 C40 60 26 72 10 92" stroke="${c}" stroke-width="12" stroke-linecap="round" fill="none" opacity=".65"/><path d="M44 56 C34 66 24 76 14 86" stroke="rgba(255,255,255,.6)" stroke-width="5" stroke-linecap="round" fill="none"/>`
 };
 
 function symbolSvg(sym) {
@@ -303,6 +306,7 @@ async function doSpin() {
   const filler = randomGrid();
   state.reelEls.forEach(({ col, cells }, reel) => {
     col.classList.add('rolling');
+    col.classList.remove('expanded');
     cells.forEach((c, row) => {
       c.innerHTML = symbolSvg(symbolById(filler[reel][row]));
       c.className = 'cell';
@@ -351,12 +355,23 @@ async function doSpin() {
     });
   }
 
-  // 4) 中奖演出
-  await highlightWins(result);
+  // 4) 扩展符号提示（Book 系：整轴展开）
+  if (result.expandingSymbol) {
+    const sym = symbolById(result.expandingSymbol.symbolId);
+    for (const reel of result.expandingSymbol.reels) state.reelEls[reel].col.classList.add('expanded');
+    toast(`扩展符号「${sym.label}」整轴展开！`);
+  }
+
+  // 5) 中奖演出：雪崩机台按段播放，其余为单段高亮
+  if (result.cascades && result.cascades.length > 1) {
+    await playCascades(result);
+  } else {
+    await highlightWins(result);
+  }
   await updateHud(result);
   pushHistory(result);
 
-  // 5) 特性 / 自动旋转续转
+  // 6) 特性 / 自动旋转续转
   const pendingFeature = result.nextPhase !== 'base';
   if (pendingFeature) {
     showFeatureBanner(result);
@@ -378,7 +393,11 @@ function showFeatureBanner(result) {
   const fs = result.freeSpins;
   const rs = result.respins;
   if (fs) {
-    el.innerHTML = `<b>免费旋转 ${fs.remaining} 次</b><span>倍率 x${fs.multiplier} · 已获 ${fmt(fs.awarded)}</span>`;
+    const hints = [`倍率 x${fs.multiplier} · 已获 ${fmt(fs.awarded)}`];
+    const sel = result.selectedSymbol || fs.selectedSymbol;
+    if (sel) hints.unshift(`扩展符号：${symbolById(sel).label}（≥2 个即整轴展开）`);
+    if (fs.cascadeIndex) hints.unshift(`连锁倍率已累积至 x${state.config.features?.cascades?.ladder?.[fs.cascadeIndex] ?? fs.cascadeIndex}`);
+    el.innerHTML = `<b>免费旋转 ${fs.remaining} 次</b><span>${hints.join(' · ')}</span>`;
   } else if (rs) {
     el.innerHTML = `<b>金币重旋 ${rs.remaining} 次</b><span>已锁定 ${rs.coins} 枚金币</span>`;
   } else if (result.respinSettlement) {
@@ -439,6 +458,49 @@ async function highlightWins(result) {
     await sleep(520);
   }
   return winCells;
+}
+
+/* 雪崩连锁：逐段重放盘面并展示倍率阶梯 */
+function cascadeBadgeEl() {
+  let el = $('cascadeBadge');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'cascadeBadge';
+    el.className = 'cascade-badge hidden';
+    $('reels').parentElement.appendChild(el);
+  }
+  return el;
+}
+
+function showCascadeBadge(multiplier, win, step) {
+  const el = cascadeBadgeEl();
+  el.innerHTML = `<b>第 ${step} 段</b><span>倍率 x${multiplier}${win > 0 ? ` · +${fmt(win)}` : ''}</span>`;
+  el.classList.remove('hidden');
+}
+
+function hideCascadeBadge() {
+  const el = $('cascadeBadge');
+  if (el) el.classList.add('hidden');
+}
+
+function markDropped(cells = []) {
+  for (const c of cells) state.reelEls[c.reel]?.cells[c.row]?.classList.add('drop');
+}
+
+async function playCascades(result) {
+  const coinValues = new Map(result.bonusCells.map((c) => [`${c.reel},${c.row}`, c.value ?? '']));
+  const wildMults = new Map(result.wildMultipliers.map((w) => [`${w.reel},${w.row}`, w.value]));
+  const holdCells = result.respins ? result.respins.held : [];
+  $('lineOverlay').innerHTML = '';
+  for (let i = 0; i < result.cascades.length; i += 1) {
+    const seg = result.cascades[i];
+    renderGrid(seg.grid, { winCells: seg.winCells, holdCells, coinValues, wildMults });
+    if (i > 0) markDropped(result.cascades[i - 1].newCells);
+    showCascadeBadge(seg.multiplier, seg.win, i + 1);
+    await sleep(i === 0 ? 520 : 430);
+  }
+  renderGrid(result.grid, { holdCells, coinValues, wildMults });
+  hideCascadeBadge();
 }
 
 async function updateHud(result) {
@@ -537,9 +599,12 @@ async function refreshStoreTag() {
     const h = await rpc('store.health');
     const driver = h.primary?.driver || h.driver || 'memory';
     const degraded = h.primary?.degraded || h.degraded;
+    const arc = h.archive || {};
+    const archiveText =
+      arc.enabled === false ? '' : ` · R2 归档${arc.degraded ? '降级' : '就绪'}${arc.pending ? `(${arc.pending})` : ''}`;
     const tag = $('storeTag');
-    tag.textContent = `${driver}${degraded ? ' · 已降级' : ''}`;
-    tag.className = `store-tag ${degraded ? 'warn' : 'ok'}`;
+    tag.textContent = `${driver}${degraded ? ' · 已降级' : ''}${archiveText}`;
+    tag.className = `store-tag ${degraded || arc.degraded ? 'warn' : 'ok'}`;
   } catch {
     $('storeTag').textContent = '—';
   }

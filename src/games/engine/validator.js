@@ -83,6 +83,29 @@ export function validateConfig(config) {
     for (const reel of fs.expandingWild?.reelIndexes || []) {
       need(reel >= 0 && reel < config.grid.reels, `expandingWild reel ${reel} out of range`);
     }
+    if (fs.expandingSymbol) {
+      need((fs.expandingSymbol.minCount ?? 2) >= 2, 'freeSpins.expandingSymbol.minCount must be >= 2');
+      for (const id of fs.expandingSymbol.candidates || []) {
+        need(ids.has(id), `expandingSymbol candidate "${id}" not defined`);
+        need(
+          config.symbols.find((s) => s.id === id)?.kind === 'standard',
+          `expandingSymbol candidate "${id}" must be kind=standard`
+        );
+      }
+      for (const reel of fs.expandingSymbol.reels || []) {
+        need(reel >= 0 && reel < config.grid.reels, `expandingSymbol reel ${reel} out of range`);
+      }
+    }
+  }
+
+  const cas = config.features?.cascades;
+  if (cas) {
+    need(Array.isArray(cas.ladder) && cas.ladder.length > 0, 'cascades.ladder must be a non-empty array');
+    for (const v of cas.ladder || []) {
+      need(typeof v === 'number' && v > 0, `cascades.ladder value "${v}" must be a positive number`);
+    }
+    need((cas.maxSteps ?? 8) >= 1, 'cascades.maxSteps must be >= 1');
+    if (cas.removeWild) warnings.push('cascades.removeWild=true will keep wilds on the grid between cascades');
   }
 
   const hr = config.features?.holdAndRespin;

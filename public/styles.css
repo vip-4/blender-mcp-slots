@@ -146,6 +146,22 @@ main { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; }
 .reel.rolling .cell { animation: roll .3s linear infinite; }
 @keyframes roll { 0% { transform: translateY(-30%); opacity: .55; } 100% { transform: translateY(30%); opacity: 1; } }
 @keyframes pop { 0% { transform: scale(.86); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes drop-in { 0% { transform: translateY(-70%); opacity: .3; } 100% { transform: translateY(0); opacity: 1; } }
+
+/* 雪崩连锁：新落位符号 */
+.cell.drop { animation: drop-in .28s ease; border-color: var(--accent); }
+/* 扩展符号：整轴展开 */
+.reel.expanded {
+  box-shadow: 0 0 0 2px var(--secondary), 0 0 22px color-mix(in srgb, var(--secondary) 55%, transparent);
+  animation: pop .45s ease;
+}
+.cascade-badge {
+  display: flex; align-items: baseline; gap: 8px; justify-content: center; margin-top: 10px;
+  padding: 6px 14px; border-radius: 999px; font-size: 12px;
+  background: rgba(255, 255, 255, .08); border: 1px solid var(--accent); color: #fff;
+}
+.cascade-badge b { color: var(--accent); font-size: 13px; }
+.cascade-badge.hidden { display: none; }
 
 .line-overlay { position: absolute; inset: 0; pointer-events: none; width: 100%; height: 100%; }
 

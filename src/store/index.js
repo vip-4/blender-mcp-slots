@@ -1,6 +1,7 @@
 import { MemoryStore } from './memory.js';
 import { PostgresStore } from './postgres.js';
 import { RedisStore } from './redis.js';
+import { createArchive } from './r2.js';
 
 /**
  * 可插拔存储门面（ResilientStore）
@@ -11,10 +12,11 @@ import { RedisStore } from './redis.js';
  *  3. 读取优先主存储，失败回退内存快照，保证接口永远有数据返回。
  */
 class ResilientStore {
-  constructor({ primary, fallback, logger, metrics }) {
+  constructor({ primary, fallback, logger, metrics, archive = null }) {
     this.name = primary?.name || 'memory';
     this.primary = primary;
     this.fallback = fallback || new MemoryStore();
+    this.archive = archive;
     this.logger = logger;
     this.metrics = metrics;
     this.degraded = false;
@@ -36,6 +38,10 @@ class ResilientStore {
     this.writes += 1;
     try {
       this.fallback.recordSpin(entry);
+    } catch {}
+    // R2 归档：同样走旁路，失败不影响主流程
+    try {
+      this.archive?.push(entry);
     } catch {}
     const onError = (e) => {
       this.dropped += 1;
@@ -71,6 +77,18 @@ class ResilientStore {
     return this.fallback.leaderboard(query);
   }
 
+  /** 立即把缓冲中的旋转流水归档到 R2（供运维/审计手动触发） */
+  async flushArchive() {
+    if (!this.archive) return { enabled: false, flushed: 0 };
+    return this.archive.flush();
+  }
+
+  /** 机台 CONFIG 快照备份（参数化调参的回滚点） */
+  async snapshotConfigs(name, payload) {
+    if (!this.archive) return { enabled: false, ok: false };
+    return this.archive.snapshot(name, payload);
+  }
+
   async health() {
     const primary = await this.primary.health().catch((e) => ({ ok: false, degraded: true, reason: String(e?.message) }));
     const fallback = await this.fallback.health().catch(() => ({ ok: false }));
@@ -79,12 +97,13 @@ class ResilientStore {
       degraded: !!primary.degraded || !primary.ok,
       primary,
       fallback,
+      archive: this.archive ? this.archive.health() : { enabled: false },
       counters: { writes: this.writes, dropped: this.dropped }
     };
   }
 
   async close() {
-    await Promise.allSettled([this.primary.close?.(), this.fallback.close?.()]);
+    await Promise.allSettled([this.primary.close?.(), this.fallback.close?.(), this.archive?.close?.()]);
   }
 }
 
@@ -107,8 +126,14 @@ export async function createStore({ driver, databaseUrl, redisUrl, logger, metri
     primary = new MemoryStore();
   }
 
-  const store = new ResilientStore({ primary, logger, metrics });
+  // R2 归档：未配置凭据时返回 null，行为与之前完全一致
+  const archive = createArchive({ logger });
+  const store = new ResilientStore({ primary, logger, metrics, archive });
   const info = await store.init();
+  if (archive) {
+    const a = await archive.init();
+    logger?.info('r2 archive initialised', a);
+  }
 
   // Redis 作为旁路缓存：可用则登记机台键前缀，不可用静默跳过
   if (cacheUrl && primary.name !== 'redis') {

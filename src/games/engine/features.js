@@ -70,6 +70,85 @@ export function jackpotFor(heldCount, cfg) {
   return null;
 }
 
+/* ============================================================
+ *  雪崩连锁（Cascading / Avalanche Reels）
+ *  中奖符号消除 → 上方符号下落 → 顶部补新符号 → 倍率按阶梯递增
+ *  纯数据驱动：CONFIG.features.cascades = { ladder, maxSteps, removeWild }
+ * ============================================================ */
+
+/** 第 step 段雪崩对应的倍率（超出 ladder 长度则取最后一级） */
+export function cascadeMultiplier(cfg, step) {
+  const ladder = cfg?.ladder?.length ? cfg.ladder : [1];
+  return ladder[Math.min(Math.max(step, 0), ladder.length - 1)];
+}
+
+/**
+ * 消除中奖格并让上方符号下落，顶部用条带补新符号。
+ * @returns {{grid: string[][], removed: object[], newCells: object[]}}
+ */
+export function collapseGrid({ grid, winCells, strips, rng, removeWild = false, wildIds = [] }) {
+  const reels = grid.length;
+  const rows = grid[0].length;
+  const mask = Array.from({ length: reels }, () => Array.from({ length: rows }, () => false));
+  const removed = [];
+  for (const p of winCells) {
+    if (!mask[p.reel] || p.row >= rows) continue;
+    if (!removeWild && wildIds.includes(grid[p.reel][p.row])) continue;
+    if (mask[p.reel][p.row]) continue;
+    mask[p.reel][p.row] = true;
+    removed.push({ reel: p.reel, row: p.row, symbol: grid[p.reel][p.row] });
+  }
+  if (!removed.length) return { grid, removed, newCells: [] };
+
+  const next = [];
+  const newCells = [];
+  for (let reel = 0; reel < reels; reel += 1) {
+    const survivors = [];
+    for (let row = 0; row < rows; row += 1) if (!mask[reel][row]) survivors.push(grid[reel][row]);
+    const freshCount = rows - survivors.length;
+    const strip = strips?.[reel]?.length ? strips[reel] : null;
+    const column = [];
+    for (let i = 0; i < freshCount; i += 1) {
+      column.push(strip ? strip[rng.int(strip.length)] : survivors[0] ?? grid[reel][0]);
+      newCells.push({ reel, row: i });
+    }
+    for (const s of survivors) column.push(s);
+    next.push(column);
+  }
+  return { grid: next, removed, newCells };
+}
+
+/* ============================================================
+ *  扩展符号（Expanding Symbol，Book 系经典玩法）
+ *  进入免费旋转时随机选定一个符号；盘面出现 >= minCount 个时整轴展开
+ * ============================================================ */
+
+export function pickExpandingSymbol({ config, cfg, rng }) {
+  const pool = config.symbols.filter((s) => s.kind === 'standard' && s.pay);
+  const candidates = (cfg?.candidates || []).filter((id) => pool.some((s) => s.id === id));
+  const list = candidates.length ? candidates : pool.map((s) => s.id);
+  if (!list.length) return null;
+  return list[rng.int(list.length)];
+}
+
+export function applyExpandingSymbol({ grid, symbolId, reels, minCount = 2 }) {
+  if (!symbolId) return { expanded: [], reels: [] };
+  const count = grid.reduce((n, col) => n + col.filter((x) => x === symbolId).length, 0);
+  if (count < minCount) return { expanded: [], reels: [], count };
+  const targets = [];
+  for (let reel = 0; reel < grid.length; reel += 1) {
+    if (!grid[reel].includes(symbolId)) continue;
+    if (reels?.length && !reels.includes(reel)) continue;
+    targets.push(reel);
+    for (let row = 0; row < grid[reel].length; row += 1) grid[reel][row] = symbolId;
+  }
+  return {
+    expanded: targets.flatMap((reel) => grid[reel].map((_, row) => ({ reel, row }))),
+    reels: targets,
+    count
+  };
+}
+
 /** 免费旋转倍率递进 */
 export function stepMultiplier(current, cfg, reason) {
   if (!cfg?.multiplier) return current;

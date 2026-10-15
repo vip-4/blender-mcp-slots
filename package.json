@@ -18,7 +18,7 @@
     "site:build": "node scripts/minify-site.mjs --slim",
     "site:og": "node scripts/og-cards.mjs",
     "site:smoke": "node scripts/smoke-live.mjs",
-    "test": "node --test tests/"
+    "test": "node --test"
   },
   "optionalDependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

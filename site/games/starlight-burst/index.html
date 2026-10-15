@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============ 基础 SEO ============ -->
+<title>星光爆裂 Starlight Burst · 免费在线老虎机试玩（WILD 重旋 · 双向赔付）</title>
+<meta name="description" content="星光爆裂是开源的老虎机（SLOT GAMES）试玩页：5×3、10 线双向赔付，星芒 WILD 落在第 2/3/4 轴即整轴展开并触发 3 次免费重旋。纯前端实现，免后端、免注册，仅使用虚拟积分。">
+<meta name="keywords" content="星光爆裂,Starlight Burst,老虎机,SLOT GAMES,免费旋转,WILD 重旋,双向赔付,RTP,开源游戏,单文件游戏,网页游戏">
+<meta name="author" content="blender-mcp-slots">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#1b1046">
+<link rel="canonical" href="https://vip-4.github.io/blender-mcp-slots/games/starlight-burst/">
+
+<!-- ============ Open Graph ============ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Blender MCP Slots · 轻量静态游戏">
+<meta property="og:title" content="星光爆裂 · 免费在线老虎机试玩">
+<meta property="og:description" content="5×3、10 线双向赔付，星芒 WILD 整轴展开触发 3 次免费重旋。纯前端实现，免后端、免注册。">
+<meta property="og:url" content="https://vip-4.github.io/blender-mcp-slots/games/starlight-burst/">
+<meta property="og:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="霓虹紫金风格的老虎机转轮与符号封面图">
+<meta property="og:locale" content="zh_CN">
+
+<!-- ============ Twitter Card ============ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="星光爆裂 · 免费在线老虎机试玩">
+<meta name="twitter:description" content="5×3、10 线双向赔付，星芒 WILD 整轴展开触发 3 次免费重旋，纯前端免后端。">
+<meta name="twitter:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
+<meta name="twitter:image:alt" content="霓虹紫金风格的老虎机转轮与符号封面图">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b1046'/%3E%3Crect x='6' y='9' width='20' height='14' rx='3' fill='none' stroke='%23ffd166' stroke-width='2'/%3E%3Ccircle cx='12' cy='16' r='2.5' fill='%23ef476f'/%3E%3Ccircle cx='20' cy='16' r='2.5' fill='%237de2fc'/%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:#0b0724; --bg2:#170f3d; --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.14);
+    --fg:#f4f1ff; --muted:#b9b3d6; --primary:#7c5cff; --accent:#7de2fc; --gold:#ffd166; --radius:14px;
+    --font:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.06); --line:rgba(28,16,80,.16); --fg:#1b1046; --muted:#4b4470; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:var(--font); color:var(--fg); line-height:1.7; background:radial-gradient(1000px 520px at 12% -10%, var(--bg2), var(--bg)) no-repeat, var(--bg); }
+  .wrap { width:min(960px,92vw); margin-inline:auto; }
+  a { color:var(--accent); } a:hover { text-decoration:underline; }
+  :focus-visible { outline:3px solid var(--gold); outline-offset:2px; border-radius:6px; }
+  .skip { position:absolute; left:-9999px; top:0; background:var(--gold); color:#1b1046; padding:.5rem 1rem; z-index:20; }
+  .skip:focus { left:1rem; top:1rem; }
+  header.site { border-bottom:1px solid var(--line); }
+  header.site .wrap { display:flex; gap:1rem; align-items:center; justify-content:space-between; padding:.7rem 0; flex-wrap:wrap; }
+  .brand { font-weight:800; }
+  nav ul { display:flex; gap:1rem; list-style:none; margin:0; padding:0; font-size:.92rem; flex-wrap:wrap; }
+  h1 { font-size:clamp(1.5rem,4vw,2.2rem); line-height:1.25; margin:.4rem 0 .5rem; }
+  h2 { font-size:1.2rem; margin:1.8rem 0 .6rem; }
+  p { margin:.5rem 0; }
+  .muted { color:var(--muted); }
+  .machine { display:grid; gap:1.2rem; grid-template-columns:minmax(0,1.35fr) minmax(240px,1fr); margin-top:1rem; }
+  @media (max-width:760px) { .machine { grid-template-columns:1fr; } }
+  .reels { display:grid; grid-template-columns:repeat(5,1fr); gap:.5rem; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:.6rem; }
+  .reel { display:grid; gap:.5rem; }
+  .cell { aspect-ratio:1/1; display:grid; place-items:center; border-radius:10px; font-weight:800; font-size:clamp(.8rem,2.4vw,1.3rem); background:rgba(255,255,255,.06); border:1px solid var(--line); }
+  .cell.win { box-shadow:0 0 0 2px var(--gold) inset, 0 0 18px rgba(255,209,102,.45); }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:1rem; }
+  .row { display:flex; justify-content:space-between; gap:.6rem; font-size:.9rem; padding:.22rem 0; }
+  .row b { font-variant-numeric:tabular-nums; }
+  .controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; margin-top:.8rem; }
+  select, button { font:inherit; color:var(--fg); background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:.55rem .8rem; }
+  button { cursor:pointer; }
+  button.primary { background:linear-gradient(135deg,var(--primary),#b388ff); border-color:transparent; font-weight:700; }
+  .log { margin-top:.8rem; font-size:.85rem; color:var(--muted); max-height:9rem; overflow:auto; }
+  .status { margin-top:.7rem; min-height:1.6em; color:var(--gold); font-weight:700; }
+  table { width:100%; border-collapse:collapse; font-size:.92rem; margin-top:.6rem; }
+  caption { text-align:left; color:var(--muted); font-size:.86rem; padding-bottom:.4rem; }
+  th, td { text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); }
+  td.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .table-scroll { overflow-x:auto; }
+  dl.facts { display:grid; gap:.3rem 1.2rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin:.8rem 0 0; }
+  dl.facts dt { font-weight:700; font-size:.9rem; } dl.facts dd { margin:0 0 .5rem; color:var(--muted); font-size:.9rem; }
+  footer.site { border-top:1px solid var(--line); margin-top:2.4rem; padding:1.4rem 0 2.4rem; color:var(--muted); font-size:.88rem; }
+  .note { border-left:3px solid var(--gold); padding-left:.8rem; color:var(--muted); font-size:.88rem; margin-top:1rem; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">◈ 轻量静态游戏</div>
+    <nav aria-label="站内导航">
+      <ul>
+        <li><a href="/blender-mcp-slots/">游戏中心首页</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-2048/">霓虹 2048</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-snake/">霓虹贪吃蛇</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-breakout/">霓虹打砖块</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap" aria-labelledby="game-title">
+  <h1 id="game-title">星光爆裂 Starlight Burst：免费在线老虎机试玩</h1>
+  <p class="muted">星光爆裂是 <strong>5×3、10 线双向赔付</strong>的老虎机试玩页：星芒 WILD 只出现在第 2/3/4 轴，出现即<strong>整轴展开</strong>并触发 3 次免费重旋，重旋中再出新 WILD 则次数重置。本页为纯前端实现，免后端、免注册，仅使用虚拟积分。</p>
+
+  <div class="machine">
+    <div>
+      <div class="reels" id="reels" role="img" aria-label="5 轴 3 行老虎机盘面，共 15 个格子"></div>
+      <div class="controls">
+        <label class="muted" for="betSel">投注</label>
+        <select id="betSel" aria-label="选择每轮投注额度">
+          <option value="0.2">0.2</option>
+          <option value="0.5">0.5</option>
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+        </select>
+        <button class="primary" id="spinBtn" type="button">旋转（空格）</button>
+        <button id="resetBtn" type="button">重置</button>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite">点击「旋转」开始，初始积分 1000。</p>
+      <div class="log" id="log" aria-live="polite" aria-label="特性与结算日志"></div>
+    </div>
+    <div class="panel">
+      <div class="row"><span>积分余额</span><b id="bal">1000.00</b></div>
+      <div class="row"><span>累计投注</span><b id="tb">0.00</b></div>
+      <div class="row"><span>累计派彩</span><b id="tw">0.00</b></div>
+      <div class="row"><span>实时 RTP</span><b id="rtp">—</b></div>
+      <div class="row"><span>轮次</span><b id="rounds">0</b></div>
+      <div class="row"><span>WILD 重旋剩余</span><b id="rsLeft">—</b></div>
+    </div>
+  </div>
+
+  <h2>规则与赔付</h2>
+  <div class="table-scroll">
+    <table>
+      <caption>星光爆裂赔付表（每线注倍数；每条线左右各判一次）</caption>
+      <thead><tr><th scope="col">符号</th><th scope="col">3 连</th><th scope="col">4 连</th><th scope="col">5 连</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">红宝石 / 黄玉</th><td class="num">1×</td><td class="num">3×</td><td class="num">10×</td></tr>
+        <tr><th scope="row">蓝宝石</th><td class="num">1.5×</td><td class="num">4×</td><td class="num">12×</td></tr>
+        <tr><th scope="row">祖母绿</th><td class="num">2×</td><td class="num">5×</td><td class="num">15×</td></tr>
+        <tr><th scope="row">紫水晶</th><td class="num">3×</td><td class="num">8×</td><td class="num">24×</td></tr>
+        <tr><th scope="row">BAR</th><td class="num">5×</td><td class="num">15×</td><td class="num">45×</td></tr>
+        <tr><th scope="row">幸运 7</th><td class="num">8×</td><td class="num">24×</td><td class="num">70×</td></tr>
+        <tr><th scope="row">星芒 WILD</th><td colspan="3">替代任意符号；落在第 2/3/4 轴即整轴展开，赠送 3 次免费重旋</td></tr>
+        <tr><th scope="row">星云 SCATTER</th><td class="num">2×总注</td><td class="num">5×总注</td><td class="num">20×总注</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>玩法要点</h2>
+  <dl class="facts">
+    <dt>双向赔付</dt><dd>同一条线「左→右」与「右→左」各判定一次，两向同时成立各付一次。</dd>
+    <dt>WILD 重旋</dt><dd>星芒 WILD 只出现在第 2/3/4 轴；出现即整轴展开成黏性 WILD，并赠送 3 次免费重旋，重旋中再出新 WILD 则重置为 3 次。</dd>
+    <dt>散射</dt><dd>3 个及以上星云按 2× / 5× / 20× 总注派彩。</dd>
+    <dt>参考 RTP</dt><dd>完整引擎 20 万轮蒙特卡洛实测 0.9622（目标 0.962）。</dd>
+    <dt>操作</dt><dd>点击「旋转」或按空格；可在下拉框切换 0.2 ~ 10 的投注档位。</dd>
+  </dl>
+
+  <p class="note">合规与实现说明：本页为概率引擎的技术演示，所有「投注 / 派彩」均为虚拟积分，不涉及真实货币交易，也不提供任何博彩服务；HTML/CSS/JS 全部内联，无外部请求。</p>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p><a href="/blender-mcp-slots/">← 返回游戏中心</a> · Blender MCP Slots 轻量静态游戏合集 · MIT License · 最后更新：<time datetime="2026-10-15">2026-10-15</time></p>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoGame",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/starlight-burst/#game",
+      "name": "星光爆裂 Starlight Burst",
+      "description": "5×3、10 线双向赔付的老虎机试玩：星芒 WILD 整轴展开触发 3 次免费重旋，纯前端实现，仅使用虚拟积分。",
+      "gameGenre": ["老虎机", "Slot", "SLOT GAMES"],
+      "gamePlatform": ["Web Browser", "Desktop", "Mobile"],
+      "playMode": "SinglePlayer",
+      "url": "https://vip-4.github.io/blender-mcp-slots/games/starlight-burst/",
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true,
+      "license": "https://opensource.org/licenses/MIT",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "accessibilityFeature": ["KeyboardControl", "AlternativeText"],
+      "featureList": ["5×3 / 10 线", "双向赔付", "WILD 整轴展开", "3 次免费重旋", "虚拟积分、无需注册"],
+      "additionalProperty": [
+        { "@type": "PropertyValue", "name": "参考 RTP", "value": "0.9622" },
+        { "@type": "PropertyValue", "name": "特性", "value": "WILD 重旋 · 双向赔付" }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/starlight-burst/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "游戏中心", "item": "https://vip-4.github.io/blender-mcp-slots/" },
+        { "@type": "ListItem", "position": 2, "name": "轻量静态游戏", "item": "https://vip-4.github.io/blender-mcp-slots/#arcade" },
+        { "@type": "ListItem", "position": 3, "name": "星光爆裂" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var SYM = [
+    { id: 'ruby', label: '红宝石', glyph: '◆', color: '#ef476f', w: 110, pay: { 3: 1, 4: 3, 5: 10 } },
+    { id: 'topaz', label: '黄玉', glyph: '◆', color: '#ffd166', w: 110, pay: { 3: 1, 4: 3, 5: 10 } },
+    { id: 'sapphire', label: '蓝宝石', glyph: '◆', color: '#4cc9f0', w: 105, pay: { 3: 1.5, 4: 4, 5: 12 } },
+    { id: 'emerald', label: '祖母绿', glyph: '◆', color: '#06d6a0', w: 100, pay: { 3: 2, 4: 5, 5: 15 } },
+    { id: 'amethyst', label: '紫水晶', glyph: '◆', color: '#b388ff', w: 60, pay: { 3: 3, 4: 8, 5: 24 } },
+    { id: 'bar', label: 'BAR', glyph: 'BAR', color: '#f8f9fa', w: 42, pay: { 3: 5, 4: 15, 5: 45 } },
+    { id: 'seven', label: '幸运 7', glyph: '7', color: '#ff8500', w: 26, pay: { 3: 8, 4: 24, 5: 70 } },
+    { id: 'star', label: '星芒', glyph: '★', color: '#ffe066', w: 6, pay: null, wild: true },
+    { id: 'nebula', label: '星云', glyph: '◉', color: '#c77dff', w: 16, pay: null, scatter: { 3: 2, 4: 5, 5: 20 } }
+  ];
+  var BY_ID = {};
+  for (var i = 0; i < SYM.length; i += 1) BY_ID[SYM[i].id] = SYM[i];
+
+  var LINES = [
+    [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2],
+    [1, 0, 0, 0, 1], [1, 2, 2, 2, 1], [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [0, 1, 1, 1, 0]
+  ];
+  var WILD_REELS = [1, 2, 3], RESPINS = 3;
+  var state = { bet: 1, balance: 1000, totalBet: 0, totalWin: 0, rounds: 0, rs: { active: false, remaining: 0, sticky: {}, awarded: 0 } };
+  var els = {}, busy = false;
+
+  function rand() {
+    var a = new Uint32Array(1);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return a[0] / 4294967296;
+  }
+  function rollReel(reel) {
+    var allowWild = WILD_REELS.indexOf(reel) >= 0, total = 0, k;
+    for (k = 0; k < SYM.length; k += 1) if (allowWild || !SYM[k].wild) total += SYM[k].w;
+    var r = rand() * total;
+    for (k = 0; k < SYM.length; k += 1) {
+      if (!allowWild && SYM[k].wild) continue;
+      r -= SYM[k].w;
+      if (r <= 0) return SYM[k].id;
+    }
+    return SYM[0].id;
+  }
+  function rollGrid() {
+    var grid = [];
+    for (var reel = 0; reel < 5; reel += 1) {
+      var col = [];
+      for (var row = 0; row < 3; row += 1) col.push(rollReel(reel));
+      grid.push(col);
+    }
+    return grid;
+  }
+  function key(p) { return p.reel + ',' + p.row; }
+
+  function applySticky(grid) {
+    Object.keys(state.rs.sticky).forEach(function (k) {
+      var parts = k.split(',');
+      grid[+parts[0]][+parts[1]] = 'star';
+    });
+  }
+  function findWilds(grid) {
+    var out = [];
+    WILD_REELS.forEach(function (reel) {
+      for (var row = 0; row < 3; row += 1) if (grid[reel][row] === 'star') out.push({ reel: reel, row: row });
+    });
+    return out;
+  }
+  function judge(grid, pattern) {
+    var seq = pattern.map(function (r, i) { return grid[i][r]; });
+    var base = null, i;
+    for (i = 0; i < seq.length; i += 1) if (seq[i] !== 'star') { base = seq[i]; break; }
+    if (base === null) base = seq[0];
+    var matched = [];
+    for (var j = 0; j < seq.length; j += 1) {
+      if (seq[j] === base || seq[j] === 'star') matched.push({ reel: j, row: pattern[j] });
+      else break;
+    }
+    var sym = BY_ID[base];
+    if (matched.length < 3 || !sym.pay) return null;
+    return { base: base, count: matched.length, cells: matched, pay: sym.pay[matched.length] };
+  }
+  function evaluate(grid, bet) {
+    var perUnit = bet / LINES.length, win = 0, cells = {}, details = [];
+    LINES.forEach(function (pattern) {
+      [pattern, pattern.slice().reverse()].forEach(function (p, idx) {
+        var hit = judge(grid, p);
+        if (!hit) return;
+        var amount = Math.round(hit.pay * perUnit * 100) / 100;
+        win += amount;
+        hit.cells.forEach(function (c) { cells[key(c)] = true; });
+        if (details.length < 6) details.push(hit.count + ' 连 ' + BY_ID[hit.base].label + (idx ? '（右→左）' : '（左→右）') + ' +' + amount.toFixed(2));
+      });
+    });
+    var scatter = 0;
+    for (var reel = 0; reel < 5; reel += 1) for (var row = 0; row < 3; row += 1) if (grid[reel][row] === 'nebula') scatter += 1;
+    if (scatter >= 3) {
+      var sp = BY_ID.nebula.scatter[Math.min(scatter, 5)] * bet;
+      win += sp;
+      details.unshift(scatter + ' 个星云散射 +' + sp.toFixed(2) + '（总注倍数）');
+    }
+    return { win: Math.round(win * 100) / 100, cells: cells, details: details };
+  }
+  function render(grid, res) {
+    var html = '';
+    for (var reel = 0; reel < 5; reel += 1) {
+      html += '<div class="reel">';
+      for (var row = 0; row < 3; row += 1) {
+        var s = BY_ID[grid[reel][row]];
+        var winCls = res && res.cells[key({ reel: reel, row: row })] ? ' win' : '';
+        html += '<div class="cell' + winCls + '" style="color:' + s.color + '">' + s.glyph + '</div>';
+      }
+      html += '</div>';
+    }
+    els.reels.innerHTML = html;
+    els.reels.setAttribute('aria-label', '盘面：' + grid.map(function (col) { return col.map(function (id) { return BY_ID[id].label; }).join('、'); }).join(' | '));
+  }
+  function log(msg) {
+    var d = document.createElement('div');
+    d.textContent = msg;
+    els.log.insertBefore(d, els.log.firstChild);
+  }
+  function updateHud() {
+    els.bal.textContent = state.balance.toFixed(2);
+    els.tb.textContent = state.totalBet.toFixed(2);
+    els.tw.textContent = state.totalWin.toFixed(2);
+    els.rtp.textContent = state.totalBet > 0 ? (state.totalWin / state.totalBet).toFixed(4) : '—';
+    els.rounds.textContent = String(state.rounds);
+    els.rsLeft.textContent = state.rs.active ? state.rs.remaining + ' 次 · 已获 ' + state.rs.awarded.toFixed(2) : '—';
+    els.spinBtn.textContent = state.rs.active ? '免费重旋（空格）' : '旋转（空格）';
+  }
+  function spin() {
+    if (busy) return;
+    busy = true;
+    var rs = state.rs, free = rs.active;
+    if (!free) {
+      if (state.balance < state.bet) { els.status.textContent = '积分不足，请降低投注或点击重置。'; busy = false; return; }
+      state.balance -= state.bet;
+      state.totalBet += state.bet;
+    }
+    var grid = rollGrid();
+    if (free) applySticky(grid);
+    var fresh = findWilds(grid).filter(function (p) { return !rs.sticky[key(p)]; });
+    if (fresh.length) {
+      var reelsHit = [];
+      fresh.forEach(function (p) {
+        if (reelsHit.indexOf(p.reel) < 0) reelsHit.push(p.reel);
+        rs.sticky[key(p)] = true;
+      });
+      reelsHit.forEach(function (reel) {
+        for (var row = 0; row < 3; row += 1) { grid[reel][row] = 'star'; rs.sticky[key({ reel: reel, row: row })] = true; }
+      });
+      if (free) {
+        rs.remaining = RESPINS;
+        log('新的星芒 WILD 落在第 ' + reelsHit.map(function (r) { return r + 1; }).join('/') + ' 轴 → 重旋次数重置为 ' + RESPINS);
+      } else {
+        rs.active = true; rs.remaining = RESPINS; rs.awarded = 0;
+        log('星芒 WILD 落在第 ' + reelsHit.map(function (r) { return r + 1; }).join('/') + ' 轴 → 整轴展开，获得 ' + RESPINS + ' 次免费重旋');
+      }
+    } else if (free) {
+      rs.remaining -= 1;
+    }
+    var res = evaluate(grid, state.bet);
+    state.balance += res.win;
+    state.totalWin += res.win;
+    state.rounds += 1;
+    if (res.details.length) {
+      log('本轮' + (free ? '重旋' : '旋转') + '赢得 ' + res.win.toFixed(2) + '：' + res.details.join('；'));
+      els.status.textContent = '本轮赢得 ' + res.win.toFixed(2) + ' 积分。';
+    } else {
+      els.status.textContent = free ? '重旋未中奖。' : '本轮未中奖，再试一次。';
+    }
+    if (rs.active) {
+      rs.awarded += res.win;
+      if (rs.remaining < 0) {
+        log('WILD 重旋结束：本段共赢得 ' + rs.awarded.toFixed(2));
+        rs.active = false; rs.remaining = 0; rs.sticky = {}; rs.awarded = 0;
+      }
+    }
+    render(grid, res);
+    updateHud();
+    busy = false;
+  }
+  function reset() {
+    state.balance = 1000; state.totalBet = 0; state.totalWin = 0; state.rounds = 0;
+    state.rs = { active: false, remaining: 0, sticky: {}, awarded: 0 };
+    els.log.innerHTML = '';
+    els.status.textContent = '已重置，初始积分 1000。';
+    render(rollGrid(), null);
+    updateHud();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    els = {
+      reels: document.getElementById('reels'), betSel: document.getElementById('betSel'), spinBtn: document.getElementById('spinBtn'),
+      resetBtn: document.getElementById('resetBtn'), status: document.getElementById('status'), log: document.getElementById('log'),
+      bal: document.getElementById('bal'), tb: document.getElementById('tb'), tw: document.getElementById('tw'),
+      rtp: document.getElementById('rtp'), rounds: document.getElementById('rounds'), rsLeft: document.getElementById('rsLeft')
+    };
+    els.spinBtn.addEventListener('click', spin);
+    els.resetBtn.addEventListener('click', reset);
+    els.betSel.addEventListener('change', function () { state.bet = parseFloat(els.betSel.value); });
+    document.addEventListener('keydown', function (e) {
+      if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); spin(); }
+    });
+    render(rollGrid(), null);
+    updateHud();
+  });
+})();
+</script>
+</body>
+</html>

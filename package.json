@@ -16,6 +16,7 @@
     "site:serve": "node scripts/serve-site.mjs 8080",
     "site:check": "node scripts/check-site.mjs",
     "site:build": "node scripts/minify-site.mjs --slim",
+    "site:og": "node scripts/og-cards.mjs",
     "test": "node --test tests/"
   },
   "optionalDependencies": {

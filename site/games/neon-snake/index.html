@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============ 基础 SEO ============ -->
+<title>霓虹贪吃蛇 · 免费在线网页版 Snake（免安装、单文件）</title>
+<meta name="description" content="霓虹贪吃蛇是开源的单文件网页版贪吃蛇（Snake）：方向键控制蛇吃到光点不断变长，撞墙或撞到自己即结束，可随时暂停。零依赖、离线可玩、无需注册，适配桌面与手机浏览器。">
+<meta name="keywords" content="贪吃蛇,贪吃蛇游戏,Snake,在线贪吃蛇,免费小游戏,HTML5 游戏,单文件游戏,开源游戏,网页游戏,休闲游戏">
+<meta name="author" content="blender-mcp-slots">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#1b1046">
+<link rel="canonical" href="https://vip-4.github.io/blender-mcp-slots/games/neon-snake/">
+
+<!-- ============ Open Graph ============ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Blender MCP Slots · 轻量静态游戏">
+<meta property="og:title" content="霓虹贪吃蛇 · 免费在线网页版 Snake">
+<meta property="og:description" content="方向键控制蛇吃到光点不断变长，撞墙或撞到自己即结束。零依赖单文件网页游戏，支持键盘与触屏。">
+<meta property="og:url" content="https://vip-4.github.io/blender-mcp-slots/games/neon-snake/">
+<meta property="og:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-snake.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="霓虹风格贪吃蛇网格与光点封面图">
+<meta property="og:locale" content="zh_CN">
+
+<!-- ============ Twitter Card ============ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="霓虹贪吃蛇 · 免费在线网页版 Snake">
+<meta name="twitter:description" content="方向键控制蛇吃到光点不断变长，撞墙或撞到自己即结束。零依赖单文件网页游戏。">
+<meta name="twitter:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-snake.png">
+<meta name="twitter:image:alt" content="霓虹风格贪吃蛇网格与光点封面图">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b1046'/%3E%3Crect x='7' y='13' width='12' height='6' rx='3' fill='%2306d6a0'/%3E%3Ccircle cx='23' cy='16' r='3' fill='%23ffd166'/%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:#0b0724; --bg2:#170f3d; --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.14);
+    --fg:#f4f1ff; --muted:#b9b3d6; --primary:#7c5cff; --accent:#7de2fc; --gold:#ffd166; --ok:#06d6a0; --radius:14px;
+    --font:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.06); --line:rgba(28,16,80,.16); --fg:#1b1046; --muted:#4b4470; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:var(--font); color:var(--fg); line-height:1.7; background:radial-gradient(1000px 520px at 12% -10%, var(--bg2), var(--bg)) no-repeat, var(--bg); }
+  .wrap { width:min(880px,92vw); margin-inline:auto; }
+  a { color:var(--accent); } a:hover { text-decoration:underline; }
+  :focus-visible { outline:3px solid var(--gold); outline-offset:2px; border-radius:6px; }
+  .skip { position:absolute; left:-9999px; top:0; background:var(--gold); color:#1b1046; padding:.5rem 1rem; z-index:20; }
+  .skip:focus { left:1rem; top:1rem; }
+  header.site { border-bottom:1px solid var(--line); }
+  header.site .wrap { display:flex; gap:1rem; align-items:center; justify-content:space-between; padding:.7rem 0; flex-wrap:wrap; }
+  .brand { font-weight:800; }
+  nav ul { display:flex; gap:1rem; list-style:none; margin:0; padding:0; font-size:.92rem; flex-wrap:wrap; }
+  h1 { font-size:clamp(1.5rem,4vw,2.2rem); line-height:1.25; margin:.4rem 0 .5rem; }
+  h2 { font-size:1.2rem; margin:1.8rem 0 .6rem; }
+  p { margin:.5rem 0; }
+  .muted { color:var(--muted); }
+  .hud { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; margin:.8rem 0; }
+  .score { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.4rem .8rem; font-variant-numeric:tabular-nums; }
+  button { font:inherit; color:var(--fg); background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:.55rem .9rem; cursor:pointer; }
+  button.primary { background:linear-gradient(135deg,var(--primary),#b388ff); border-color:transparent; font-weight:700; }
+  .stage { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:.7rem; }
+  canvas { width:100%; height:auto; display:block; border-radius:10px; background:#08051c; touch-action:none; }
+  .status { margin-top:.7rem; min-height:1.6em; color:var(--gold); font-weight:700; }
+  table { width:100%; border-collapse:collapse; font-size:.92rem; margin-top:.6rem; }
+  caption { text-align:left; color:var(--muted); font-size:.86rem; padding-bottom:.4rem; }
+  th, td { text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); }
+  dl.facts { display:grid; gap:.3rem 1.2rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin:.8rem 0 0; }
+  dl.facts dt { font-weight:700; font-size:.9rem; } dl.facts dd { margin:0 0 .5rem; color:var(--muted); font-size:.9rem; }
+  footer.site { border-top:1px solid var(--line); margin-top:2.4rem; padding:1.4rem 0 2.4rem; color:var(--muted); font-size:.88rem; }
+  .note { border-left:3px solid var(--gold); padding-left:.8rem; color:var(--muted); font-size:.88rem; margin-top:1rem; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">◈ 轻量静态游戏</div>
+    <nav aria-label="站内导航">
+      <ul>
+        <li><a href="/blender-mcp-slots/">游戏中心首页</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-2048/">霓虹 2048</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-breakout/">霓虹打砖块</a></li>
+        <li><a href="/blender-mcp-slots/games/starlight-burst/">星光爆裂</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap" aria-labelledby="game-title">
+  <h1 id="game-title">霓虹贪吃蛇：免费在线网页版 Snake</h1>
+  <p class="muted">霓虹贪吃蛇是贪吃蛇（Snake）的霓虹主题单文件网页实现：控制蛇吃到光点不断变长，<strong>撞墙或撞到自己即结束</strong>。零依赖、离线可玩、无广告、无需注册，支持键盘与触屏滑动。</p>
+
+  <div class="hud">
+    <span class="score" aria-label="当前长度">长度 <b id="score">3</b></span>
+    <span class="score" aria-label="历史最长">最长 <b id="best">3</b></span>
+    <span class="score" aria-label="当前速度">速度 <b id="speed">1.0×</b></span>
+    <button class="primary" id="startBtn" type="button">开始</button>
+    <button id="pauseBtn" type="button">暂停</button>
+    <button id="restartBtn" type="button">重开</button>
+  </div>
+
+  <div class="stage">
+    <canvas id="cv" width="420" height="420" role="img" aria-label="贪吃蛇游戏画面：20×20 格网格，绿蛇与金色光点"></canvas>
+  </div>
+  <p id="status" class="status" role="status" aria-live="polite">点击「开始」，用方向键或 WASD 控制方向。</p>
+
+  <h2>怎么玩（规则一览）</h2>
+  <dl class="facts">
+    <dt>目标</dt><dd>吃到金色光点让蛇变长，长度越长分数越高。</dd>
+    <dt>失败条件</dt><dd>撞到边界墙，或头部撞到自己的身体。</dd>
+    <dt>速度</dt><dd>每吃到 5 个光点提速一档，最高 2.2×，越到后期越考验路线规划。</dd>
+    <dt>转向</dt><dd>不能直接反向 180° 掉头，必须在相邻方向之间切换。</dd>
+    <dt>计分</dt><dd>每个光点 +1 长度；长度会与历史最长比较并保存在本地。</dd>
+  </dl>
+
+  <h2>操作方式</h2>
+  <table>
+    <caption>霓虹贪吃蛇的键盘与触屏操作</caption>
+    <thead><tr><th scope="col">操作</th><th scope="col">键盘</th><th scope="col">触屏</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">上 / 下 / 左 / 右</th><td>↑ ↓ ← → 或 W A S D</td><td>在画面上滑动</td></tr>
+      <tr><th scope="row">开始 / 继续</th><td>回车</td><td>点击「开始」</td></tr>
+      <tr><th scope="row">暂停 / 继续</th><td>空格</td><td>点击「暂停」</td></tr>
+      <tr><th scope="row">重开</th><td>R</td><td>点击「重开」</td></tr>
+    </tbody>
+  </table>
+
+  <h2>上手技巧</h2>
+  <dl class="facts">
+    <dt>贴边绕行</dt><dd>沿棋盘边缘绕圈行进，能给自己留出回旋空间。</dd>
+    <dt>预留出口</dt><dd>吃光点前先确认吃完仍有通路，避免把自己封进死角。</dd>
+    <dt>提前转向</dt><dd>高速阶段提前一格规划方向，避免来不及反应。</dd>
+  </dl>
+
+  <p class="note">实现说明：本页为自研单文件实现（MIT），HTML/CSS/JS 全部内联，无外部请求、无追踪脚本；最长记录保存在浏览器本地，不会上传。</p>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p><a href="/blender-mcp-slots/">← 返回游戏中心</a> · Blender MCP Slots 轻量静态游戏合集 · MIT License · 最后更新：<time datetime="2026-10-15">2026-10-15</time></p>
+    <p>灵感来源筛选渠道：<a href="https://itch.io/games/tag-open-source" rel="noopener">itch.io 开源标签</a>、<a href="https://github.com/trending" rel="noopener">GitHub Trending</a>、<a href="https://ldjam.com/" rel="noopener">Ludum Dare</a>、<a href="https://simplegametutorials.github.io/" rel="noopener">Simple Game Tutorials</a>。</p>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoGame",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-snake/#game",
+      "name": "霓虹贪吃蛇",
+      "alternateName": "Neon Snake",
+      "description": "贪吃蛇的霓虹主题单文件网页实现：控制蛇吃光点变长，撞墙或撞到自己即结束，支持键盘与触屏。",
+      "gameGenre": ["休闲", "Arcade", "Snake"],
+      "gamePlatform": ["Web Browser", "Desktop", "Mobile"],
+      "playMode": "SinglePlayer",
+      "url": "https://vip-4.github.io/blender-mcp-slots/games/neon-snake/",
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true,
+      "license": "https://opensource.org/licenses/MIT",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "accessibilityFeature": ["KeyboardControl", "AlternativeText"],
+      "featureList": ["单文件零依赖", "离线可玩", "键盘与触屏操作", "可暂停", "最长记录本地保存"]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-snake/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "游戏中心", "item": "https://vip-4.github.io/blender-mcp-slots/" },
+        { "@type": "ListItem", "position": 2, "name": "轻量静态游戏", "item": "https://vip-4.github.io/blender-mcp-slots/#arcade" },
+        { "@type": "ListItem", "position": 3, "name": "霓虹贪吃蛇" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var COLS = 21, ROWS = 21, CELL = 20;
+  var cv, ctx, snake, dir, nextDir, food, alive, running, timer, speed, best;
+  var els = {};
+
+  function readBest() { try { return Number(localStorage.getItem('neonSnake.best') || 3); } catch (e) { return 3; } }
+  function writeBest(v) { try { localStorage.setItem('neonSnake.best', String(v)); } catch (e) {} }
+
+  function placeFood() {
+    var free = [];
+    for (var r = 0; r < ROWS; r += 1) for (var c = 0; c < COLS; c += 1) free.push([c, r]);
+    free = free.filter(function (p) {
+      return !snake.some(function (s) { return s[0] === p[0] && s[1] === p[1]; });
+    });
+    var p = free[Math.floor(Math.random() * free.length)];
+    food = { x: p[0], y: p[1] };
+  }
+
+  function reset() {
+    snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+    dir = { x: 1, y: 0 }; nextDir = { x: 1, y: 0 };
+    alive = true; speed = 1;
+    placeFood();
+    draw();
+    els.score.textContent = snake.length;
+    els.speed.textContent = speed.toFixed(1) + '×';
+  }
+
+  function step() {
+    if (!alive) return;
+    dir = nextDir;
+    var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    if (head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS) return gameOver('撞到边界墙');
+    for (var i = 0; i < snake.length; i += 1) {
+      if (snake[i].x === head.x && snake[i].y === head.y) return gameOver('撞到自己的身体');
+    }
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) {
+      if (snake.length % 5 === 0 && speed < 2.2) speed = Math.min(2.2, speed + 0.2);
+      placeFood();
+      if (snake.length > best) { best = snake.length; writeBest(best); }
+      els.status.textContent = '吃到光点！当前长度 ' + snake.length + '，速度 ' + speed.toFixed(1) + '×。';
+    } else {
+      snake.pop();
+    }
+    els.score.textContent = snake.length;
+    els.best.textContent = best;
+    els.speed.textContent = speed.toFixed(1) + '×';
+    draw();
+    schedule();
+  }
+
+  function gameOver(reason) {
+    alive = false; running = false;
+    clearTimeout(timer);
+    draw();
+    els.status.textContent = '游戏结束（' + reason + '）：最终长度 ' + snake.length + '，最长 ' + best + '。点击「开始」再来一局。';
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!running) return;
+    timer = setTimeout(step, Math.round(130 / speed));
+  }
+
+  function start() {
+    if (!alive) reset();
+    running = true;
+    els.status.textContent = '进行中：方向键或滑动控制方向，空格暂停。';
+    schedule();
+  }
+  function pause() {
+    running = false;
+    clearTimeout(timer);
+    els.status.textContent = '已暂停，点击「开始」继续。';
+  }
+
+  function draw() {
+    ctx.fillStyle = '#08051c';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.strokeStyle = 'rgba(255,255,255,.05)';
+    for (var i = 0; i <= COLS; i += 1) {
+      ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, ROWS * CELL); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, i * CELL); ctx.lineTo(COLS * CELL, i * CELL); ctx.stroke();
+    }
+    ctx.fillStyle = '#ffd166';
+    ctx.beginPath();
+    ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - 3, 0, Math.PI * 2);
+    ctx.fill();
+    for (var k = 0; k < snake.length; k += 1) {
+      var s = snake[k];
+      ctx.fillStyle = k === 0 ? '#06d6a0' : '#7c5cff';
+      ctx.fillRect(s.x * CELL + 1, s.y * CELL + 1, CELL - 2, CELL - 2);
+    }
+    if (!alive) {
+      ctx.fillStyle = 'rgba(8,5,28,.72)';
+      ctx.fillRect(0, cv.height / 2 - 34, cv.width, 68);
+      ctx.fillStyle = '#ffd166';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('游戏结束 · 长度 ' + snake.length, cv.width / 2, cv.height / 2 + 8);
+    }
+  }
+
+  function turn(x, y) {
+    if (dir.x === -x && dir.y === -y) return;
+    nextDir = { x: x, y: y };
+    if (!running && alive) start();
+  }
+
+  var keys = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0], W: [0, -1], S: [0, 1], A: [-1, 0], D: [1, 0] };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    cv = document.getElementById('cv');
+    ctx = cv.getContext('2d');
+    els = {
+      score: document.getElementById('score'), best: document.getElementById('best'), speed: document.getElementById('speed'),
+      status: document.getElementById('status'), startBtn: document.getElementById('startBtn'),
+      pauseBtn: document.getElementById('pauseBtn'), restartBtn: document.getElementById('restartBtn')
+    };
+    best = readBest();
+    els.best.textContent = best;
+    reset();
+
+    els.startBtn.addEventListener('click', start);
+    els.pauseBtn.addEventListener('click', pause);
+    els.restartBtn.addEventListener('click', function () { clearTimeout(timer); running = false; reset(); els.status.textContent = '已重开，点击「开始」。'; });
+
+    document.addEventListener('keydown', function (e) {
+      var k = keys[e.key];
+      if (k) { e.preventDefault(); turn(k[0], k[1]); return; }
+      if (e.code === 'Space') { e.preventDefault(); running ? pause() : start(); }
+      if (e.key === 'Enter') start();
+      if (e.key === 'r' || e.key === 'R') { clearTimeout(timer); running = false; reset(); }
+    });
+
+    var startPt = null;
+    cv.addEventListener('touchstart', function (e) { startPt = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
+    cv.addEventListener('touchend', function (e) {
+      if (!startPt) return;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - startPt.x, dy = t.clientY - startPt.y;
+      startPt = null;
+      if (Math.abs(dx) < 20 && Math.abs(dy) < 20) { running ? pause() : start(); return; }
+      if (Math.abs(dx) > Math.abs(dy)) turn(dx > 0 ? 1 : -1, 0); else turn(0, dy > 0 ? 1 : -1);
+    }, { passive: true });
+  });
+})();
+</script>
+</body>
+</html>

@@ -12,6 +12,46 @@
     </image:image>
   </url>
   <url>
+    <loc>https://vip-4.github.io/blender-mcp-slots/games/neon-2048/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://vip-4.github.io/blender-mcp-slots/assets/og-2048.png</image:loc>
+      <image:title>霓虹 2048 封面</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vip-4.github.io/blender-mcp-slots/games/neon-snake/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://vip-4.github.io/blender-mcp-slots/assets/og-snake.png</image:loc>
+      <image:title>霓虹贪吃蛇封面</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vip-4.github.io/blender-mcp-slots/games/neon-breakout/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://vip-4.github.io/blender-mcp-slots/assets/og-breakout.png</image:loc>
+      <image:title>霓虹打砖块封面</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://vip-4.github.io/blender-mcp-slots/games/starlight-burst/</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png</image:loc>
+      <image:title>星光爆裂封面</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://vip-4.github.io/blender-mcp-slots/llms.txt</loc>
     <lastmod>2026-10-15</lastmod>
     <changefreq>monthly</changefreq>

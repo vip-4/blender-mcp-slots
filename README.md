@@ -328,8 +328,30 @@ site/
 ├── llms.txt              # 面向 AI 爬虫的纯文本事实摘要（GEO）
 ├── manifest.webmanifest  # PWA 清单（可安装、主题色）
 ├── .nojekyll             # 关闭 GitHub Pages 的 Jekyll 处理
-└── assets/og-cover.png   # 社交分享封面 1200×630（懒加载，不影响首屏）
+├── games/                # 轻量静态小游戏（每款一个自包含单文件）
+│   ├── neon-2048/index.html
+│   ├── neon-snake/index.html
+│   ├── neon-breakout/index.html
+│   └── starlight-burst/index.html
+└── assets/               # 社交分享封面 1200×630（首页懒加载）
+    ├── og-cover.png      # 首页 / 星光爆裂
+    ├── og-2048.png
+    ├── og-snake.png
+    └── og-breakout.png
 ```
+
+### 8.1.1 轻量静态游戏（免安装、单文件、离线可玩）
+
+| 游戏 | 路径 | 体积 | 操作 | 要点 |
+| --- | --- | --- | --- | --- |
+| 霓虹 2048 | `/games/neon-2048/` | 19.8 KB | 方向键 / WASD / 滑动 | 合并同数字拼出 2048，支持撤销一步、最高分本地保存 |
+| 霓虹贪吃蛇 | `/games/neon-snake/` | 17.7 KB | 方向键 / WASD / 滑动 | 吃光点变长，撞墙或撞自身结束，可暂停，随长度提速 |
+| 霓虹打砖块 | `/games/neon-breakout/` | 19.8 KB | 鼠标 / 方向键 / 触屏 | 挡板反弹小球清砖，3 条命，可暂停，随进度提速 |
+| 星光爆裂 | `/games/starlight-burst/` | 23.0 KB | 点击 / 空格 | 5×3、10 线双向赔付，WILD 整轴展开 + 3 次免费重旋 |
+
+四款均为自研实现（MIT），HTML/CSS/JS 全内联：零外部请求、无追踪、无广告、断网可玩；键盘可完整操作，状态通过 `aria-live` 播报，尊重 `prefers-reduced-motion`，支持明暗双主题。选题渠道：itch.io 开源标签、GitHub Trending、Ludum Dare、Simple Game Tutorials（页面内已注明灵感来源，未复制第三方代码）。
+
+分享卡片由 `npm run site:og` 零依赖生成（自带 PNG 编码器，23~30 KB/张，`scripts/og-cards.mjs`）。
 
 ### 8.2 SEO / GEO 处理
 

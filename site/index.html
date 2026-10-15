@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- ============ 基础 SEO ============ -->
-<title>Blender MCP Slots · 开源多机台老虎机引擎与在线试玩</title>
-<meta name="description" content="Blender MCP Slots 是开源的多机台老虎机（SLOT GAMES）引擎：11 款机台共用一套 CONFIG 驱动引擎，支持免费旋转、雪崩连锁、双向赔付、WILD 重旋，全部机台经 20 万轮蒙特卡洛实测 RTP 达标，并提供免后端在线试玩。">
-<meta name="keywords" content="老虎机,SLOT GAMES,slot machine,开源老虎机引擎,Blender MCP,MCP 服务,RTP 蒙特卡洛,免费旋转,雪崩连锁,双向赔付,WILD 重旋,Node.js">
+<title>Blender MCP Slots · 开源多机台老虎机引擎与轻量静态游戏</title>
+<meta name="description" content="Blender MCP Slots 是开源的多机台老虎机（SLOT GAMES）引擎，并提供 4 款免安装单文件网页小游戏（2048、贪吃蛇、打砖块、星光爆裂）：离线可玩、零依赖、支持键盘与触屏，全部机台经 20 万轮蒙特卡洛实测 RTP 达标。">
+<meta name="keywords" content="老虎机,SLOT GAMES,开源老虎机引擎,Blender MCP,MCP 服务,RTP 蒙特卡洛,免费小游戏,2048,贪吃蛇,打砖块,单文件游戏,HTML5 游戏,开源游戏,网页游戏">
 <meta name="author" content="blender-mcp-slots">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <meta name="color-scheme" content="dark light">
@@ -17,8 +17,8 @@
 <!-- ============ Open Graph ============ -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Blender MCP Slots">
-<meta property="og:title" content="Blender MCP Slots · 开源多机台老虎机引擎与在线试玩">
-<meta property="og:description" content="11 款机台共用一套 CONFIG 驱动引擎：免费旋转、雪崩连锁、双向赔付、WILD 重旋，20 万轮实测 RTP 达标，支持免后端在线试玩。">
+<meta property="og:title" content="Blender MCP Slots · 开源多机台老虎机引擎与轻量静态游戏">
+<meta property="og:description" content="11 款机台共用一套 CONFIG 驱动引擎，20 万轮实测 RTP 达标；另有 4 款免安装单文件网页小游戏（2048、贪吃蛇、打砖块、星光爆裂），离线可玩、零依赖。">
 <meta property="og:url" content="https://vip-4.github.io/blender-mcp-slots/">
 <meta property="og:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
 <meta property="og:image:secure_url" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
@@ -31,8 +31,8 @@
 
 <!-- ============ Twitter Card ============ -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Blender MCP Slots · 开源多机台老虎机引擎">
-<meta name="twitter:description" content="11 款机台、一套 CONFIG 引擎、20 万轮实测 RTP 达标，附带免后端在线试玩。">
+<meta name="twitter:title" content="Blender MCP Slots · 开源老虎机引擎与轻量静态游戏">
+<meta name="twitter:description" content="11 款机台、一套 CONFIG 引擎、20 万轮实测 RTP 达标；4 款免安装单文件网页小游戏，离线可玩、零依赖。">
 <meta name="twitter:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
 <meta name="twitter:image:alt" content="霓虹紫金风格的老虎机转轮与符号封面图">
 
@@ -162,6 +162,7 @@
     <nav aria-label="站内导航">
       <ul>
         <li><a href="#tldr">摘要</a></li>
+        <li><a href="#arcade">轻量小游戏</a></li>
         <li><a href="#play">在线试玩</a></li>
         <li><a href="#games">机台合集</a></li>
         <li><a href="#engine">引擎能力</a></li>
@@ -202,6 +203,40 @@
       <dt>许可与用途</dt><dd>MIT 开源，用于引擎/数学/概率教学与技术演示，不涉及任何真实货币。</dd>
     </dl>
     <p class="note">合规说明：本项目为概率引擎与软件工程示例，所有「投注 / 派彩」均为虚拟积分，不涉及真实货币交易，也不提供任何博彩服务。</p>
+  </section>
+
+  <!-- ============ 轻量静态游戏 ============ -->
+  <section id="arcade" aria-labelledby="arcade-title">
+    <h2 id="arcade-title">轻量静态游戏：免安装、单文件、离线可玩</h2>
+    <p class="muted">下面 4 款小游戏均为<strong>自研单文件实现</strong>：HTML/CSS/JS 全部内联，零外部请求、无追踪、无广告，打开即玩，断网也能继续；全部支持键盘操作，手机可用触屏或滑动。选题灵感筛选自 itch.io 开源标签、GitHub Trending、Ludum Dare 与 Simple Game Tutorials。</p>
+    <div class="cards">
+      <article class="card">
+        <b><a href="games/neon-2048/">霓虹 2048</a></b>
+        <p class="muted">4×4 棋盘合并相同数字方块，目标拼出 2048；支持撤销一步，最高分本地保存。</p>
+        <p><span class="tag">益智</span> <span class="tag">键盘 / 滑动</span> <span class="tag">约 12 KB</span></p>
+      </article>
+      <article class="card">
+        <b><a href="games/neon-snake/">霓虹贪吃蛇</a></b>
+        <p class="muted">经典 Snake：吃光点变长，撞墙或撞到自己即结束，可暂停，随长度提速。</p>
+        <p><span class="tag">休闲</span> <span class="tag">键盘 / 滑动</span> <span class="tag">可暂停</span></p>
+      </article>
+      <article class="card">
+        <b><a href="games/neon-breakout/">霓虹打砖块</a></b>
+        <p class="muted">经典 Breakout：拖动挡板反弹小球击碎全部砖块，3 条命，可暂停。</p>
+        <p><span class="tag">街机</span> <span class="tag">鼠标 / 键盘 / 触屏</span> <span class="tag">可暂停</span></p>
+      </article>
+      <article class="card">
+        <b><a href="games/starlight-burst/">星光爆裂</a></b>
+        <p class="muted">5×3、10 线双向赔付的老虎机试玩：星芒 WILD 整轴展开并触发 3 次免费重旋。</p>
+        <p><span class="tag">老虎机</span> <span class="tag">虚拟积分</span> <span class="tag">免注册</span></p>
+      </article>
+    </div>
+    <dl class="facts">
+      <dt>为什么是单文件</dt><dd>一个 HTML 文件即可托管到任意静态平台（GitHub Pages / Cloudflare Pages / Vercel / EdgeOne / 对象存储），也可直接双击本地打开。</dd>
+      <dt>性能</dt><dd>每页仅 12~25 KB，无第三方脚本、无字体与图片外链，首屏无阻塞请求。</dd>
+      <dt>可访问性</dt><dd>键盘可完整操作，分数与状态通过 <code>aria-live</code> 播报，尊重 <code>prefers-reduced-motion</code>，支持明暗双主题。</dd>
+      <dt>许可</dt><dd>MIT，可自由修改与二次分发；页面内已注明灵感来源渠道。</dd>
+    </dl>
   </section>
 
   <!-- ============ 在线试玩 ============ -->
@@ -417,6 +452,19 @@ node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code
         { "@type": "VideoGame", "position": 9, "name": "樱花物语 Sakura Tale", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9583"}] },
         { "@type": "VideoGame", "position": 10, "name": "星光爆裂 Starlight Burst", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9622"}] },
         { "@type": "VideoGame", "position": 11, "name": "宝藏猎人 Treasure Hunter", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9582"}] }
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#arcade",
+      "name": "Blender MCP Slots 轻量静态游戏",
+      "description": "4 款免安装、单文件、零依赖的网页小游戏，支持键盘与触屏，离线可玩。",
+      "numberOfItems": 4,
+      "itemListElement": [
+        { "@type": "VideoGame", "position": 1, "name": "霓虹 2048", "gameGenre": "益智", "playMode": "SinglePlayer", "url": "https://vip-4.github.io/blender-mcp-slots/games/neon-2048/", "isAccessibleForFree": true, "gamePlatform": ["Web Browser", "Mobile"] },
+        { "@type": "VideoGame", "position": 2, "name": "霓虹贪吃蛇", "gameGenre": "休闲", "playMode": "SinglePlayer", "url": "https://vip-4.github.io/blender-mcp-slots/games/neon-snake/", "isAccessibleForFree": true, "gamePlatform": ["Web Browser", "Mobile"] },
+        { "@type": "VideoGame", "position": 3, "name": "霓虹打砖块", "gameGenre": "街机", "playMode": "SinglePlayer", "url": "https://vip-4.github.io/blender-mcp-slots/games/neon-breakout/", "isAccessibleForFree": true, "gamePlatform": ["Web Browser", "Mobile"] },
+        { "@type": "VideoGame", "position": 4, "name": "星光爆裂 Starlight Burst", "gameGenre": "老虎机", "playMode": "SinglePlayer", "url": "https://vip-4.github.io/blender-mcp-slots/games/starlight-burst/", "isAccessibleForFree": true, "gamePlatform": ["Web Browser", "Mobile"] }
       ]
     },
     {

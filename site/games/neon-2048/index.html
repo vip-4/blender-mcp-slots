@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============ 基础 SEO ============ -->
+<title>霓虹 2048 · 免费在线合并益智游戏（免安装、单文件）</title>
+<meta name="description" content="霓虹 2048 是开源的单文件网页版 2048：方向键或滑动合并同数字方块，目标拼出 2048，支持撤销一步与最高分保存。零依赖、离线可玩、无需注册，适配桌面与手机浏览器。">
+<meta name="keywords" content="2048,2048 游戏,在线 2048,免费小游戏,合并益智,数字方块,HTML5 游戏,单文件游戏,开源游戏,网页游戏">
+<meta name="author" content="blender-mcp-slots">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#1b1046">
+<link rel="canonical" href="https://vip-4.github.io/blender-mcp-slots/games/neon-2048/">
+
+<!-- ============ Open Graph ============ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Blender MCP Slots · 轻量静态游戏">
+<meta property="og:title" content="霓虹 2048 · 免费在线合并益智游戏">
+<meta property="og:description" content="方向键或滑动合并同数字方块，拼出 2048。零依赖单文件网页游戏，支持键盘与触屏，离线可玩。">
+<meta property="og:url" content="https://vip-4.github.io/blender-mcp-slots/games/neon-2048/">
+<meta property="og:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-2048.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="霓虹风格 2048 数字方块棋盘封面图">
+<meta property="og:locale" content="zh_CN">
+
+<!-- ============ Twitter Card ============ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="霓虹 2048 · 免费在线合并益智游戏">
+<meta name="twitter:description" content="方向键或滑动合并同数字方块，拼出 2048。零依赖单文件网页游戏，支持键盘与触屏。">
+<meta name="twitter:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-2048.png">
+<meta name="twitter:image:alt" content="霓虹风格 2048 数字方块棋盘封面图">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237c5cff'/%3E%3Ctext x='16' y='21' font-size='12' font-family='sans-serif' font-weight='bold' fill='%23fff' text-anchor='middle'%3E2048%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:#0b0724; --bg2:#170f3d; --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.14);
+    --fg:#f4f1ff; --muted:#b9b3d6; --primary:#7c5cff; --accent:#7de2fc; --gold:#ffd166; --radius:14px;
+    --font:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.06); --line:rgba(28,16,80,.16); --fg:#1b1046; --muted:#4b4470; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:var(--font); color:var(--fg); line-height:1.7; background:radial-gradient(1000px 520px at 12% -10%, var(--bg2), var(--bg)) no-repeat, var(--bg); }
+  .wrap { width:min(880px,92vw); margin-inline:auto; }
+  a { color:var(--accent); } a:hover { text-decoration:underline; }
+  :focus-visible { outline:3px solid var(--gold); outline-offset:2px; border-radius:6px; }
+  .skip { position:absolute; left:-9999px; top:0; background:var(--gold); color:#1b1046; padding:.5rem 1rem; z-index:20; }
+  .skip:focus { left:1rem; top:1rem; }
+  header.site { border-bottom:1px solid var(--line); }
+  header.site .wrap { display:flex; gap:1rem; align-items:center; justify-content:space-between; padding:.7rem 0; flex-wrap:wrap; }
+  .brand { font-weight:800; display:flex; align-items:center; gap:.5rem; }
+  nav ul { display:flex; gap:1rem; list-style:none; margin:0; padding:0; font-size:.92rem; flex-wrap:wrap; }
+  h1 { font-size:clamp(1.5rem,4vw,2.2rem); line-height:1.25; margin:.4rem 0 .5rem; }
+  h2 { font-size:1.2rem; margin:1.8rem 0 .6rem; scroll-margin-top:4rem; }
+  p { margin:.5rem 0; }
+  .muted { color:var(--muted); }
+  .hud { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; margin:.8rem 0; }
+  .score { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.4rem .8rem; font-variant-numeric:tabular-nums; }
+  button, select { font:inherit; color:var(--fg); background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:.55rem .9rem; }
+  button { cursor:pointer; }
+  button.primary { background:linear-gradient(135deg,var(--primary),#b388ff); border-color:transparent; font-weight:700; }
+  .board { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:.6rem; margin-top:.8rem; }
+  .cell { aspect-ratio:1/1; display:grid; place-items:center; border-radius:10px; font-weight:800; font-size:clamp(1rem,4.6vw,1.7rem); background:rgba(255,255,255,.05); border:1px solid var(--line); color:var(--muted); font-variant-numeric:tabular-nums; }
+  .cell.v2 { color:#c9c3e6; } .cell.v4 { color:#a8e0ff; } .cell.v8 { color:#7de2fc; }
+  .cell.v16 { color:#06d6a0; } .cell.v32 { color:#9bf6ff; } .cell.v64 { color:#ffd166; }
+  .cell.v128 { color:#ffb703; } .cell.v256 { color:#ff9f1c; } .cell.v512 { color:#ff8500; }
+  .cell.v1024 { color:#ff6b6b; } .cell.v2048 { color:#fff; background:linear-gradient(135deg,var(--gold),#ff6b6b); }
+  .cell.pop { animation:pop .18s ease-out; }
+  @keyframes pop { from { transform:scale(.82); } to { transform:scale(1); } }
+  .status { margin-top:.7rem; min-height:1.6em; color:var(--gold); font-weight:700; }
+  table { width:100%; border-collapse:collapse; font-size:.92rem; margin-top:.6rem; }
+  caption { text-align:left; color:var(--muted); font-size:.86rem; padding-bottom:.4rem; }
+  th, td { text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); }
+  dl.facts { display:grid; gap:.3rem 1.2rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin:.8rem 0 0; }
+  dl.facts dt { font-weight:700; font-size:.9rem; } dl.facts dd { margin:0 0 .5rem; color:var(--muted); font-size:.9rem; }
+  footer.site { border-top:1px solid var(--line); margin-top:2.4rem; padding:1.4rem 0 2.4rem; color:var(--muted); font-size:.88rem; }
+  .note { border-left:3px solid var(--gold); padding-left:.8rem; color:var(--muted); font-size:.88rem; margin-top:1rem; }
+  @media (prefers-reduced-motion: reduce) {
+    .cell.pop { animation:none; }
+    * { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">◈ 轻量静态游戏</div>
+    <nav aria-label="站内导航">
+      <ul>
+        <li><a href="/blender-mcp-slots/">游戏中心首页</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-snake/">霓虹贪吃蛇</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-breakout/">霓虹打砖块</a></li>
+        <li><a href="/blender-mcp-slots/games/starlight-burst/">星光爆裂</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap" aria-labelledby="game-title">
+  <h1 id="game-title">霓虹 2048：免费在线合并益智游戏</h1>
+  <p class="muted">霓虹 2048 是 2048 的霓虹主题单文件网页实现：每次移动会随机生成一个新方块，<strong>相同数字的方块相撞即合并加倍</strong>，目标是拼出 2048。零依赖、离线可玩、无广告、无需注册，支持键盘与触屏滑动。</p>
+
+  <div class="hud">
+    <span class="score" aria-label="当前分数">分数 <b id="score">0</b></span>
+    <span class="score" aria-label="历史最高分">最高 <b id="best">0</b></span>
+    <span class="score" aria-label="已移动步数">步数 <b id="moves">0</b></span>
+    <button class="primary" id="newBtn" type="button">新游戏</button>
+    <button id="undoBtn" type="button">撤销一步</button>
+  </div>
+
+  <div class="board" id="board" role="grid" aria-label="4 行 4 列的 2048 棋盘"></div>
+  <p id="status" class="status" role="status" aria-live="polite">用方向键或 WASD 开始，手机上直接滑动。</p>
+
+  <h2>怎么玩（规则一览）</h2>
+  <dl class="facts">
+    <dt>目标</dt><dd>把相同数字的方块合并，最终拼出 <b>2048</b>；拼出后仍可继续冲击更高分。</dd>
+    <dt>一次移动</dt><dd>所有方块朝该方向滑动到底，相邻同数字两两合并（每次移动每个方块只合并一次）。</dd>
+    <dt>新方块</dt><dd>每次有效移动后随机生成一个方块：90% 概率为 2，10% 概率为 4。</dd>
+    <dt>结束条件</dt><dd>棋盘填满且四个方向都无法合并时游戏结束。</dd>
+    <dt>计分</dt><dd>每次合并把合并后的数字计入分数，因此越大越晚合并得分越高。</dd>
+  </dl>
+
+  <h2>操作方式</h2>
+  <table>
+    <caption>霓虹 2048 的键盘与触屏操作</caption>
+    <thead><tr><th scope="col">操作</th><th scope="col">键盘</th><th scope="col">触屏 / 鼠标</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">向上</th><td>↑ / W</td><td>向上滑动</td></tr>
+      <tr><th scope="row">向下</th><td>↓ / S</td><td>向下滑动</td></tr>
+      <tr><th scope="row">向左</th><td>← / A</td><td>向左滑动</td></tr>
+      <tr><th scope="row">向右</th><td>→ / D</td><td>向右滑动</td></tr>
+      <tr><th scope="row">新开一局</th><td>R</td><td>点击「新游戏」</td></tr>
+      <tr><th scope="row">撤销</th><td>Z</td><td>点击「撤销一步」</td></tr>
+    </tbody>
+  </table>
+
+  <h2>高分技巧</h2>
+  <dl class="facts">
+    <dt>固定最大块</dt><dd>把最大数字固定在某个角落，避免它来回搬家导致棋盘碎裂。</dd>
+    <dt>单向优先</dt><dd>优先使用两个方向（如左、下），第三个方向只在必要时用，能保持棋盘有序。</dd>
+    <dt>留空列</dt><dd>始终保持至少一列/一行是空的，给新方块与合并留缓冲。</dd>
+  </dl>
+
+  <p class="note">实现说明：本页为自研单文件实现（MIT），HTML/CSS/JS 全部内联，无外部请求、无追踪脚本；最高分保存在浏览器本地，不会上传。</p>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p><a href="/blender-mcp-slots/">← 返回游戏中心</a> · Blender MCP Slots 轻量静态游戏合集 · MIT License · 最后更新：<time datetime="2026-10-15">2026-10-15</time></p>
+    <p>灵感来源筛选渠道：<a href="https://itch.io/games/tag-open-source" rel="noopener">itch.io 开源标签</a>、<a href="https://github.com/trending" rel="noopener">GitHub Trending</a>、<a href="https://ldjam.com/" rel="noopener">Ludum Dare</a>、<a href="https://simplegametutorials.github.io/" rel="noopener">Simple Game Tutorials</a>。</p>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoGame",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-2048/#game",
+      "name": "霓虹 2048",
+      "alternateName": "Neon 2048",
+      "description": "2048 的霓虹主题单文件网页实现：合并相同数字方块拼出 2048，支持键盘与触屏，离线可玩。",
+      "gameGenre": ["益智", "Puzzle", "2048"],
+      "gamePlatform": ["Web Browser", "Desktop", "Mobile"],
+      "playMode": "SinglePlayer",
+      "url": "https://vip-4.github.io/blender-mcp-slots/games/neon-2048/",
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true,
+      "license": "https://opensource.org/licenses/MIT",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "accessibilityFeature": ["KeyboardControl", "AlternativeText", "ReadingOrder"],
+      "featureList": ["单文件零依赖", "离线可玩", "键盘与触屏操作", "最高分本地保存", "支持撤销一步"]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-2048/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "游戏中心", "item": "https://vip-4.github.io/blender-mcp-slots/" },
+        { "@type": "ListItem", "position": 2, "name": "轻量静态游戏", "item": "https://vip-4.github.io/blender-mcp-slots/#arcade" },
+        { "@type": "ListItem", "position": 3, "name": "霓虹 2048" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var SIZE = 4, TARGET = 2048;
+  var board, score, best, moves, prev, over, won;
+  var els = {};
+
+  function readBest() { try { return Number(localStorage.getItem('neon2048.best') || 0); } catch (e) { return 0; } }
+  function writeBest(v) { try { localStorage.setItem('neon2048.best', String(v)); } catch (e) {} }
+
+  function emptyCells() {
+    var out = [];
+    for (var r = 0; r < SIZE; r += 1) for (var c = 0; c < SIZE; c += 1) if (!board[r][c]) out.push([r, c]);
+    return out;
+  }
+  function spawn() {
+    var free = emptyCells();
+    if (!free.length) return null;
+    var p = free[Math.floor(Math.random() * free.length)];
+    var v = Math.random() < 0.9 ? 2 : 4;
+    board[p[0]][p[1]] = v;
+    return p;
+  }
+  function clone(b) { return b.map(function (row) { return row.slice(); }); }
+
+  function slide(line) {
+    // 去掉 0 → 合并相邻相同 → 补 0，返回 { line, gained }
+    var arr = line.filter(function (v) { return v !== 0; });
+    var out = [], gained = 0, merged = [];
+    for (var i = 0; i < arr.length; i += 1) {
+      if (i + 1 < arr.length && arr[i] === arr[i + 1]) {
+        out.push(arr[i] * 2);
+        gained += arr[i] * 2;
+        merged.push(out.length - 1);
+        i += 1;
+      } else {
+        out.push(arr[i]);
+      }
+    }
+    while (out.length < SIZE) out.push(0);
+    return { line: out, gained: gained, merged: merged };
+  }
+
+  function move(dir) {
+    if (over) return false;
+    var snapshot = { board: clone(board), score: score, moves: moves };
+    var gained = 0, changed = false, mergedCells = [];
+    var horizontal = dir === 'left' || dir === 'right';
+
+    for (var i = 0; i < SIZE; i += 1) {
+      var line = [];
+      for (var j = 0; j < SIZE; j += 1) line.push(horizontal ? board[i][j] : board[j][i]);
+      if (dir === 'right' || dir === 'down') line = line.reverse();
+      var res = slide(line);
+      if (dir === 'right' || dir === 'down') res.line = res.line.reverse();
+      for (var k = 0; k < SIZE; k += 1) {
+        var v = res.line[k];
+        var r = horizontal ? i : k, c = horizontal ? k : i;
+        if (board[r][c] !== v) changed = true;
+        board[r][c] = v;
+      }
+      if (res.gained) {
+        gained += res.gained;
+        res.merged.forEach(function (idx) {
+          var pos = dir === 'right' ? SIZE - 1 - idx : idx;
+          var rr = horizontal ? i : (dir === 'down' ? SIZE - 1 - pos : pos);
+          var cc = horizontal ? (dir === 'right' ? SIZE - 1 - pos : pos) : i;
+          mergedCells.push([rr, cc]);
+        });
+      }
+    }
+
+    if (!changed) return false;
+    score += gained;
+    moves += 1;
+    if (score > best) { best = score; writeBest(best); }
+    prev = snapshot;
+    var fresh = spawn();
+    render(mergedCells, fresh ? [fresh] : []);
+    checkEnd(gained);
+    return true;
+  }
+
+  function canMove() {
+    for (var r = 0; r < SIZE; r += 1) {
+      for (var c = 0; c < SIZE; c += 1) {
+        var v = board[r][c];
+        if (!v) return true;
+        if (c + 1 < SIZE && board[r][c + 1] === v) return true;
+        if (r + 1 < SIZE && board[r + 1][c] === v) return true;
+      }
+    }
+    return false;
+  }
+
+  function checkEnd(gained) {
+    var max = 0;
+    board.forEach(function (row) { row.forEach(function (v) { if (v > max) max = v; }); });
+    if (!won && max >= TARGET) {
+      won = true;
+      els.status.textContent = '达成 2048！可以继续合并冲击更高分。';
+      return;
+    }
+    if (!canMove()) {
+      over = true;
+      els.status.textContent = '游戏结束：棋盘已满且无法合并。最终分数 ' + score + '，点击「新游戏」重开。';
+    } else if (gained) {
+      els.status.textContent = '本步合并获得 ' + gained + ' 分，当前分数 ' + score + '。';
+    }
+  }
+
+  function render(merged, fresh) {
+    var html = '';
+    for (var r = 0; r < SIZE; r += 1) {
+      for (var c = 0; c < SIZE; c += 1) {
+        var v = board[r][c];
+        var isNew = false, isMerged = false;
+        (fresh || []).forEach(function (p) { if (p[0] === r && p[1] === c) isNew = true; });
+        (merged || []).forEach(function (p) { if (p[0] === r && p[1] === c) isMerged = true; });
+        html += '<div class="cell v' + v + (isNew || isMerged ? ' pop' : '') + '" role="gridcell" aria-label="' +
+          (v ? '第' + (r + 1) + '行第' + (c + 1) + '列，' + v : '第' + (r + 1) + '行第' + (c + 1) + '列，空') + '">' +
+          (v || '') + '</div>';
+      }
+    }
+    els.board.innerHTML = html;
+    els.score.textContent = score;
+    els.best.textContent = best;
+    els.moves.textContent = moves;
+    els.undoBtn.disabled = !prev;
+  }
+
+  function reset() {
+    board = [];
+    for (var r = 0; r < SIZE; r += 1) board.push([0, 0, 0, 0]);
+    score = 0; moves = 0; prev = null; over = false; won = false;
+    var a = spawn(), b = spawn();
+    render([], [a, b].filter(Boolean));
+    els.status.textContent = '新游戏开始：目标 2048，用方向键或滑动合并。';
+  }
+
+  function undo() {
+    if (!prev) return;
+    board = prev.board; score = prev.score; moves = prev.moves; prev = null; over = false;
+    render([], []);
+    els.status.textContent = '已撤销一步，当前分数 ' + score + '。';
+    els.undoBtn.disabled = true;
+  }
+
+  var keys = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', w: 'up', s: 'down', a: 'left', d: 'right', W: 'up', S: 'down', A: 'left', D: 'right' };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    els = {
+      board: document.getElementById('board'), score: document.getElementById('score'), best: document.getElementById('best'),
+      moves: document.getElementById('moves'), status: document.getElementById('status'),
+      newBtn: document.getElementById('newBtn'), undoBtn: document.getElementById('undoBtn')
+    };
+    best = readBest();
+    reset();
+    els.newBtn.addEventListener('click', reset);
+    els.undoBtn.addEventListener('click', undo);
+    document.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var dir = keys[e.key];
+      if (dir) { e.preventDefault(); move(dir); return; }
+      if (e.key === 'r' || e.key === 'R') reset();
+      if (e.key === 'z' || e.key === 'Z') undo();
+    });
+
+    var start = null;
+    function onStart(e) { var t = e.touches ? e.touches[0] : e; start = { x: t.clientX, y: t.clientY }; }
+    function onEnd(e) {
+      if (!start) return;
+      var t = e.changedTouches ? e.changedTouches[0] : e;
+      var dx = t.clientX - start.x, dy = t.clientY - start.y;
+      start = null;
+      if (Math.abs(dx) < 24 && Math.abs(dy) < 24) return;
+      if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 'right' : 'left');
+      else move(dy > 0 ? 'down' : 'up');
+    }
+    var b = els.board;
+    b.addEventListener('touchstart', onStart, { passive: true });
+    b.addEventListener('touchend', onEnd, { passive: true });
+    b.addEventListener('mousedown', onStart);
+    b.addEventListener('mouseup', onEnd);
+  });
+})();
+</script>
+</body>
+</html>

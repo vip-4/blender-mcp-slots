@@ -18,7 +18,7 @@ const TYPES = {
 http
   .createServer(async (req, res) => {
     const url = decodeURIComponent((req.url || '/').split('?')[0]);
-    const rel = url === '/' ? 'index.html' : url.replace(/^\/+/, '');
+    const rel = url === '/' ? 'index.html' : url.replace(/^\/+/, '').replace(/\/$/, '/index.html');
     const file = path.join(ROOT, rel);
     if (!file.startsWith(ROOT)) {
       res.writeHead(403).end('forbidden');

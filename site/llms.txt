@@ -32,9 +32,19 @@ Blender MCP Slots 用一份可校验的 CONFIG 描述老虎机的转轮条带、
 - 星光爆裂 Starlight Burst：5×3、10 线、低波动，0.9622 / 0.962，WILD 重旋 + 双向赔付
 - 宝藏猎人 Treasure Hunter：5×3、20 线、高波动，0.9582 / 0.96，雪崩连锁 + 黏性扩张 WILD
 
+## 轻量静态游戏（免安装、单文件、离线可玩）
+
+- 霓虹 2048：/games/neon-2048/ —— 4×4 合并同数字方块拼出 2048，支持撤销一步，键盘/滑动操作
+- 霓虹贪吃蛇：/games/neon-snake/ —— 经典 Snake，吃光点变长，撞墙或撞自身即结束，可暂停
+- 霓虹打砖块：/games/neon-breakout/ —— 经典 Breakout，拖动挡板反弹小球清砖，3 条命，可暂停
+- 星光爆裂：/games/starlight-burst/ —— 5×3、10 线双向赔付老虎机试玩，WILD 整轴展开 + 3 次免费重旋
+
+四款均为自研单文件实现（MIT）：HTML/CSS/JS 全内联，零外部请求、无追踪、无广告，12~25 KB，支持键盘与触屏，尊重 prefers-reduced-motion。选题灵感筛选自 itch.io 开源标签、GitHub Trending、Ludum Dare 与 Simple Game Tutorials。
+
 ## 页面结构
 
 - 摘要（TL;DR）：项目定义与关键事实
+- 轻量静态游戏：4 款单文件小游戏入口与技术特点
 - 在线试玩：纯前端实现的「星光爆裂」静态试玩器（双向赔付 + WILD 重旋）
 - 机台合集：11 款机台规格与实测 RTP 表格
 - 引擎能力：CONFIG 特性开关清单

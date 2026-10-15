@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============ 基础 SEO ============ -->
+<title>霓虹打砖块 · 免费在线网页版 Breakout（免安装、单文件）</title>
+<meta name="description" content="霓虹打砖块是开源的单文件网页版打砖块（Breakout）：移动挡板反弹小球击碎全部砖块，共 3 条命，可随时暂停。零依赖、离线可玩、无需注册，支持鼠标、键盘与触屏。">
+<meta name="keywords" content="打砖块,打砖块游戏,Breakout,弹球,在线打砖块,免费小游戏,HTML5 游戏,单文件游戏,开源游戏,网页游戏">
+<meta name="author" content="blender-mcp-slots">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#1b1046">
+<link rel="canonical" href="https://vip-4.github.io/blender-mcp-slots/games/neon-breakout/">
+
+<!-- ============ Open Graph ============ -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Blender MCP Slots · 轻量静态游戏">
+<meta property="og:title" content="霓虹打砖块 · 免费在线网页版 Breakout">
+<meta property="og:description" content="移动挡板反弹小球击碎全部砖块，三条命用完即结束。零依赖单文件网页游戏，支持鼠标、键盘与触屏。">
+<meta property="og:url" content="https://vip-4.github.io/blender-mcp-slots/games/neon-breakout/">
+<meta property="og:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-breakout.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="霓虹风格打砖块挡板、小球与彩色砖墙封面图">
+<meta property="og:locale" content="zh_CN">
+
+<!-- ============ Twitter Card ============ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="霓虹打砖块 · 免费在线网页版 Breakout">
+<meta name="twitter:description" content="移动挡板反弹小球击碎全部砖块，三条命用完即结束。零依赖单文件网页游戏。">
+<meta name="twitter:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-breakout.png">
+<meta name="twitter:image:alt" content="霓虹风格打砖块挡板、小球与彩色砖墙封面图">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b1046'/%3E%3Crect x='5' y='6' width='22' height='4' fill='%23ff6b6b'/%3E%3Crect x='5' y='12' width='22' height='4' fill='%23ffd166'/%3E%3Crect x='12' y='24' width='10' height='3' rx='1.5' fill='%237de2fc'/%3E%3Ccircle cx='16' cy='19' r='2' fill='%23fff'/%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:#0b0724; --bg2:#170f3d; --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.14);
+    --fg:#f4f1ff; --muted:#b9b3d6; --primary:#7c5cff; --accent:#7de2fc; --gold:#ffd166; --radius:14px;
+    --font:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.06); --line:rgba(28,16,80,.16); --fg:#1b1046; --muted:#4b4470; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:var(--font); color:var(--fg); line-height:1.7; background:radial-gradient(1000px 520px at 12% -10%, var(--bg2), var(--bg)) no-repeat, var(--bg); }
+  .wrap { width:min(880px,92vw); margin-inline:auto; }
+  a { color:var(--accent); } a:hover { text-decoration:underline; }
+  :focus-visible { outline:3px solid var(--gold); outline-offset:2px; border-radius:6px; }
+  .skip { position:absolute; left:-9999px; top:0; background:var(--gold); color:#1b1046; padding:.5rem 1rem; z-index:20; }
+  .skip:focus { left:1rem; top:1rem; }
+  header.site { border-bottom:1px solid var(--line); }
+  header.site .wrap { display:flex; gap:1rem; align-items:center; justify-content:space-between; padding:.7rem 0; flex-wrap:wrap; }
+  .brand { font-weight:800; }
+  nav ul { display:flex; gap:1rem; list-style:none; margin:0; padding:0; font-size:.92rem; flex-wrap:wrap; }
+  h1 { font-size:clamp(1.5rem,4vw,2.2rem); line-height:1.25; margin:.4rem 0 .5rem; }
+  h2 { font-size:1.2rem; margin:1.8rem 0 .6rem; }
+  p { margin:.5rem 0; }
+  .muted { color:var(--muted); }
+  .hud { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; margin:.8rem 0; }
+  .score { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:.4rem .8rem; font-variant-numeric:tabular-nums; }
+  button { font:inherit; color:var(--fg); background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:.55rem .9rem; cursor:pointer; }
+  button.primary { background:linear-gradient(135deg,var(--primary),#b388ff); border-color:transparent; font-weight:700; }
+  .stage { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:.7rem; }
+  canvas { width:100%; height:auto; display:block; border-radius:10px; background:#08051c; touch-action:none; }
+  .status { margin-top:.7rem; min-height:1.6em; color:var(--gold); font-weight:700; }
+  table { width:100%; border-collapse:collapse; font-size:.92rem; margin-top:.6rem; }
+  caption { text-align:left; color:var(--muted); font-size:.86rem; padding-bottom:.4rem; }
+  th, td { text-align:left; padding:.45rem .5rem; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); }
+  dl.facts { display:grid; gap:.3rem 1.2rem; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); margin:.8rem 0 0; }
+  dl.facts dt { font-weight:700; font-size:.9rem; } dl.facts dd { margin:0 0 .5rem; color:var(--muted); font-size:.9rem; }
+  footer.site { border-top:1px solid var(--line); margin-top:2.4rem; padding:1.4rem 0 2.4rem; color:var(--muted); font-size:.88rem; }
+  .note { border-left:3px solid var(--gold); padding-left:.8rem; color:var(--muted); font-size:.88rem; margin-top:1rem; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<header class="site">
+  <div class="wrap">
+    <div class="brand">◈ 轻量静态游戏</div>
+    <nav aria-label="站内导航">
+      <ul>
+        <li><a href="/blender-mcp-slots/">游戏中心首页</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-2048/">霓虹 2048</a></li>
+        <li><a href="/blender-mcp-slots/games/neon-snake/">霓虹贪吃蛇</a></li>
+        <li><a href="/blender-mcp-slots/games/starlight-burst/">星光爆裂</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap" aria-labelledby="game-title">
+  <h1 id="game-title">霓虹打砖块：免费在线网页版 Breakout</h1>
+  <p class="muted">霓虹打砖块是打砖块（Breakout）的霓虹主题单文件网页实现：移动挡板反弹小球，<strong>击碎全部砖块即可通关</strong>，三条命用完即结束。零依赖、离线可玩、无广告、无需注册，支持鼠标、键盘与触屏。</p>
+
+  <div class="hud">
+    <span class="score" aria-label="当前分数">分数 <b id="score">0</b></span>
+    <span class="score" aria-label="剩余生命">生命 <b id="lives">3</b></span>
+    <span class="score" aria-label="剩余砖块">剩余砖块 <b id="left">0</b></span>
+    <span class="score" aria-label="历史最高分">最高 <b id="best">0</b></span>
+    <button class="primary" id="startBtn" type="button">开始</button>
+    <button id="pauseBtn" type="button">暂停</button>
+    <button id="restartBtn" type="button">重开</button>
+  </div>
+
+  <div class="stage">
+    <canvas id="cv" width="480" height="360" role="img" aria-label="打砖块游戏画面：上方彩色砖墙、中部反弹小球与底部挡板"></canvas>
+  </div>
+  <p id="status" class="status" role="status" aria-live="polite">点击「开始」，用鼠标、方向键或手指拖动挡板。</p>
+
+  <h2>怎么玩（规则一览）</h2>
+  <dl class="facts">
+    <dt>目标</dt><dd>用挡板把小球弹回上方，击碎全部砖块即通关。</dd>
+    <dt>生命</dt><dd>共 3 条命，小球落到底部即扣 1 条，扣完游戏结束。</dd>
+    <dt>计分</dt><dd>每块砖 10 分；越靠上的砖块颜色越冷，分数相同但更难触及。</dd>
+    <dt>反弹角度</dt><dd>小球击中挡板的位置越靠边，反弹角度越斜，可用于主动控制落点。</dd>
+    <dt>加速</dt><dd>每击碎 8 块砖小球略微提速，最高 1.6×。</dd>
+  </dl>
+
+  <h2>操作方式</h2>
+  <table>
+    <caption>霓虹打砖块的鼠标、键盘与触屏操作</caption>
+    <thead><tr><th scope="col">操作</th><th scope="col">键盘</th><th scope="col">鼠标 / 触屏</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">左移挡板</th><td>← 或 A</td><td>鼠标移动 / 手指拖动</td></tr>
+      <tr><th scope="row">右移挡板</th><td>→ 或 D</td><td>鼠标移动 / 手指拖动</td></tr>
+      <tr><th scope="row">发射小球</th><td>回车</td><td>点击画面</td></tr>
+      <tr><th scope="row">暂停 / 继续</th><td>空格</td><td>点击「暂停」</td></tr>
+      <tr><th scope="row">重开</th><td>R</td><td>点击「重开」</td></tr>
+    </tbody>
+  </table>
+
+  <h2>上手技巧</h2>
+  <dl class="facts">
+    <dt>用边缘接球</dt><dd>用挡板两侧接球可打出更斜的角度，更容易打到侧边砖块。</dd>
+    <dt>避免垂直对撞</dt><dd>正中接球会让球垂直往返，反而难以清掉两侧砖块。</dd>
+    <dt>提前预判</dt><dd>小球提速后要提前移动挡板，避免来不及反应。</dd>
+  </dl>
+
+  <p class="note">实现说明：本页为自研单文件实现（MIT），HTML/CSS/JS 全部内联，无外部请求、无追踪脚本；最高分保存在浏览器本地，不会上传。</p>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p><a href="/blender-mcp-slots/">← 返回游戏中心</a> · Blender MCP Slots 轻量静态游戏合集 · MIT License · 最后更新：<time datetime="2026-10-15">2026-10-15</time></p>
+    <p>灵感来源筛选渠道：<a href="https://itch.io/games/tag-open-source" rel="noopener">itch.io 开源标签</a>、<a href="https://github.com/trending" rel="noopener">GitHub Trending</a>、<a href="https://ldjam.com/" rel="noopener">Ludum Dare</a>、<a href="https://simplegametutorials.github.io/" rel="noopener">Simple Game Tutorials</a>。</p>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoGame",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-breakout/#game",
+      "name": "霓虹打砖块",
+      "alternateName": "Neon Breakout",
+      "description": "打砖块的霓虹主题单文件网页实现：移动挡板反弹小球击碎全部砖块，支持鼠标、键盘与触屏。",
+      "gameGenre": ["休闲", "Arcade", "Breakout"],
+      "gamePlatform": ["Web Browser", "Desktop", "Mobile"],
+      "playMode": "SinglePlayer",
+      "url": "https://vip-4.github.io/blender-mcp-slots/games/neon-breakout/",
+      "inLanguage": "zh-CN",
+      "isAccessibleForFree": true,
+      "license": "https://opensource.org/licenses/MIT",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "accessibilityFeature": ["KeyboardControl", "AlternativeText"],
+      "featureList": ["单文件零依赖", "离线可玩", "鼠标/键盘/触屏操作", "可暂停", "最高分本地保存"]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-breakout/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "游戏中心", "item": "https://vip-4.github.io/blender-mcp-slots/" },
+        { "@type": "ListItem", "position": 2, "name": "轻量静态游戏", "item": "https://vip-4.github.io/blender-mcp-slots/#arcade" },
+        { "@type": "ListItem", "position": 3, "name": "霓虹打砖块" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var W = 480, H = 360, ROWS = 5, COLS = 10, BRICK_W = 44, BRICK_H = 16, GAP = 4, TOP = 34, PAD_W = 78, PAD_H = 10;
+  var cv, ctx, bricks, ball, pad, score, lives, left, best, running, launched, speedMult, raf, keyLeft, keyRight;
+  var els = {};
+  var colors = ['#ff6b6b', '#ff9f1c', '#ffd166', '#06d6a0', '#7de2fc'];
+
+  function readBest() { try { return Number(localStorage.getItem('neonBreakout.best') || 0); } catch (e) { return 0; } }
+  function writeBest(v) { try { localStorage.setItem('neonBreakout.best', String(v)); } catch (e) {} }
+
+  function buildBricks() {
+    bricks = [];
+    for (var r = 0; r < ROWS; r += 1) {
+      for (var c = 0; c < COLS; c += 1) {
+        bricks.push({ x: 8 + c * (BRICK_W + GAP), y: TOP + r * (BRICK_H + GAP), w: BRICK_W, h: BRICK_H, color: colors[r % colors.length], alive: true });
+      }
+    }
+  }
+
+  function reset(full) {
+    buildBricks();
+    pad = { x: (W - PAD_W) / 2, y: H - 26, w: PAD_W, h: PAD_H };
+    ball = { x: W / 2, y: H - 40, r: 6, vx: 2.4, vy: -3.2 };
+    launched = false; speedMult = 1;
+    if (full) { score = 0; lives = 3; }
+    left = bricks.length;
+    hud();
+    draw();
+  }
+
+  function hud() {
+    els.score.textContent = score;
+    els.lives.textContent = lives;
+    els.left.textContent = left;
+    els.best.textContent = best;
+  }
+
+  function draw() {
+    ctx.fillStyle = '#08051c';
+    ctx.fillRect(0, 0, W, H);
+    bricks.forEach(function (b) {
+      if (!b.alive) return;
+      ctx.fillStyle = b.color;
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+    });
+    ctx.fillStyle = '#7de2fc';
+    ctx.fillRect(pad.x, pad.y, pad.w, pad.h);
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fill();
+    if (!launched && running) {
+      ctx.fillStyle = '#ffd166';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('点击画面或按回车发射小球', W / 2, H / 2);
+    }
+    if (!running && lives > 0 && left > 0) {
+      ctx.fillStyle = 'rgba(8,5,28,.7)';
+      ctx.fillRect(0, H / 2 - 26, W, 52);
+      ctx.fillStyle = '#ffd166';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('已暂停 · 点击「开始」继续', W / 2, H / 2 + 6);
+    }
+  }
+
+  function tick() {
+    if (!running) return;
+    if (keyLeft) pad.x -= 6;
+    if (keyRight) pad.x += 6;
+    pad.x = Math.max(0, Math.min(W - pad.w, pad.x));
+
+    if (launched) {
+      ball.x += ball.vx * speedMult;
+      ball.y += ball.vy * speedMult;
+      if (ball.x - ball.r <= 0 || ball.x + ball.r >= W) { ball.vx *= -1; ball.x = Math.max(ball.r, Math.min(W - ball.r, ball.x)); }
+      if (ball.y - ball.r <= 0) { ball.vy *= -1; ball.y = ball.r; }
+      if (ball.y + ball.r >= pad.y && ball.y + ball.r <= pad.y + pad.h + 4 && ball.x >= pad.x - ball.r && ball.x <= pad.x + pad.w + ball.r && ball.vy > 0) {
+        var hit = (ball.x - (pad.x + pad.w / 2)) / (pad.w / 2);
+        var angle = hit * 0.9;
+        var speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+        ball.vx = Math.sin(angle) * speed;
+        ball.vy = -Math.cos(angle) * speed;
+        ball.y = pad.y - ball.r;
+      }
+      bricks.forEach(function (b) {
+        if (!b.alive) return;
+        if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w && ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+          b.alive = false;
+          ball.vy *= -1;
+          left -= 1;
+          score += 10;
+          if (score > best) { best = score; writeBest(best); }
+          if (left % 8 === 0 && speedMult < 1.6) speedMult = Math.min(1.6, speedMult + 0.1);
+        }
+      });
+      if (ball.y - ball.r > H) {
+        lives -= 1;
+        if (lives <= 0) { end('生命用完'); return; }
+        launched = false;
+        ball.x = pad.x + pad.w / 2; ball.y = H - 40; ball.vx = 2.4; ball.vy = -3.2; speedMult = 1;
+        els.status.textContent = '失去一条命，剩余 ' + lives + ' 条。点击画面或按回车重新发射。';
+        hud();
+        draw();
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+      if (left === 0) { end('全部砖块已击碎，通关！'); return; }
+    } else {
+      ball.x = pad.x + pad.w / 2;
+      ball.y = H - 40;
+    }
+    hud();
+    draw();
+    raf = requestAnimationFrame(tick);
+  }
+
+  function end(msg) {
+    running = false;
+    cancelAnimationFrame(raf);
+    draw();
+    els.status.textContent = '游戏结束：' + msg + ' 最终分数 ' + score + '，最高 ' + best + '。点击「重开」再来一局。';
+  }
+
+  function start() {
+    if (lives <= 0 || left === 0) reset(true);
+    running = true;
+    els.status.textContent = launched ? '进行中：拖动鼠标或按方向键移动挡板。' : '已就绪：点击画面或按回车发射小球。';
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(tick);
+  }
+  function pause() {
+    running = false;
+    cancelAnimationFrame(raf);
+    draw();
+    els.status.textContent = '已暂停，点击「开始」继续。';
+  }
+  function launch() {
+    if (!launched && running) { launched = true; els.status.textContent = '小球已发射，开始击碎砖块。'; }
+  }
+
+  function pointerX(e) {
+    var rect = cv.getBoundingClientRect();
+    var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    return x / rect.width * W;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    cv = document.getElementById('cv');
+    ctx = cv.getContext('2d');
+    els = {
+      score: document.getElementById('score'), lives: document.getElementById('lives'), left: document.getElementById('left'),
+      best: document.getElementById('best'), status: document.getElementById('status'),
+      startBtn: document.getElementById('startBtn'), pauseBtn: document.getElementById('pauseBtn'), restartBtn: document.getElementById('restartBtn')
+    };
+    best = readBest();
+    score = 0; lives = 3;
+    reset(true);
+
+    els.startBtn.addEventListener('click', start);
+    els.pauseBtn.addEventListener('click', pause);
+    els.restartBtn.addEventListener('click', function () { cancelAnimationFrame(raf); running = false; reset(true); els.status.textContent = '已重开，点击「开始」。'; });
+
+    cv.addEventListener('mousemove', function (e) { pad.x = Math.max(0, Math.min(W - pad.w, pointerX(e) - pad.w / 2)); if (!running) draw(); });
+    cv.addEventListener('click', function (e) { pad.x = Math.max(0, Math.min(W - pad.w, pointerX(e) - pad.w / 2)); launch(); });
+    cv.addEventListener('touchmove', function (e) { e.preventDefault(); pad.x = Math.max(0, Math.min(W - pad.w, pointerX(e) - pad.w / 2)); launch(); }, { passive: false });
+    cv.addEventListener('touchstart', function (e) { pad.x = Math.max(0, Math.min(W - pad.w, pointerX(e) - pad.w / 2)); launch(); }, { passive: true });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { keyLeft = true; e.preventDefault(); }
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { keyRight = true; e.preventDefault(); }
+      if (e.code === 'Space') { e.preventDefault(); running ? pause() : start(); }
+      if (e.key === 'Enter') { start(); launch(); }
+      if (e.key === 'r' || e.key === 'R') { cancelAnimationFrame(raf); running = false; reset(true); }
+    });
+    document.addEventListener('keyup', function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keyLeft = false;
+      if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keyRight = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>

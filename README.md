@@ -386,4 +386,15 @@ node scripts/deploy-edgeone.mjs
 
 线上地址：<https://vip-4.github.io/blender-mcp-slots/>
 
-> 说明：EdgeOne Pages 的托管域名对「老虎机/博彩」类内容有策略限制，会被拒绝并返回 self-hosted 指引；该类渠道可改用 GitHub Pages / Cloudflare Pages / Vercel，或自建 Pages MCP 服务。
+线上冒烟：`npm run site:smoke`（检查 5 个页面 + 4 张分享卡片是否 200，并校验结构化数据是否在线）。
+
+### 8.4 已发布地址
+
+| 渠道 | 地址 | 状态 |
+| --- | --- | --- |
+| GitHub Pages（主站） | https://vip-4.github.io/blender-mcp-slots/ | ✅ 全站 5 个页面 |
+| EdgeOne Pages · 霓虹 2048 | https://mcp.edgeone.site/share/cFib0P82W2uLq880SCIo9 | ✅ 单文件镜像 |
+| EdgeOne Pages · 霓虹贪吃蛇 | https://mcp.edgeone.site/share/THXrW_9qh0Sz6vrFLfQEr | ✅ 单文件镜像 |
+| EdgeOne Pages · 霓虹打砖块 | https://mcp.edgeone.site/share/XeSKOAPwtuFHoT02SsjSC | ✅ 单文件镜像 |
+
+> 说明：EdgeOne Pages 的托管域名对「老虎机 / 博彩」类内容有策略限制（首页与星光爆裂会被拒绝并返回 self-hosted 指引）；该类页面使用 GitHub Pages / Cloudflare Pages / Vercel，或自建 Pages MCP 服务。

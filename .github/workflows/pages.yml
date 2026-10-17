@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths:
       - 'site/**'
+      - 'scripts/**'
+      - '.github/workflows/pages.yml'
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'scripts/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -18,7 +24,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # 部署前门禁：SEO / GEO / 语义化 / 可访问性 / 托管可移植性（scripts/check-site.mjs）
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 站点质量检查（site:check）
+        run: npm run site:check
+
   build:
+    needs: verify
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +54,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

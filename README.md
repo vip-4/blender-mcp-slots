@@ -359,7 +359,7 @@ site/
 
 四款均为自研实现（MIT），HTML/CSS/JS 全内联：零外部请求、无追踪、无广告、断网可玩；键盘可完整操作，状态通过 `aria-live` 播报，尊重 `prefers-reduced-motion`，支持明暗双主题。选题渠道：itch.io 开源标签、GitHub Trending、Ludum Dare、Simple Game Tutorials（页面内已注明灵感来源，未复制第三方代码）。
 
-分享卡片由 `npm run site:og` 零依赖生成（自带 PNG 编码器，23~30 KB/张，`scripts/og-cards.mjs`）。
+游戏分享卡片由 `npm run site:og` 零依赖生成（自带 PNG 编码器，22~29 KB/张，`scripts/og-cards.mjs`，只输出 3 张游戏卡）。首页封面 `assets/og-cover.png` 为 280 KB 的调色板量化 PNG，不由该脚本生成，改动时请勿用 `site:og` 覆盖。
 
 ### 8.2 SEO / GEO 处理
 
@@ -382,7 +382,7 @@ site/
 ```bash
 npm run site:serve          # 本地预览 http://127.0.0.1:8080
 npm run site:check          # SEO / GEO / 可访问性 / 对比度 / 链接可移植性自检（284 项）
-npm run site:build          # 生成 dist/index.min.html（单文件镜像，约 27 KB）
+npm run site:build          # 生成 site/dist/index.min.html（--slim 单文件镜像，35.6 KB；移除内联试玩器并改为指向完整版 #play）
 npm run site:smoke          # 线上冒烟：首页 + 4 个游戏页 + llms.txt / sitemap / robots / 封面图
 
 # GitHub Pages：推送 main 即由 .github/workflows/pages.yml 发布 site/

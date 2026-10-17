@@ -1,7 +1,7 @@
 {
   "name": "Blender MCP Slots · 开源多机台老虎机引擎",
   "short_name": "MCP Slots",
-  "description": "11 款机台共用一套 CONFIG 驱动的老虎机引擎，20 万轮实测 RTP 达标，支持免后端在线试玩。",
+  "description": "14 款机台共用一套 CONFIG 驱动的老虎机引擎，20 万轮实测 RTP 达标，另有 4 款免安装单文件轻量静态小游戏。",
   "lang": "zh-CN",
   "start_url": "./",
   "scope": "./",
@@ -10,10 +10,10 @@
   "theme_color": "#1b1046",
   "icons": [
     {
-      "src": "assets/og-cover.png",
-      "sizes": "1200x630",
-      "type": "image/png",
-      "purpose": "any"
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }

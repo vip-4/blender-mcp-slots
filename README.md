@@ -403,8 +403,12 @@ node scripts/deploy-edgeone.mjs
 | 渠道 | 地址 | 状态 |
 | --- | --- | --- |
 | GitHub Pages（主站） | https://vip-4.github.io/blender-mcp-slots/ | ✅ 全站 5 个页面 |
-| EdgeOne Pages · 霓虹 2048 | https://mcp.edgeone.site/share/cFib0P82W2uLq880SCIo9 | ✅ 单文件镜像 |
-| EdgeOne Pages · 霓虹贪吃蛇 | https://mcp.edgeone.site/share/THXrW_9qh0Sz6vrFLfQEr | ✅ 单文件镜像 |
-| EdgeOne Pages · 霓虹打砖块 | https://mcp.edgeone.site/share/XeSKOAPwtuFHoT02SsjSC | ✅ 单文件镜像 |
+| EdgeOne Pages · 霓虹 2048 | https://mcp.edgeone.site/share/Mdzo3AKaRlg_h1XIX2o4J | ✅ 单文件镜像（2026-10-18 更新：含 FAQ 与章节锚点） |
+| EdgeOne Pages · 霓虹贪吃蛇 | https://mcp.edgeone.site/share/7hxx1JRGfoAdLTb1N3XyE | ✅ 单文件镜像（2026-10-18 更新） |
+| EdgeOne Pages · 霓虹打砖块 | https://mcp.edgeone.site/share/CgBrmvG9rA4SVJXLkGBuh | ✅ 单文件镜像（2026-10-18 更新） |
 
-> 说明：EdgeOne Pages 的托管域名对「老虎机 / 博彩」类内容有策略限制（首页与星光爆裂会被拒绝并返回 self-hosted 指引）；该类页面使用 GitHub Pages / Cloudflare Pages / Vercel，或自建 Pages MCP 服务。
+> 说明 1：EdgeOne Pages 的托管域名对「老虎机 / 博彩」类内容有策略限制（首页与星光爆裂会被拒绝并返回 self-hosted 指引）；该类页面使用 GitHub Pages / Cloudflare Pages / Vercel，或自建 Pages MCP 服务。
+>
+> 说明 2：`node scripts/deploy-edgeone.mjs <file>` 每次发布生成**新的分享链接**，旧链接不会自动失效但内容停留在发布时点；更新内容后需重新发布并把新地址写回本表。发布接口偶发返回 `HTTP 545`，重试即可成功。
+>
+> 说明 3：全站（`site/`）已在「根路径托管」环境实测通过——无子路径的静态服务器下 5 个页面与 24 条站内链接全部 200，外部资源 0 个，即同一份产物可直接部署到任意根域名静态托管。

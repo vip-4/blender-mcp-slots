@@ -292,15 +292,21 @@ curl -X POST http://127.0.0.1:5173/rpc -H 'content-type: application/json' \
 | `starlight-burst` 星光爆裂 | 5×3 / 10 线 | **双向赔付**（每条线左右各判一次）；星芒 WILD 只落在 2/3/4 轴，出现即整轴展开并获 3 次免费重旋，重旋中再出新 WILD 则次数重置；星云散射 8/12/16 次免费旋转（黏性扩张 WILD） | 96.2% |
 | `treasure-hunter` 宝藏猎人 | 5×3 / 20 线 | 雪崩连锁（倍率阶梯 `1/1/2/3/5/8`）× 黏性扩张 WILD（1~3 轴低概率展开）× 免费旋转倍率递进；3+ 宝藏箱散射触发 8/12/16 次，可再触发 | 96% |
 | `sakura-tale` 樱花物语 | 5×3 / 10 线 | **双向赔付** × 雪崩连锁（倍率阶梯 `1/1/2/3/5`）× 扩展符号免费旋转；神社铃铛散射 10/12/15 次，进入时随机选定扩展符号，出现 ≥2 个整轴展开后双向结算可触发连锁 | 96% |
+| `mega-ways-lite` 裂空通路 | 5×3 / 243 WAYS | **通路制**（不设固定线，左起相邻轴同符号即中奖，通路数 = 各轴命中格数之积）× 雪崩连锁（倍率在免费旋转中 `carryInFreeSpins` 跨轮累积）；刻意不使用倍率 WILD 以抑制方差；焰核散射触发免费旋转 | 96% |
+| `fruit-fiesta` 果盘嘉年华 | 3×3 / 5 线 | SCATTER（彩钻）触发 10 次免费旋转，起始 2× 全局倍率且可再触发；免费旋转使用独立 `reelSet`（WILD/7 权重上调）；倍率 WILD（x2/x3） | 95.5% |
+| `book-of-nebula` 星海遗书 | 5×3 / 20 线 | 星海遗书散射触发免费旋转，进入时随机选定**扩展符号**，出现 ≥2 个即整轴展开；免费旋转可再触发，并使用独立 `reelSet` | 95.5% |
 
 ### 实测 RTP（`npm run simulate -- <gameId> 200000`）
 
 ```
+book-of-nebula    rtp=0.9593  target=0.955  max=298.00x
 book-of-ra        rtp=0.9553  target=0.955  max=247.69x
 classic-fruits    rtp=0.9386  target=0.95   max=350.10x
 cosmic-crush      rtp=0.9604  target=0.96   max=710.25x
 dragon-fortune    rtp=0.9569  target=0.96   max=260.31x
+fruit-fiesta      rtp=0.9547  target=0.955  max=562.61x
 inferno-jackpots  rtp=0.9432  target=0.96   max=234.00x
+mega-ways-lite    rtp=0.9601  target=0.96   max=1308.83x
 neon-fruits       rtp=0.9596  target=0.96   max=2507.92x
 panda-fortune     rtp=0.9544  target=0.96   max=103.20x
 pharaoh-gold      rtp=0.9517  target=0.96   max=235.00x
@@ -309,13 +315,13 @@ starlight-burst   rtp=0.9622  target=0.962  max=78.27x
 treasure-hunter   rtp=0.9582  target=0.96   max=321.60x
 ```
 
-十一台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。可用 `npm run site:check` 之外的新脚本 `node scripts/tune-check.mjs [spins]` 一次快筛全部机台（默认 20 万轮，高波动机台轮数不足时方差可达 ±3%）。
+十四台机台实测 RTP 均落在 `target ± tolerance`（20 万轮蒙特卡洛）。可用 `npm run site:check` 之外的新脚本 `node scripts/tune-check.mjs [spins]` 一次快筛全部机台（默认 20 万轮，高波动机台轮数不足时方差可达 ±3%）。
 
 ---
 
 ## 8. 静态站点（`site/`）与生产部署
 
-`site/` 是**自包含单文件**静态站点：内联 CSS/JS、零外部请求、45 KB，内含免后端的「星光爆裂」试玩器，已做 SEO 与 GEO（生成式引擎优化）处理，可直接托管到任意静态平台。
+`site/` 是**自包含单文件**静态站点：内联 CSS/JS、零外部请求、首页 54.6 KB，内含免后端的「星光爆裂」试玩器，已做 SEO 与 GEO（生成式引擎优化）处理，可直接托管到任意静态平台。
 
 ### 8.1 文件结构
 
@@ -344,10 +350,12 @@ site/
 
 | 游戏 | 路径 | 体积 | 操作 | 要点 |
 | --- | --- | --- | --- | --- |
-| 霓虹 2048 | `/games/neon-2048/` | 19.8 KB | 方向键 / WASD / 滑动 | 合并同数字拼出 2048，支持撤销一步、最高分本地保存 |
-| 霓虹贪吃蛇 | `/games/neon-snake/` | 17.7 KB | 方向键 / WASD / 滑动 | 吃光点变长，撞墙或撞自身结束，可暂停，随长度提速 |
-| 霓虹打砖块 | `/games/neon-breakout/` | 19.8 KB | 鼠标 / 方向键 / 触屏 | 挡板反弹小球清砖，3 条命，可暂停，随进度提速 |
-| 星光爆裂 | `/games/starlight-burst/` | 23.0 KB | 点击 / 空格 | 5×3、10 线双向赔付，WILD 整轴展开 + 3 次免费重旋 |
+| 霓虹 2048 | `/games/neon-2048/` | 22.4 KB | 方向键 / WASD / 滑动 | 合并同数字拼出 2048，支持撤销一步、最高分本地保存 |
+| 霓虹贪吃蛇 | `/games/neon-snake/` | 20.4 KB | 方向键 / WASD / 滑动 | 吃光点变长，撞墙或撞自身结束，可暂停，随长度提速 |
+| 霓虹打砖块 | `/games/neon-breakout/` | 22.4 KB | 鼠标 / 方向键 / 触屏 | 挡板反弹小球清砖，3 条命，可暂停，随进度提速 |
+| 星光爆裂 | `/games/starlight-burst/` | 26.0 KB | 点击 / 空格 | 5×3、10 线双向赔付，WILD 整轴展开 + 3 次免费重旋 |
+
+每款游戏页均含「怎么玩 / 操作方式 / 技巧 / 常见问题」四节，对应锚点 `#rules` / `#controls` / `#tips` / `#faq`，便于生成式引擎定位到段落级引用。
 
 四款均为自研实现（MIT），HTML/CSS/JS 全内联：零外部请求、无追踪、无广告、断网可玩；键盘可完整操作，状态通过 `aria-live` 播报，尊重 `prefers-reduced-motion`，支持明暗双主题。选题渠道：itch.io 开源标签、GitHub Trending、Ludum Dare、Simple Game Tutorials（页面内已注明灵感来源，未复制第三方代码）。
 
@@ -360,20 +368,22 @@ site/
 | 基础 meta | `title`(35 字) / `description`(127 字) / `keywords` / `robots`(max-image-preview:large) / `canonical` / `theme-color` |
 | Open Graph | `og:type/site_name/title/description/url/image/image:width/height/alt/locale` |
 | Twitter Card | `summary_large_image` + title/description/image/image:alt |
-| 结构化数据 | `@graph`：WebSite + SoftwareApplication + ItemList(11 台 VideoGame) + FAQPage |
-| GEO（AI 摘要友好） | 首屏 TL;DR 定义段、`<dl>` 事实列表、表格化规格、完整问句式 FAQ 小标题、`llms.txt` |
+| 结构化数据 | 首页 `@graph`：Organization + WebSite + WebPage + BreadcrumbList + SoftwareApplication + ItemList(14 台 VideoGame) + ItemList(4 款小游戏) + FAQPage；游戏页：WebPage + VideoGame + BreadcrumbList + FAQPage |
+| GEO（AI 摘要友好） | 首屏 TL;DR 定义段、`<dl>` 事实列表、表格化规格、完整问句式 FAQ 小标题、`llms.txt`（含机台清单、引用建议与段落锚点说明）、游戏页 `#faq` 与 `FAQPage` 一一对应 |
 | 语义化 | `header/nav/main/section/footer` + 唯一 `h1` + 每节 `aria-labelledby` + 表格 `caption/scope` |
-| 可访问性 | 跳转链接、`aria-live` 结果播报、`prefers-reduced-motion`、明暗双主题、`:focus-visible` 焦点环 |
-| 性能 | 零外部请求、内联资源 45 KB、封面图懒加载、无阻塞脚本 |
+| 可访问性 | 跳转链接、`aria-live` 结果播报、`prefers-reduced-motion`、明暗双主题、`:focus-visible` 焦点环；明暗两主题文字对比度均按 WCAG AA（≥4.5:1）实测 |
+| 性能 | 零外部请求、首页内联 54.6 KB、封面图懒加载（280 KB，调色板量化压缩）、无阻塞脚本 |
+| 托管可移植性 | 站内导航全部为相对路径，可直接部署到任意根域名静态托管（Cloudflare / EdgeOne / Vercel / 自建） |
 
-自检：`npm run site:check`（49 项：meta / OG / Twitter / JSON-LD 可解析性 / 语义 / 可访问性 / 外部依赖 / 体积）。
+自检：`npm run site:check`（284 项：meta / OG / Twitter / JSON-LD 可解析性 / 语义 / 可访问性 / 明暗主题对比度实测 / 站内链接可移植性 / 外部依赖 / 体积）。该检查已在 `.github/workflows/pages.yml` 中作为部署前门禁强制执行，改动 `site/**` 与 `scripts/**` 的 PR 同样受约束。
 
 ### 8.3 部署命令
 
 ```bash
 npm run site:serve          # 本地预览 http://127.0.0.1:8080
-npm run site:check          # SEO / GEO / 可访问性自检
+npm run site:check          # SEO / GEO / 可访问性 / 对比度 / 链接可移植性自检（284 项）
 npm run site:build          # 生成 dist/index.min.html（单文件镜像，约 27 KB）
+npm run site:smoke          # 线上冒烟：首页 + 4 个游戏页 + llms.txt / sitemap / robots / 封面图
 
 # GitHub Pages：推送 main 即由 .github/workflows/pages.yml 发布 site/
 # Cloudflare Pages

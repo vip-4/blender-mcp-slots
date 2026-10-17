@@ -39,18 +39,18 @@
 <style>
   :root {
     --bg:#0b0724; --bg2:#170f3d; --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.14);
-    --fg:#f4f1ff; --muted:#b9b3d6; --primary:#7c5cff; --accent:#7de2fc; --gold:#ffd166; --radius:14px;
+    --fg:#f4f1ff; --muted:#b9b3d6; --primary:#7c5cff; --primary-a:#5f35e0; --primary-b:#6f45ea; --accent:#7de2fc; --gold:#ffd166; --radius:14px;
     --font:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
   }
   @media (prefers-color-scheme: light) {
-    :root { --bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.06); --line:rgba(28,16,80,.16); --fg:#1b1046; --muted:#4b4470; }
+    :root {--bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.06); --line:rgba(28,16,80,.16); --fg:#1b1046; --muted:#4b4470; --accent:#0b5fd0; --gold:#8a5a00; }
   }
   * { box-sizing: border-box; }
   body { margin:0; font-family:var(--font); color:var(--fg); line-height:1.7; background:radial-gradient(1000px 520px at 12% -10%, var(--bg2), var(--bg)) no-repeat, var(--bg); }
   .wrap { width:min(960px,92vw); margin-inline:auto; }
   a { color:var(--accent); } a:hover { text-decoration:underline; }
   :focus-visible { outline:3px solid var(--gold); outline-offset:2px; border-radius:6px; }
-  .skip { position:absolute; left:-9999px; top:0; background:var(--gold); color:#1b1046; padding:.5rem 1rem; z-index:20; }
+  .skip { position:absolute; left:-9999px; top:0; background: #ffd166; color:#1b1046; padding:.5rem 1rem; z-index:20; }
   .skip:focus { left:1rem; top:1rem; }
   header.site { border-bottom:1px solid var(--line); }
   header.site .wrap { display:flex; gap:1rem; align-items:center; justify-content:space-between; padding:.7rem 0; flex-wrap:wrap; }
@@ -72,7 +72,7 @@
   .controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; margin-top:.8rem; }
   select, button { font:inherit; color:var(--fg); background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:.55rem .8rem; }
   button { cursor:pointer; }
-  button.primary { background:linear-gradient(135deg,var(--primary),#b388ff); border-color:transparent; font-weight:700; }
+  button.primary { background:linear-gradient(135deg, var(--primary-a), var(--primary-b)); border-color:transparent; font-weight:700; }
   .log { margin-top:.8rem; font-size:.85rem; color:var(--muted); max-height:9rem; overflow:auto; }
   .status { margin-top:.7rem; min-height:1.6em; color:var(--gold); font-weight:700; }
   table { width:100%; border-collapse:collapse; font-size:.92rem; margin-top:.6rem; }

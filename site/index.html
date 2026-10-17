@@ -47,12 +47,12 @@
   :root {
     --bg: #0b0724; --bg2: #160f38; --card: rgba(255,255,255,.05);
     --line: rgba(255,255,255,.12); --fg: #f4f1ff; --muted: #b9b3d6;
-    --primary: #7c5cff; --accent: #7de2fc; --gold: #ffd166;
+    --primary: #7c5cff; --primary-a: #5f35e0; --primary-b: #6f45ea; --accent: #7de2fc; --gold: #ffd166;
     --ok: #06d6a0; --warn: #ff9f1c; --radius: 14px;
     --font: "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
   }
   @media (prefers-color-scheme: light) {
-    :root { --bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.05); --line:rgba(28,16,80,.14); --fg:#1b1046; --muted:#4b4470; }
+    :root {--bg:#f6f4ff; --bg2:#ece8ff; --card:rgba(28,16,80,.05); --line:rgba(28,16,80,.14); --fg:#1b1046; --muted:#4b4470; --accent:#0b5fd0; --gold:#8a5a00; }
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -65,7 +65,7 @@
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
-  .skip { position: absolute; left: -9999px; top: 0; background: var(--gold); color: #1b1046; padding: .6rem 1rem; z-index: 20; }
+  .skip { position: absolute; left: -9999px; top: 0; background: #ffd166; color: #1b1046; padding: .6rem 1rem; z-index: 20; }
   .skip:focus { left: 1rem; top: 1rem; }
 
   header.site {
@@ -92,7 +92,7 @@
   .cta { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1.2rem; }
   .btn {
     display: inline-block; padding: .7rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: .95rem;
-    background: linear-gradient(135deg, var(--primary), #b388ff); color: #fff; border: 1px solid transparent;
+    background: linear-gradient(135deg, var(--primary-a), var(--primary-b)); color: #fff; border: 1px solid transparent;
   }
   .btn.alt { background: transparent; border-color: var(--line); color: var(--fg); }
   .btn:hover { text-decoration: none; filter: brightness(1.1); }
@@ -119,7 +119,7 @@
     font: inherit; color: var(--fg); background: var(--bg2); border: 1px solid var(--line);
     border-radius: 10px; padding: .55rem .8rem;
   }
-  button.primary { background: linear-gradient(135deg, var(--primary), #b388ff); border-color: transparent; font-weight: 700; cursor: pointer; }
+  button.primary { background: linear-gradient(135deg, var(--primary-a), var(--primary-b)); border-color: transparent; font-weight: 700; cursor: pointer; }
   button[aria-disabled="true"] { opacity: .5; }
   .log { margin-top: .8rem; font-size: .85rem; color: var(--muted); max-height: 8.5rem; overflow: auto; }
   .log div { padding: .12rem 0; }

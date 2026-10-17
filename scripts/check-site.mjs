@@ -121,7 +121,39 @@ function checkPage(rel) {
   });
   has(broken.length === 0, `站内链接目标均存在（失效 ${broken.length} 个${broken.length ? '：' + broken.slice(0, 3).join(', ') : ''}，共 ${navLinks.length} 条）`);
 
-  // 7) 性能：零外部请求 + 体积
+  // 7) 真实对比度：按 WCAG AA 计算，而不是只看有没有写相关属性
+  const cssText = (html.match(/<style>([\s\S]*?)<\/style>/) || ['', ''])[1];
+  const varsOf = (block) => {
+    const o = {};
+    for (const m of block.matchAll(/--([\w-]+)\s*:\s*(#[0-9a-fA-F]{3,8})/g)) o[m[1]] = m[2];
+    return o;
+  };
+  const rootBlock = (cssText.match(/:root\s*\{([\s\S]*?)\}/) || ['', ''])[1];
+  const lightBlock = (cssText.match(/prefers-color-scheme:\s*light\)\s*\{[\s\S]*?:root\s*\{([\s\S]*?)\}/) || ['', ''])[1];
+  const darkVars = varsOf(rootBlock);
+  const lightVars = { ...darkVars, ...varsOf(lightBlock) };
+  const toRgb = (h) => {
+    let s = h.replace('#', '');
+    if (s.length === 3) s = s.split('').map((c) => c + c).join('');
+    return [0, 2, 4].map((i) => parseInt(s.slice(i, i + 2), 16));
+  };
+  const lum = (rgb) => {
+    const v = rgb.map((c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+    return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+  };
+  const contrast = (a, b) => {
+    const l1 = lum(toRgb(a)), l2 = lum(toRgb(b));
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  };
+  const textPairs = [['accent', 'bg'], ['gold', 'bg'], ['muted', 'bg'], ['fg', 'bg']];
+  for (const [theme, v] of [['深色', darkVars], ['浅色', lightVars]]) {
+    const low = textPairs.filter(([a, b]) => v[a] && v[b] && contrast(v[a], v[b]) < 4.5);
+    has(low.length === 0, `${theme}主题文字对比度达 WCAG AA 4.5:1${low.length ? '（不足：' + low.map((p) => p.join('/')).join(', ') + '）' : ''}`);
+  }
+  const btnLow = ['primary-a', 'primary-b'].filter((k) => darkVars[k] && contrast('#ffffff', darkVars[k]) < 4.5);
+  has(btnLow.length === 0, `主按钮白字对比度达 AA${btnLow.length ? '（不足：' + btnLow.join(', ') + '）' : ''}`);
+
+  // 8) 性能：零外部请求 + 体积
   const external = [...html.matchAll(/<(?:script|link|img)\b[^>]*>/g)]
     .map((m) => m[0])
     .filter((tag) => !/rel="(canonical|sitemap|manifest|icon)"/.test(tag))

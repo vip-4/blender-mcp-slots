@@ -46,6 +46,13 @@ Blender MCP Slots 用一份可校验的 CONFIG 描述老虎机的转轮条带、
 
 四款均为自研单文件实现（MIT）：HTML/CSS/JS 全内联，零外部请求、无追踪、无广告，12~25 KB，支持键盘与触屏，尊重 prefers-reduced-motion。选题灵感筛选自 itch.io 开源标签、GitHub Trending、Ludum Dare 与 Simple Game Tutorials。
 
+每个游戏页都提供稳定的章节锚点，便于生成式引擎按段落精确引用：
+
+- #rules：规则与赔付（各游戏的核心规则、失败条件、赔付表）
+- #controls：操作方式（键盘与触屏对照表；星光爆裂无此节）
+- #tips：技巧要点（高分/上手技巧）
+- #faq：常见问题（与页面 FAQPage 结构化数据一一对应）
+
 ## 页面结构
 
 - 摘要（TL;DR）：项目定义与关键事实

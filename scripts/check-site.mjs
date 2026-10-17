@@ -82,7 +82,7 @@ function checkPage(rel) {
     }
   });
   const isHome = rel === 'index.html';
-  const need = isHome ? ['WebSite', 'SoftwareApplication', 'ItemList', 'FAQPage'] : ['VideoGame', 'BreadcrumbList'];
+  const need = isHome ? ['WebSite', 'SoftwareApplication', 'ItemList', 'FAQPage'] : ['VideoGame', 'BreadcrumbList', 'FAQPage'];
   need.forEach((t) => has(types.includes(t), `结构化数据包含 ${t}`));
 
   // 4) 语义化与可访问性
@@ -106,6 +106,9 @@ function checkPage(rel) {
     has(/<h3>如何新增一款老虎机机台？<\/h3>/.test(html), 'FAQ 使用完整问句作为小标题');
     has(/id="arcade"/.test(html), '存在轻量静态游戏入口（id=arcade）');
     has(existsSync(path.join(SITE, 'llms.txt')), '存在 llms.txt（AI 爬虫摘要入口）');
+  } else {
+    has(/id="faq"/.test(html), '存在可引用的 FAQ 锚点（id=faq）');
+    has(/<h2 id="(rules|tips)"/.test(html), '章节小标题带稳定锚点（便于 AI 深度引用）');
   }
 
   // 6) 托管可移植性：站内导航必须相对，且目标真实存在（换任意静态托管都能用）

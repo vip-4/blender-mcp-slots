@@ -114,7 +114,7 @@
   </div>
   <p id="status" class="status" role="status" aria-live="polite">点击「开始」，用方向键或 WASD 控制方向。</p>
 
-  <h2>怎么玩（规则一览）</h2>
+  <h2 id="rules">怎么玩（规则一览）</h2>
   <dl class="facts">
     <dt>目标</dt><dd>吃到金色光点让蛇变长，长度越长分数越高。</dd>
     <dt>失败条件</dt><dd>撞到边界墙，或头部撞到自己的身体。</dd>
@@ -123,7 +123,7 @@
     <dt>计分</dt><dd>每个光点 +1 长度；长度会与历史最长比较并保存在本地。</dd>
   </dl>
 
-  <h2>操作方式</h2>
+  <h2 id="controls">操作方式</h2>
   <table>
     <caption>霓虹贪吃蛇的键盘与触屏操作</caption>
     <thead><tr><th scope="col">操作</th><th scope="col">键盘</th><th scope="col">触屏</th></tr></thead>
@@ -135,12 +135,23 @@
     </tbody>
   </table>
 
-  <h2>上手技巧</h2>
+  <h2 id="tips">上手技巧</h2>
   <dl class="facts">
     <dt>贴边绕行</dt><dd>沿棋盘边缘绕圈行进，能给自己留出回旋空间。</dd>
     <dt>预留出口</dt><dd>吃光点前先确认吃完仍有通路，避免把自己封进死角。</dd>
     <dt>提前转向</dt><dd>高速阶段提前一格规划方向，避免来不及反应。</dd>
   </dl>
+
+  <h2 id="faq">常见问题</h2>
+
+  <h3>为什么有时按了方向键没有反应？</h3>
+  <p>蛇不能直接 180° 掉头，只能在相邻方向之间切换。例如正在向右移动时，按左键无效，需先按上或下。</p>
+
+  <h3>蛇的速度会一直变快吗？</h3>
+  <p>不会无限变快。每吃到 5 个光点提速一档，最高为初始速度的 2.2×，之后保持该速度。</p>
+
+  <h3>最长记录保存在哪里？</h3>
+  <p>保存在你当前浏览器的本地存储中，不会上传；换浏览器或清除站点数据后记录会归零。</p>
 
   <p class="note">实现说明：本页为自研单文件实现（MIT），HTML/CSS/JS 全部内联，无外部请求、无追踪脚本；最长记录保存在浏览器本地，不会上传。</p>
 </main>
@@ -193,6 +204,27 @@
         { "@type": "ListItem", "position": 1, "name": "游戏中心", "item": "https://vip-4.github.io/blender-mcp-slots/" },
         { "@type": "ListItem", "position": 2, "name": "轻量静态游戏", "item": "https://vip-4.github.io/blender-mcp-slots/#arcade" },
         { "@type": "ListItem", "position": 3, "name": "霓虹贪吃蛇" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-snake/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "为什么有时按了方向键没有反应？",
+          "acceptedAnswer": { "@type": "Answer", "text": "蛇不能直接 180° 掉头，只能在相邻方向之间切换。例如正在向右移动时，按左键无效，需先按上或下。" }
+        },
+        {
+          "@type": "Question",
+          "name": "蛇的速度会一直变快吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会无限变快。每吃到 5 个光点提速一档，最高为初始速度的 2.2×，之后保持该速度。" }
+        },
+        {
+          "@type": "Question",
+          "name": "最长记录保存在哪里？",
+          "acceptedAnswer": { "@type": "Answer", "text": "保存在当前浏览器的本地存储中，不会上传；换浏览器或清除站点数据后记录会归零。" }
+        }
       ]
     }
   ]

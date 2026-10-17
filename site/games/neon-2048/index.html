@@ -119,7 +119,7 @@
   <div class="board" id="board" role="grid" aria-label="4 行 4 列的 2048 棋盘"></div>
   <p id="status" class="status" role="status" aria-live="polite">用方向键或 WASD 开始，手机上直接滑动。</p>
 
-  <h2>怎么玩（规则一览）</h2>
+  <h2 id="rules">怎么玩（规则一览）</h2>
   <dl class="facts">
     <dt>目标</dt><dd>把相同数字的方块合并，最终拼出 <b>2048</b>；拼出后仍可继续冲击更高分。</dd>
     <dt>一次移动</dt><dd>所有方块朝该方向滑动到底，相邻同数字两两合并（每次移动每个方块只合并一次）。</dd>
@@ -128,7 +128,7 @@
     <dt>计分</dt><dd>每次合并把合并后的数字计入分数，因此越大越晚合并得分越高。</dd>
   </dl>
 
-  <h2>操作方式</h2>
+  <h2 id="controls">操作方式</h2>
   <table>
     <caption>霓虹 2048 的键盘与触屏操作</caption>
     <thead><tr><th scope="col">操作</th><th scope="col">键盘</th><th scope="col">触屏 / 鼠标</th></tr></thead>
@@ -142,12 +142,23 @@
     </tbody>
   </table>
 
-  <h2>高分技巧</h2>
+  <h2 id="tips">高分技巧</h2>
   <dl class="facts">
     <dt>固定最大块</dt><dd>把最大数字固定在某个角落，避免它来回搬家导致棋盘碎裂。</dd>
     <dt>单向优先</dt><dd>优先使用两个方向（如左、下），第三个方向只在必要时用，能保持棋盘有序。</dd>
     <dt>留空列</dt><dd>始终保持至少一列/一行是空的，给新方块与合并留缓冲。</dd>
   </dl>
+
+  <h2 id="faq">常见问题</h2>
+
+  <h3>拼出 2048 之后还能继续玩吗？</h3>
+  <p>可以。拼出 2048 后游戏不会结束，可以继续合并冲击更高分（4096 及以上）。</p>
+
+  <h3>怎样才算游戏结束？</h3>
+  <p>棋盘被填满，且上、下、左、右四个方向都无法再产生任何合并时，本局结束。</p>
+
+  <h3>最高分会上传到服务器吗？</h3>
+  <p>不会。最高分只保存在你当前浏览器的本地存储中，本页没有任何网络请求，因此换浏览器或清除站点数据后最高分会归零。</p>
 
   <p class="note">实现说明：本页为自研单文件实现（MIT），HTML/CSS/JS 全部内联，无外部请求、无追踪脚本；最高分保存在浏览器本地，不会上传。</p>
 </main>
@@ -200,6 +211,27 @@
         { "@type": "ListItem", "position": 1, "name": "游戏中心", "item": "https://vip-4.github.io/blender-mcp-slots/" },
         { "@type": "ListItem", "position": 2, "name": "轻量静态游戏", "item": "https://vip-4.github.io/blender-mcp-slots/#arcade" },
         { "@type": "ListItem", "position": 3, "name": "霓虹 2048" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/games/neon-2048/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "拼出 2048 之后还能继续玩吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "可以。拼出 2048 后游戏不会结束，可以继续合并冲击更高分（4096 及以上）。" }
+        },
+        {
+          "@type": "Question",
+          "name": "怎样才算游戏结束？",
+          "acceptedAnswer": { "@type": "Answer", "text": "棋盘被填满，且上、下、左、右四个方向都无法再产生任何合并时，本局结束。" }
+        },
+        {
+          "@type": "Question",
+          "name": "最高分会上传到服务器吗？",
+          "acceptedAnswer": { "@type": "Answer", "text": "不会。最高分只保存在当前浏览器的本地存储中，本页没有任何网络请求；换浏览器或清除站点数据后最高分会归零。" }
+        }
       ]
     }
   ]

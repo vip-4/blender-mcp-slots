@@ -18,7 +18,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Blender MCP Slots">
 <meta property="og:title" content="Blender MCP Slots · 开源多机台老虎机引擎与轻量静态游戏">
-<meta property="og:description" content="11 款机台共用一套 CONFIG 驱动引擎，20 万轮实测 RTP 达标；另有 4 款免安装单文件网页小游戏（2048、贪吃蛇、打砖块、星光爆裂），离线可玩、零依赖。">
+<meta property="og:description" content="14 款机台共用一套 CONFIG 驱动引擎，20 万轮实测 RTP 达标；另有 4 款免安装单文件网页小游戏（2048、贪吃蛇、打砖块、星光爆裂），离线可玩、零依赖。">
 <meta property="og:url" content="https://vip-4.github.io/blender-mcp-slots/">
 <meta property="og:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
 <meta property="og:image:secure_url" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
@@ -178,14 +178,14 @@
   <!-- ============ HERO ============ -->
   <section class="hero" aria-labelledby="hero-title">
     <span class="tag hot">开源 · MIT</span>
-    <span class="tag">11 款机台</span>
+    <span class="tag">14 款机台</span>
     <span class="tag">20 万轮实测 RTP</span>
     <span class="tag">免后端可试玩</span>
     <h1 id="hero-title">Blender MCP Slots：一套 CONFIG 驱动的多机台老虎机引擎</h1>
     <p class="muted">Blender MCP Slots 是一个用 Node.js 实现的多机台老虎机（SLOT GAMES）引擎与 MCP 服务。新增一台机台只需写一个 CONFIG 文件：转轮条带、赔付表、线制、特性开关全部由配置描述，引擎、MCP 工具与前端无需改动一行代码。</p>
     <div class="cta">
       <a class="btn" href="#play">立即试玩（静态版）</a>
-      <a class="btn alt" href="#games">查看 11 款机台</a>
+      <a class="btn alt" href="#games">查看 14 款机台</a>
       <a class="btn alt" href="https://github.com/vip-4/blender-mcp-slots" rel="noopener">源码仓库</a>
     </div>
   </section>
@@ -193,10 +193,10 @@
   <!-- ============ TL;DR（面向生成式引擎的答案块） ============ -->
   <section id="tldr" aria-labelledby="tldr-title">
     <h2 id="tldr-title">摘要：Blender MCP Slots 是什么？</h2>
-    <p><strong>Blender MCP Slots 是一个开源的多机台老虎机（SLOT GAMES）引擎</strong>，通过 Model Context Protocol（MCP）对外提供服务。它把「转轮逻辑、赔率、中奖判定、奖励触发、特殊符号」全部抽象为一份可校验的 CONFIG，目前内置 11 款机台，涵盖免费旋转、雪崩连锁、双向赔付、WILD 重旋、金币重旋与收集符等主流玩法；每款机台都用 20 万轮蒙特卡洛模拟校准 RTP，实测值均落在目标 ±2% 区间内。</p>
+    <p><strong>Blender MCP Slots 是一个开源的多机台老虎机（SLOT GAMES）引擎</strong>，通过 Model Context Protocol（MCP）对外提供服务。它把「转轮逻辑、赔率、中奖判定、奖励触发、特殊符号」全部抽象为一份可校验的 CONFIG，目前内置 14 款机台，涵盖免费旋转、雪崩连锁、双向赔付、WILD 重旋、金币重旋、收集符与通路制（WAYS）等主流玩法；每款机台都用 20 万轮蒙特卡洛模拟校准 RTP，实测值均落在目标 ±2% 区间内。</p>
     <dl class="facts">
       <dt>引擎实现</dt><dd>Node.js 20+ ESM，零运行时依赖，共享引擎目录 <code>src/games/engine/*</code>。</dd>
-      <dt>机台数量</dt><dd>11 款（3×3 到 5×3，5 线 / 10 线 / 20 线 / 243 WAYS）。</dd>
+      <dt>机台数量</dt><dd>14 款（3×3 到 5×3，5 线 / 10 线 / 20 线 / 243 WAYS）。</dd>
       <dt>配置驱动</dt><dd>新增机台 = 新增一个 CONFIG 文件，重启或调用 <code>slots.reloadConfigs</code> 生效。</dd>
       <dt>公平性</dt><dd>服务端种子 + 客户端种子 + nonce，公开种子哈希，结果可复算。</dd>
       <dt>RTP 校准</dt><dd><code>slots.simulate</code> 蒙特卡洛，20 万轮/台，实测 0.9386 ~ 0.9679。</dd>
@@ -297,7 +297,7 @@
 
   <!-- ============ 机台合集 ============ -->
   <section id="games" aria-labelledby="games-title">
-    <h2 id="games-title">机台合集：11 款机台的规格与实测 RTP</h2>
+    <h2 id="games-title">机台合集：14 款机台的规格与实测 RTP</h2>
     <p class="muted">下表为 20 万轮蒙特卡洛实测结果（<code>node scripts/simulate.js</code>）。「实测 RTP」是实际派彩 ÷ 实际投注，「目标 RTP」为 CONFIG 中声明的 <code>rtp.target</code>。</p>
     <div class="table-scroll">
       <table>
@@ -309,11 +309,14 @@
           </tr>
         </thead>
         <tbody>
+          <tr><th scope="row">星海遗书 Book of Nebula</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9593</td><td class="num">0.955</td><td class="num">298.00×</td><td>扩展符号 · 免费旋转再触发</td></tr>
           <tr><th scope="row">法老之书 Book of Ra</th><td class="num">5×3</td><td class="num">10 线</td><td>单向</td><td>高</td><td class="num">0.9553</td><td class="num">0.955</td><td class="num">247.69×</td><td>扩展符号 · 免费旋转再触发</td></tr>
           <tr><th scope="row">经典水果机 Classic Fruits</th><td class="num">3×3</td><td class="num">5 线</td><td>单向</td><td>低</td><td class="num">0.9386</td><td class="num">0.95</td><td class="num">350.10×</td><td>倍率 WILD</td></tr>
           <tr><th scope="row">星海消除 Cosmic Crush</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9604</td><td class="num">0.96</td><td class="num">710.25×</td><td>雪崩连锁 · 倍率阶梯 1/1/2/3/5/8/12</td></tr>
           <tr><th scope="row">龙腾富贵 Dragon Fortune</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>中高</td><td class="num">0.9569</td><td class="num">0.96</td><td class="num">260.31×</td><td>扩张 WILD · 倍率递进</td></tr>
+          <tr><th scope="row">果盘嘉年华 Fruit Fiesta</th><td class="num">3×3</td><td class="num">5 线</td><td>单向</td><td>中</td><td class="num">0.9547</td><td class="num">0.955</td><td class="num">562.61×</td><td>SCATTER 免费旋转 · 倍率 WILD</td></tr>
           <tr><th scope="row">烈焰金库 Inferno Jackpots</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9432</td><td class="num">0.96</td><td class="num">234.00×</td><td>6 币锁仓重旋 · 四档奖池</td></tr>
+          <tr><th scope="row">裂空通路 Mega Ways Lite</th><td class="num">5×3</td><td class="num">243 WAYS</td><td>单向</td><td>高</td><td class="num">0.9601</td><td class="num">0.96</td><td class="num">1308.83×</td><td>通路制 · 雪崩连锁 · 免费旋转累积倍率</td></tr>
           <tr><th scope="row">霓虹水果 Neon Fruits</th><td class="num">5×3</td><td class="num">243 WAYS</td><td>单向</td><td>高</td><td class="num">0.9596</td><td class="num">0.96</td><td class="num">2507.92×</td><td>倍率 WILD · 免费旋转</td></tr>
           <tr><th scope="row">熊猫财神 Panda Fortune</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>中高</td><td class="num">0.9544</td><td class="num">0.96</td><td class="num">103.20×</td><td>金币收集 · 黏性扩张 WILD</td></tr>
           <tr><th scope="row">黄金法老 Pharaoh Gold</th><td class="num">5×3</td><td class="num">20 线</td><td>单向</td><td>高</td><td class="num">0.9517</td><td class="num">0.96</td><td class="num">235.00×</td><td>金币重旋 · 收集符 · 奖池</td></tr>

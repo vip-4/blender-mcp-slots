@@ -32,7 +32,7 @@
 <!-- ============ Twitter Card ============ -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Blender MCP Slots · 开源老虎机引擎与轻量静态游戏">
-<meta name="twitter:description" content="11 款机台、一套 CONFIG 引擎、20 万轮实测 RTP 达标；4 款免安装单文件网页小游戏，离线可玩、零依赖。">
+<meta name="twitter:description" content="14 款机台、一套 CONFIG 引擎、20 万轮实测 RTP 达标；4 款免安装单文件网页小游戏，离线可玩、零依赖。">
 <meta name="twitter:image" content="https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png">
 <meta name="twitter:image:alt" content="霓虹紫金风格的老虎机转轮与符号封面图">
 
@@ -40,6 +40,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b1046'/%3E%3Crect x='6' y='9' width='20' height='14' rx='3' fill='none' stroke='%23ffd166' stroke-width='2'/%3E%3Ccircle cx='12' cy='16' r='2.5' fill='%23ef476f'/%3E%3Ccircle cx='20' cy='16' r='2.5' fill='%237de2fc'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="sitemap" type="application/xml" href="sitemap.xml">
+<link rel="alternate" type="text/plain" href="llms.txt" title="面向生成式引擎的站点摘要（llms.txt）">
 
 <!-- ============ 样式（内联，零外部请求） ============ -->
 <style>
@@ -400,7 +401,7 @@ node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code
 <footer class="site">
   <div class="wrap">
     <p>Blender MCP Slots · 开源多机台老虎机引擎 · MIT License · <a href="https://github.com/vip-4/blender-mcp-slots" rel="noopener">GitHub</a> · <a href="https://gitee.com/vip882/blender-mcp-slots" rel="noopener">Gitee</a> · <a href="https://atomgit.com/zzw1208/blender-mcp-slots" rel="noopener">AtomGit</a></p>
-    <p>本页数据来自 20 万轮蒙特卡洛模拟，最后更新：<time datetime="2026-10-15">2026-10-15</time>。内容为概率引擎技术演示，不涉及真实货币。</p>
+    <p>本页数据来自 20 万轮蒙特卡洛模拟，最后更新：<time datetime="2026-10-18">2026-10-18</time>。内容为概率引擎技术演示，不涉及真实货币。</p>
   </div>
 </footer>
 
@@ -410,13 +411,42 @@ node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "Organization",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#org",
+      "name": "Blender MCP Slots",
+      "url": "https://github.com/vip-4/blender-mcp-slots",
+      "logo": { "@type": "ImageObject", "url": "https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png" }
+    },
+    {
       "@type": "WebSite",
       "@id": "https://vip-4.github.io/blender-mcp-slots/#website",
       "url": "https://vip-4.github.io/blender-mcp-slots/",
       "name": "Blender MCP Slots",
-      "description": "开源的多机台老虎机（SLOT GAMES）引擎与 MCP 服务，11 款机台共用一套 CONFIG 驱动引擎。",
+      "description": "开源的多机台老虎机（SLOT GAMES）引擎与 MCP 服务，14 款机台共用一套 CONFIG 驱动引擎。",
       "inLanguage": "zh-CN",
-      "publisher": { "@id": "https://vip-4.github.io/blender-mcp-slots/#project" }
+      "publisher": { "@id": "https://vip-4.github.io/blender-mcp-slots/#org" }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#webpage",
+      "url": "https://vip-4.github.io/blender-mcp-slots/",
+      "name": "Blender MCP Slots · 开源多机台老虎机引擎与轻量静态游戏",
+      "description": "14 款机台共用一套 CONFIG 驱动引擎，20 万轮蒙特卡洛实测 RTP 达标；另有 4 款免安装单文件网页小游戏。",
+      "isPartOf": { "@id": "https://vip-4.github.io/blender-mcp-slots/#website" },
+      "about": { "@id": "https://vip-4.github.io/blender-mcp-slots/#project" },
+      "primaryImageOfPage": { "@type": "ImageObject", "url": "https://vip-4.github.io/blender-mcp-slots/assets/og-cover.png" },
+      "breadcrumb": { "@id": "https://vip-4.github.io/blender-mcp-slots/#breadcrumb" },
+      "dateModified": "2026-10-18",
+      "inLanguage": "zh-CN"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://vip-4.github.io/blender-mcp-slots/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Blender MCP Slots 首页", "item": "https://vip-4.github.io/blender-mcp-slots/" },
+        { "@type": "ListItem", "position": 2, "name": "轻量静态游戏", "item": "https://vip-4.github.io/blender-mcp-slots/#arcade" },
+        { "@type": "ListItem", "position": 3, "name": "机台合集", "item": "https://vip-4.github.io/blender-mcp-slots/#games" }
+      ]
     },
     {
       "@type": "SoftwareApplication",
@@ -442,19 +472,22 @@ node src/main.js --transport=http --port=5173   # 统一入口：POST /rpc</code
       "@id": "https://vip-4.github.io/blender-mcp-slots/#games",
       "name": "Blender MCP Slots 内置机台",
       "itemListOrder": "https://schema.org/ItemListOrderAscending",
-      "numberOfItems": 11,
+      "numberOfItems": 14,
       "itemListElement": [
-        { "@type": "VideoGame", "position": 1, "name": "法老之书 Book of Ra", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9553"}] },
-        { "@type": "VideoGame", "position": 2, "name": "经典水果机 Classic Fruits", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"3x3"},{"@type":"PropertyValue","name":"线制","value":"5 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9386"}] },
-        { "@type": "VideoGame", "position": 3, "name": "星海消除 Cosmic Crush", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9604"}] },
-        { "@type": "VideoGame", "position": 4, "name": "龙腾富贵 Dragon Fortune", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9569"}] },
-        { "@type": "VideoGame", "position": 5, "name": "烈焰金库 Inferno Jackpots", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9432"}] },
-        { "@type": "VideoGame", "position": 6, "name": "霓虹水果 Neon Fruits", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"243 WAYS"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9596"}] },
-        { "@type": "VideoGame", "position": 7, "name": "熊猫财神 Panda Fortune", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9544"}] },
-        { "@type": "VideoGame", "position": 8, "name": "黄金法老 Pharaoh Gold", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9517"}] },
-        { "@type": "VideoGame", "position": 9, "name": "樱花物语 Sakura Tale", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9583"}] },
-        { "@type": "VideoGame", "position": 10, "name": "星光爆裂 Starlight Burst", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9622"}] },
-        { "@type": "VideoGame", "position": 11, "name": "宝藏猎人 Treasure Hunter", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9582"}] }
+        { "@type": "VideoGame", "position": 1, "name": "星海遗书 Book of Nebula", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9593"},{"@type":"PropertyValue","name":"核心特性","value":"扩展符号 · 免费旋转再触发"}] },
+        { "@type": "VideoGame", "position": 2, "name": "法老之书 Book of Ra", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9553"},{"@type":"PropertyValue","name":"核心特性","value":"扩展符号 · 免费旋转再触发"}] },
+        { "@type": "VideoGame", "position": 3, "name": "经典水果机 Classic Fruits", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"3x3"},{"@type":"PropertyValue","name":"线制","value":"5 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9386"},{"@type":"PropertyValue","name":"核心特性","value":"倍率 WILD"}] },
+        { "@type": "VideoGame", "position": 4, "name": "星海消除 Cosmic Crush", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9604"},{"@type":"PropertyValue","name":"核心特性","value":"雪崩连锁 · 倍率阶梯"}] },
+        { "@type": "VideoGame", "position": 5, "name": "龙腾富贵 Dragon Fortune", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9569"},{"@type":"PropertyValue","name":"核心特性","value":"扩张 WILD · 倍率递进"}] },
+        { "@type": "VideoGame", "position": 6, "name": "果盘嘉年华 Fruit Fiesta", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"3x3"},{"@type":"PropertyValue","name":"线制","value":"5 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9547"},{"@type":"PropertyValue","name":"核心特性","value":"SCATTER 免费旋转 · 倍率 WILD"}] },
+        { "@type": "VideoGame", "position": 7, "name": "烈焰金库 Inferno Jackpots", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9432"},{"@type":"PropertyValue","name":"核心特性","value":"金币重旋 · 四档奖池"}] },
+        { "@type": "VideoGame", "position": 8, "name": "裂空通路 Mega Ways Lite", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"243 WAYS"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9601"},{"@type":"PropertyValue","name":"核心特性","value":"通路制 · 雪崩连锁 · 免费旋转累积倍率"}] },
+        { "@type": "VideoGame", "position": 9, "name": "霓虹水果 Neon Fruits", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"243 WAYS"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9596"},{"@type":"PropertyValue","name":"核心特性","value":"倍率 WILD · 免费旋转"}] },
+        { "@type": "VideoGame", "position": 10, "name": "熊猫财神 Panda Fortune", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9544"},{"@type":"PropertyValue","name":"核心特性","value":"金币收集 · 黏性扩张 WILD"}] },
+        { "@type": "VideoGame", "position": 11, "name": "黄金法老 Pharaoh Gold", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9517"},{"@type":"PropertyValue","name":"核心特性","value":"金币重旋 · 收集符 · 奖池"}] },
+        { "@type": "VideoGame", "position": 12, "name": "樱花物语 Sakura Tale", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9583"}] },
+        { "@type": "VideoGame", "position": 13, "name": "星光爆裂 Starlight Burst", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"10 线"},{"@type":"PropertyValue","name":"赔付方向","value":"双向赔付"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9622"}] },
+        { "@type": "VideoGame", "position": 14, "name": "宝藏猎人 Treasure Hunter", "gameGenre": "老虎机", "playMode": "SinglePlayer", "additionalProperty": [{"@type":"PropertyValue","name":"盘面","value":"5x3"},{"@type":"PropertyValue","name":"线制","value":"20 线"},{"@type":"PropertyValue","name":"实测 RTP","value":"0.9582"},{"@type":"PropertyValue","name":"核心特性","value":"雪崩连锁 · 黏性扩张 WILD"}] }
       ]
     },
     {

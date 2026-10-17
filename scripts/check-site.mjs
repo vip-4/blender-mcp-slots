@@ -108,7 +108,20 @@ function checkPage(rel) {
     has(existsSync(path.join(SITE, 'llms.txt')), '存在 llms.txt（AI 爬虫摘要入口）');
   }
 
-  // 6) 性能：零外部请求 + 体积
+  // 6) 托管可移植性：站内导航必须相对，且目标真实存在（换任意静态托管都能用）
+  const dir = path.dirname(path.join(SITE, rel));
+  const navLinks = [...html.matchAll(/<a\b[^>]*href="([^"]+)"/g)]
+    .map((m) => m[1])
+    .filter((h) => !/^(https?:|mailto:|#|data:)/.test(h));
+  const hardCoded = navLinks.filter((h) => h.startsWith('/'));
+  has(hardCoded.length === 0, `站内链接未写死子路径（发现 ${hardCoded.length} 个以 / 开头${hardCoded.length ? '：' + hardCoded.slice(0, 3).join(', ') : ''}）`);
+  const broken = navLinks.filter((h) => {
+    const target = path.resolve(dir, h.split('#')[0].split('?')[0]);
+    return !(existsSync(target) || existsSync(path.join(target, 'index.html')));
+  });
+  has(broken.length === 0, `站内链接目标均存在（失效 ${broken.length} 个${broken.length ? '：' + broken.slice(0, 3).join(', ') : ''}，共 ${navLinks.length} 条）`);
+
+  // 7) 性能：零外部请求 + 体积
   const external = [...html.matchAll(/<(?:script|link|img)\b[^>]*>/g)]
     .map((m) => m[0])
     .filter((tag) => !/rel="(canonical|sitemap|manifest|icon)"/.test(tag))
